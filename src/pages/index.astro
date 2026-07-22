@@ -7,10 +7,10 @@ import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
 import config from '@/site-config'
 
-const languages = ['待补充']
-const development = ['待补充']
-const ai = ['待补充']
-const tools = ['Git', 'Vercel']
+const languages = ['Python', 'Go', 'TypeScript', 'SQL']
+const development = ['FastAPI', 'FastMCP', 'Gin', 'Redis', 'Docker']
+const ai = ['LLM Agent', 'MCP', 'SFT / GRPO', 'Vector Search', 'Knowledge Graph']
+const tools = ['Git', 'Vercel', 'Milvus', 'Neo4j', 'OpenTelemetry']
 ---
 
 <PageLayout meta={{ title: '首页' }} highlightColor='#659EB9'>
@@ -55,10 +55,10 @@ const tools = ['Git', 'Vercel']
         <Terminal />
       </div>
       <Section title='About'>
-        <p class='text-muted-foreground'>北京邮电大学硕士在读 · 电子科学与技术</p>
+        <p class='text-muted-foreground'>AI Agent · LLM Systems · Backend Engineering</p>
         <p class='text-muted-foreground'>
           你好，我是 Sia，目前在北京邮电大学攻读电子科学与技术专业硕士学位。
-          我会在这里记录学习过程、技术实践以及正在推进的项目。
+          我关注 AI Agent 与 LLM 系统工程，做过技能演化与强化学习项目，也参与过企业级 Agent 平台和 MCP 工具基础设施研发。
         </p>
         <Button title='More about me' class='w-fit self-end' href='/about' variant='ahead' />
       </Section>
@@ -90,29 +90,34 @@ const tools = ['Git', 'Vercel']
 
       <Section title='Experience'>
         <Card
-          heading='经历名称 · 待补充'
-          subheading='公司 / 团队 / 职位，以及一两句最重要的工作内容。'
-          date='开始时间 - 结束时间'
-        />
+          heading='加和科技（GoalfyAI）'
+          subheading='AI Agent 平台研发实习'
+          date='实习经历'
+        >
+          <ul class='ms-4 list-disc text-muted-foreground'>
+            <li>参与 Agent Runtime、MCP 工具服务和平台后端相关研发。</li>
+            <li>接触工具与提示词资产管理、检索、权限控制、消息队列和可观测性等工程模块。</li>
+          </ul>
+        </Card>
         <Card
-          heading='研究或实践方向 · 待补充'
-          subheading='如果暂无正式工作经历，也可以填写个人项目、研究方向或长期学习主题。'
-          date='Ongoing'
+          heading='SkillClaw Summarizer GRPO'
+          subheading='Agent 轨迹摘要与强化学习优化'
+          date='个人项目'
         />
       </Section>
 
       <Section title='Selected Works'>
         <div class='grid grid-cols-1 gap-3 sm:grid-cols-2'>
           <ProjectCard
-            href='/projects'
-            heading='代表作品 · 01'
-            subheading='用一句话说明它解决了什么问题，内容待补充'
+            href='https://github.com/wxa1225/skillclaw-summarizer-grpo'
+            heading='SkillClaw Summarizer GRPO'
+            subheading='面向 Agent 轨迹摘要的数据构建、SFT/GRPO 训练、奖励设计与离线评测'
             imagePath='/src/assets/projects/3.avif'
           />
           <ProjectCard
             href='/projects'
-            heading='代表作品 · 02'
-            subheading='项目、产品、开源仓库或研究成果均可'
+            heading='GoalfyAI Agent Platform'
+            subheading='参与企业级 Agent Runtime、MCP 工具与平台后端基础设施研发'
             imagePath='/src/assets/projects/4.avif'
           />
         </div>

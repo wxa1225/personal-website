@@ -4,47 +4,73 @@ import PageLayout from '@/layouts/CommonPage.astro'
 import ProjectSection from '@/components/projects/ProjectSection.astro'
 
 const headings = [
-  { depth: 2, slug: 'featured', text: '精选项目' },
-  { depth: 2, slug: 'experiments', text: '实验与练习' },
-  { depth: 2, slug: 'contact', text: '一起创造' }
+  { depth: 2, slug: 'skillclaw', text: 'SkillClaw Summarizer GRPO' },
+  { depth: 2, slug: 'goalfyai', text: 'GoalfyAI Agent Platform' },
+  { depth: 2, slug: 'stack', text: '技术实践' }
 ]
 ---
 
 <PageLayout title='项目' {headings}>
   <p>
-    这里收录我做过、正在做以及准备继续打磨的项目。相比数量，我更在意每个项目解决了什么问题，以及从中学到了什么。
+    这里记录我的个人项目与工程实践。公开项目提供源码链接；实习项目仅介绍适合公开的产品方向、技术栈和参与内容。
   </p>
   <Button title='访问我的 GitHub' class='w-fit' href='https://github.com/wxa1225' target='_blank'>
     <Icon class='size-5' name='github' slot='before' />
   </Button>
 
-  <h2 id='featured'>精选项目</h2>
+  <h2 id='skillclaw'>SkillClaw Summarizer GRPO</h2>
+  <p>
+    围绕 SkillClaw 技能演化链路开发的 Agent 轨迹摘要优化项目，目标是把冗长的真实交互轨迹压缩为简洁、可验证且保留关键因果信息的摘要，为后续技能生成与演化提供更稳定的输入。
+  </p>
   <ProjectSection
     projects={[
       {
-        name: "Sia's Space",
-        description: '使用 Astro 构建的个人主页、作品集与数字花园，持续记录项目和思考。',
-        links: [{ type: 'github', href: 'https://github.com/wxa1225' }]
-      }
-    ]}
-  />
-
-  <h2 id='experiments'>实验与练习</h2>
-  <ProjectSection
-    projects={[
-      {
-        name: 'Learning Notes',
-        description: '把学习过程中零散的知识整理成可以查询、复用和分享的内容。',
-        links: [{ type: 'site', href: '/blog' }]
+        name: 'Agent Summarizer Training Pipeline',
+        description: '构建摘要训练数据、质量扫描与分层评估流程，支持 SFT 与 GRPO 数据格式。',
+        links: [{ type: 'github', href: 'https://github.com/wxa1225/skillclaw-summarizer-grpo' }]
       },
       {
-        name: 'Next Project',
-        description: '下一个值得认真完成的项目将在这里出现。',
-        links: [{ type: 'github', href: 'https://github.com/wxa1225' }]
+        name: 'GRPO Reward & Quality Gate',
+        description: '围绕事实一致性、信息覆盖、简洁性和格式质量设计组合奖励、后处理与回退机制。',
+        links: [{ type: 'github', href: 'https://github.com/wxa1225/skillclaw-summarizer-grpo' }]
+      },
+      {
+        name: 'Evaluation & Inference Integration',
+        description: '整理离线评测、数据质量报告，并将小模型摘要能力接入技能演化服务。',
+        links: [{ type: 'github', href: 'https://github.com/wxa1225/skillclaw-summarizer-grpo' }]
       }
     ]}
   />
 
-  <h2 id='contact'>一起创造</h2>
-  <p>如果你对某个项目感兴趣，或者有值得一起探索的想法，欢迎通过 GitHub 与我联系。</p>
+  <h2 id='goalfyai'>GoalfyAI Agent Platform</h2>
+  <p>
+    在加和科技（GoalfyAI）实习期间，参与企业级 AI Agent 产品与平台基础设施研发。产品代码涉及多个协作仓库，因此这里仅概括适合公开的技术方向，不展示内部源码、配置和业务数据。
+  </p>
+  <ProjectSection
+    projects={[
+      {
+        name: 'Agent Runtime & Core',
+        description: '参与 Python Agent 框架相关工程，涉及 LLM 调用、工具执行、记忆、任务调度、消息队列与可观测性。',
+        links: []
+      },
+      {
+        name: 'MCP File Tooling',
+        description: '参与基于 FastMCP 的文件工具服务，覆盖远程文件操作、权限校验、PDF 生成与指标监控。',
+        links: []
+      },
+      {
+        name: 'GoalfyHub Backend',
+        description: '接触 Go / Gin / GORM 后端体系，以及 Agent 工具、提示词等资产的管理、发布、分享、检索与权限控制。',
+        links: []
+      }
+    ]}
+  />
+
+  <h2 id='stack'>技术实践</h2>
+  <ul>
+    <li>Python、Go、FastAPI、FastMCP、Gin、GORM</li>
+    <li>LLM Agent、MCP、SFT、GRPO、OpenAI-compatible API</li>
+    <li>Redis、消息队列、Milvus、Neo4j、MySQL、PostgreSQL</li>
+    <li>Docker、Kubernetes、OpenTelemetry、Prometheus</li>
+  </ul>
 </PageLayout>

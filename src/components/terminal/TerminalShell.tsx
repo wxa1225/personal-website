@@ -83,7 +83,8 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
       push([
         { tone: 'primary', text: 'Sia' },
         { text: '北京邮电大学硕士在读 · 电子科学与技术' },
-        { tone: 'muted', text: 'Beijing, China · 记录学习、技术实践与项目。' }
+        { text: 'AI Agent · LLM Systems · Backend Engineering' },
+        { tone: 'muted', text: 'Built SkillClaw Summarizer GRPO · Interned at GoalfyAI.' }
       ])
       return
     }
