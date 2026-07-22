@@ -1,0 +1,305 @@
+<button
+  id='terminal-trigger'
+  type='button'
+  class='fixed bottom-6 end-6 z-40 hidden rounded-xl border bg-background/90 px-3 py-2 font-mono text-sm text-muted-foreground shadow-lg backdrop-blur transition-all hover:-translate-y-0.5 hover:text-foreground md:block'
+  aria-label='打开开发者终端'
+  title='开发者终端（按 ` 打开）'
+>
+  <span aria-hidden='true'>$_</span>
+</button>
+
+<div
+  id='developer-terminal'
+  class='fixed inset-0 z-[100] hidden items-center justify-center bg-black/55 p-4 backdrop-blur-sm'
+  role='dialog'
+  aria-modal='true'
+  aria-labelledby='terminal-title'
+  aria-hidden='true'
+>
+  <div class='terminal-window flex max-h-[min(38rem,90dvh)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border shadow-2xl'>
+    <div class='terminal-bar flex items-center gap-3 border-b px-4 py-3'>
+      <div class='flex gap-2' aria-hidden='true'>
+        <span class='size-3 rounded-full bg-red-400'></span>
+        <span class='size-3 rounded-full bg-amber-400'></span>
+        <span class='size-3 rounded-full bg-green-400'></span>
+      </div>
+      <p id='terminal-title' class='min-w-0 flex-1 truncate text-center font-mono text-xs text-muted-foreground'>
+        sia@siaspace: ~
+      </p>
+      <button
+        id='terminal-close'
+        type='button'
+        class='rounded-md px-2 py-1 font-mono text-xs text-muted-foreground hover:bg-muted hover:text-foreground'
+        aria-label='关闭终端'
+      >
+        esc
+      </button>
+    </div>
+
+    <div
+      id='terminal-output'
+      class='min-h-72 flex-1 overflow-y-auto whitespace-pre-wrap px-5 py-4 font-mono text-sm leading-6'
+      aria-live='polite'
+    ></div>
+
+    <form id='terminal-form' class='flex items-center gap-2 border-t px-5 py-3'>
+      <label for='terminal-input' class='shrink-0 font-mono text-sm text-green-500'>sia@web:~$</label>
+      <input
+        id='terminal-input'
+        type='text'
+        class='min-w-0 flex-1 border-0 bg-transparent p-0 font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground/60'
+        placeholder='输入 help 查看命令'
+        autocomplete='off'
+        autocapitalize='off'
+        spellcheck='false'
+      />
+    </form>
+  </div>
+</div>
+
+<script>
+  const terminal = document.querySelector<HTMLElement>('#developer-terminal')
+  const trigger = document.querySelector<HTMLButtonElement>('#terminal-trigger')
+  const closeButton = document.querySelector<HTMLButtonElement>('#terminal-close')
+  const form = document.querySelector<HTMLFormElement>('#terminal-form')
+  const input = document.querySelector<HTMLInputElement>('#terminal-input')
+  const output = document.querySelector<HTMLElement>('#terminal-output')
+
+  const history: string[] = []
+  let historyIndex = 0
+
+  const routes: Record<string, string> = {
+    home: '/',
+    blog: '/blog',
+    notes: '/notes',
+    talks: '/talks',
+    projects: '/projects',
+    links: '/links',
+    about: '/about',
+    contact: '/contact'
+  }
+
+  function print(text = '', tone: 'normal' | 'muted' | 'accent' | 'error' = 'normal') {
+    if (!output) return
+    const line = document.createElement('div')
+    line.textContent = text
+    line.dataset.tone = tone
+    output.appendChild(line)
+    output.scrollTop = output.scrollHeight
+  }
+
+  function printWelcome() {
+    print('SIA SPACE TERMINAL', 'accent')
+    print('一个运行在浏览器里的安全交互界面，不会执行真实系统命令。', 'muted')
+    print('输入 help 查看可用命令。')
+    print()
+  }
+
+  function openTerminal() {
+    if (!terminal || !input) return
+    terminal.classList.remove('hidden')
+    terminal.classList.add('flex')
+    terminal.setAttribute('aria-hidden', 'false')
+    document.body.style.overflow = 'hidden'
+    if (output && output.childElementCount === 0) printWelcome()
+    window.setTimeout(() => input.focus(), 20)
+  }
+
+  function closeTerminal() {
+    if (!terminal) return
+    terminal.classList.add('hidden')
+    terminal.classList.remove('flex')
+    terminal.setAttribute('aria-hidden', 'true')
+    document.body.style.overflow = ''
+    trigger?.focus()
+  }
+
+  function navigate(destination: string) {
+    const route = routes[destination]
+    if (!route) {
+      print(`找不到页面：${destination}`, 'error')
+      return
+    }
+    print(`正在打开 ${destination} ...`, 'muted')
+    window.location.href = route
+  }
+
+  function runCommand(rawCommand: string) {
+    const raw = rawCommand.trim()
+    if (!raw) return
+
+    print(`sia@web:~$ ${raw}`, 'muted')
+    const [command, ...args] = raw.toLowerCase().split(/\s+/)
+
+    if (command === 'help') {
+      print('可用命令：', 'accent')
+      print('  about / whoami     查看 Sia 的简介')
+      print('  ls                 列出网站栏目')
+      print('  cd <page>          打开指定栏目')
+      print('  blog, notes, talks, projects, links, contact')
+      print('  github             打开 GitHub')
+      print('  status             查看网站状态')
+      print('  theme              切换深浅主题')
+      print('  date               显示当前时间')
+      print('  clear              清空终端')
+      print('  exit               关闭终端')
+      return
+    }
+
+    if (command === 'about' || command === 'whoami') {
+      print('Sia — Developer · Builder · Lifelong Learner', 'accent')
+      print('在这里记录技术、项目与持续发生的思考。')
+      return
+    }
+
+    if (command === 'ls') {
+      print(Object.keys(routes).join('  '))
+      return
+    }
+
+    if (command === 'pwd') {
+      print(window.location.pathname)
+      return
+    }
+
+    if (command === 'cd') {
+      if (!args[0] || args[0] === '~') navigate('home')
+      else navigate(args[0].replace(/^\//, ''))
+      return
+    }
+
+    if (command in routes) {
+      navigate(command)
+      return
+    }
+
+    if (command === 'github') {
+      print('正在打开 github.com/wxa1225 ...', 'muted')
+      window.open('https://github.com/wxa1225', '_blank', 'noopener,noreferrer')
+      return
+    }
+
+    if (command === 'status') {
+      print('● ONLINE', 'accent')
+      print('Host: Vercel  |  Framework: Astro  |  Domain: siaspace.vercel.app')
+      return
+    }
+
+    if (command === 'theme') {
+      document.querySelector<HTMLButtonElement>('#toggleDarkMode')?.click()
+      print('主题已切换。', 'accent')
+      return
+    }
+
+    if (command === 'date') {
+      print(new Intl.DateTimeFormat('zh-CN', { dateStyle: 'full', timeStyle: 'medium' }).format(new Date()))
+      return
+    }
+
+    if (command === 'clear') {
+      if (output) output.replaceChildren()
+      return
+    }
+
+    if (command === 'exit' || command === 'quit') {
+      closeTerminal()
+      return
+    }
+
+    print(`command not found: ${command}`, 'error')
+    print('输入 help 查看可用命令。', 'muted')
+  }
+
+  trigger?.addEventListener('click', openTerminal)
+  closeButton?.addEventListener('click', closeTerminal)
+
+  terminal?.addEventListener('click', (event) => {
+    if (event.target === terminal) closeTerminal()
+  })
+
+  function submitCurrentCommand() {
+    if (!input) return
+    const command = input.value
+    if (command.trim()) {
+      history.push(command)
+      historyIndex = history.length
+    }
+    input.value = ''
+    runCommand(command)
+  }
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault()
+    submitCurrentCommand()
+  })
+
+  input?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      submitCurrentCommand()
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      historyIndex = Math.max(0, historyIndex - 1)
+      input.value = history[historyIndex] ?? ''
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      historyIndex = Math.min(history.length, historyIndex + 1)
+      input.value = history[historyIndex] ?? ''
+    }
+  })
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && terminal?.getAttribute('aria-hidden') === 'false') {
+      closeTerminal()
+      return
+    }
+
+    const target = event.target as HTMLElement | null
+    const isTyping = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable
+    if (event.key === '`' && !isTyping) {
+      event.preventDefault()
+      if (terminal?.getAttribute('aria-hidden') === 'false') closeTerminal()
+      else openTerminal()
+    }
+  })
+</script>
+
+<style>
+  .terminal-window {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .terminal-bar {
+    background: hsl(var(--muted) / 0.6);
+  }
+
+  #terminal-output [data-tone='muted'] {
+    color: hsl(var(--muted-foreground));
+  }
+
+  #terminal-output [data-tone='accent'] {
+    color: #22c55e;
+  }
+
+  #terminal-output [data-tone='error'] {
+    color: #f87171;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .terminal-window {
+      animation: terminal-in 180ms ease-out;
+    }
+  }
+
+  @keyframes terminal-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+</style>
