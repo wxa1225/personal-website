@@ -1,15 +1,15 @@
-<section id='interactive-terminal' class='animate mb-12 w-full max-w-4xl' aria-labelledby='terminal-heading'>
+<section id='interactive-terminal' class='animate mb-14 w-full' aria-labelledby='terminal-heading'>
   <div class='mb-3 flex flex-wrap items-center gap-3 px-1 font-mono text-xs text-muted-foreground sm:text-sm'>
     <span class='rounded-full border border-dashed px-3 py-1'>// power user?</span>
     <span>跳过滚动，试试交互式 CLI。输入 <code>help</code>、<code>whoami</code> 或 <code>ls</code>。</span>
   </div>
 
   <div class='terminal-window overflow-hidden rounded-2xl border shadow-lg'>
-    <div class='terminal-bar grid grid-cols-[auto_1fr_auto] items-center gap-3 border-b px-4 py-3'>
+    <div class='terminal-bar grid grid-cols-[auto_1fr_auto] items-center gap-3 border-b px-4'>
       <div class='flex gap-2' aria-hidden='true'>
-        <span class='size-3 rounded-full border bg-background'></span>
-        <span class='size-3 rounded-full border bg-background'></span>
-        <span class='size-3 rounded-full border bg-background'></span>
+        <span class='terminal-light terminal-light-red'></span>
+        <span class='terminal-light terminal-light-yellow'></span>
+        <span class='terminal-light terminal-light-green'></span>
       </div>
       <p id='terminal-heading' class='truncate text-center font-mono text-xs text-muted-foreground sm:text-sm'>
         sia@siaspace — terminal
@@ -24,24 +24,26 @@
       </button>
     </div>
 
-    <div
-      id='terminal-output'
-      class='min-h-64 max-h-[28rem] overflow-y-auto whitespace-pre-wrap px-5 py-5 font-mono text-sm leading-6'
-      aria-live='polite'
-    ></div>
+    <div class='terminal-body'>
+      <div
+        id='terminal-output'
+        class='whitespace-pre-wrap'
+        aria-live='polite'
+      ></div>
 
-    <form id='terminal-form' class='flex items-center gap-2 border-t px-5 py-4'>
-      <label for='terminal-input' class='shrink-0 font-mono text-sm text-sky-600 dark:text-sky-400'>sia@web:~$</label>
-      <input
-        id='terminal-input'
-        type='text'
-        class='min-w-0 flex-1 border-0 bg-transparent p-0 font-mono text-sm text-foreground outline-none placeholder:text-muted-foreground/60'
-        placeholder='输入 help 查看命令'
-        autocomplete='off'
-        autocapitalize='off'
-        spellcheck='false'
-      />
-    </form>
+      <form id='terminal-form' class='terminal-input-row flex items-center gap-2'>
+        <label for='terminal-input' class='terminal-prompt shrink-0'>sia@siaspace ~ $</label>
+        <input
+          id='terminal-input'
+          type='text'
+          class='min-w-0 flex-1 border-0 bg-transparent p-0 text-foreground outline-none placeholder:text-muted-foreground/70'
+          placeholder='click or press ` then type help'
+          autocomplete='off'
+          autocapitalize='off'
+          spellcheck='false'
+        />
+      </form>
+    </div>
   </div>
 </section>
 
@@ -211,11 +213,92 @@
 </script>
 
 <style>
-  .terminal-window { background: hsl(var(--background) / 0.86); color: hsl(var(--foreground)); backdrop-filter: blur(14px); }
-  .terminal-bar { background: hsl(var(--muted) / 0.5); }
+  .terminal-window {
+    --terminal-accent: 201 92% 32%;
+    position: relative;
+    isolation: isolate;
+    border-color: hsl(var(--foreground) / 0.28);
+    background: linear-gradient(180deg, hsl(var(--card) / 0.96), hsl(var(--card) / 0.88));
+    color: hsl(var(--foreground));
+    font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    backdrop-filter: blur(18px) saturate(140%);
+    box-shadow:
+      0 0 0 1px hsl(var(--foreground) / 0.16),
+      0 1px 0 hsl(var(--background) / 0.65) inset,
+      0 24px 48px -28px hsl(var(--foreground) / 0.3),
+      0 8px 24px -16px hsl(var(--foreground) / 0.2);
+  }
+  .terminal-window::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: -1px -1px;
+    mask-image: radial-gradient(ellipse 75% 65% at 50% 0%, black 0%, transparent 85%);
+  }
+  .terminal-window::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(140deg, hsl(var(--terminal-accent) / 0.22), transparent 30%, transparent 70%, hsl(var(--terminal-accent) / 0.12));
+    mix-blend-mode: overlay;
+  }
+  .terminal-bar {
+    position: relative;
+    z-index: 1;
+    height: 44px;
+    background: hsl(var(--background) / 0.55);
+    border-color: hsl(var(--border) / 0.8);
+    letter-spacing: 0.02em;
+    user-select: none;
+  }
+  .terminal-light {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--foreground) / 0.18);
+    box-shadow: 0 1px 1px hsl(var(--foreground) / 0.08) inset;
+  }
+  .terminal-light-red { background: #ff6058; border-color: #ce4640; }
+  .terminal-light-yellow { background: #ffbd2e; border-color: #cf9d20; }
+  .terminal-light-green { background: #28c93f; border-color: #1e9c30; }
+  .terminal-body {
+    position: relative;
+    z-index: 1;
+    height: 420px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 24px 26px 18px;
+    font-size: 14px;
+    line-height: 1.7;
+    scroll-behavior: smooth;
+  }
+  .terminal-body::-webkit-scrollbar { width: 6px; }
+  .terminal-body::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground) / 0.25); border-radius: 999px; }
+  #terminal-output { border-bottom: 1px dashed hsl(var(--border) / 0.75); padding-bottom: 18px; }
+  .terminal-input-row { padding-top: 20px; }
+  .terminal-prompt { color: hsl(var(--terminal-accent)); font-size: inherit; }
   #terminal-output [data-tone='muted'] { color: hsl(var(--muted-foreground)); }
-  #terminal-output [data-tone='accent'] { color: #0284c7; }
+  #terminal-output [data-tone='accent'] {
+    color: hsl(var(--terminal-accent));
+    font-weight: 600;
+    letter-spacing: 0.055em;
+  }
   :global(.dark) #terminal-output [data-tone='accent'] { color: #38bdf8; }
   #terminal-output [data-tone='error'] { color: #f87171; }
   code { border: 1px solid hsl(var(--border)); border-radius: 0.35rem; padding: 0.1rem 0.35rem; color: hsl(var(--foreground)); }
+  @media (max-width: 640px) {
+    .terminal-body { height: 360px; max-height: 68vh; padding: 20px 18px 14px; font-size: 12px; }
+    .terminal-bar { height: 40px; }
+    .terminal-input-row { align-items: flex-start; }
+    .terminal-prompt { white-space: nowrap; }
+  }
 </style>
