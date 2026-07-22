@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Sia avatar</title>
+  <desc id="desc">A minimal letter S monogram on a blue gradient background.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8bb9cb"/>
+      <stop offset="0.52" stop-color="#659eb9"/>
+      <stop offset="1" stop-color="#3f718e"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".22"/>
+      <stop offset=".48" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#16384c" flood-opacity=".24"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="132" fill="url(#background)"/>
+  <circle cx="390" cy="100" r="170" fill="url(#shine)"/>
+  <path d="M352 160c-22-24-54-37-91-37-60 0-104 31-104 79 0 46 37 65 97 78 43 9 58 19 58 38 0 22-21 36-55 36-39 0-74-16-101-47l-39 46c35 40 82 59 137 59 67 0 113-34 113-88 0-48-33-69-99-83-40-9-56-18-56-35 0-19 19-31 49-31 31 0 57 11 78 32z" fill="#fff" filter="url(#shadow)"/>
+  <rect x="1.5" y="1.5" width="509" height="509" rx="130.5" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="3"/>
+</svg>

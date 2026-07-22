@@ -1,0 +1,14 @@
+---
+import { Button, Icon } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+---
+
+<PageLayout title='Contact'>
+  <p>如果你想讨论技术、项目、创意或合作，欢迎通过下面的方式联系我。</p>
+  <div class='not-prose mt-8 flex flex-wrap gap-3'>
+    <Button title='GitHub' href='https://github.com/wxa1225' target='_blank'>
+      <Icon name='github' class='size-5' slot='before' />
+    </Button>
+  </div>
+  <p class='mt-8 text-muted-foreground'>邮箱与其他社交账号待补充。</p>
+</PageLayout>
