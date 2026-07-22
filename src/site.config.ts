@@ -120,10 +120,10 @@ export const integ: IntegrationUserConfig = {
     applyTip: [
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
-      { name: 'Link', val: 'https://personal-website-seven-pi-89.vercel.app/' },
+      { name: 'Link', val: 'https://siaspace.vercel.app/' },
       {
         name: 'Avatar',
-        val: 'https://personal-website-seven-pi-89.vercel.app/avatar.svg'
+        val: 'https://siaspace.vercel.app/avatar.svg'
       }
     ],
     // Cache avatars in `public/avatars/` to improve user experience.
