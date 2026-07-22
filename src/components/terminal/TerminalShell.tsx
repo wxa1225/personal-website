@@ -82,8 +82,8 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
     if (command === 'whoami' || command === 'about') {
       push([
         { tone: 'primary', text: 'Sia' },
-        { text: 'Developer · Builder · Lifelong Learner' },
-        { tone: 'muted', text: '记录技术、项目与持续发生的思考。' }
+        { text: '北京邮电大学硕士在读 · 电子科学与技术' },
+        { tone: 'muted', text: 'Beijing, China · 记录学习、技术实践与项目。' }
       ])
       return
     }

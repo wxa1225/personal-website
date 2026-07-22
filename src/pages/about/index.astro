@@ -4,8 +4,8 @@ import PageLayout from '@/layouts/CommonPage.astro'
 
 const headings = [
   { depth: 2, slug: 'about-me', text: '关于我' },
+  { depth: 2, slug: 'education', text: '教育经历' },
   { depth: 2, slug: 'interests', text: '关注方向' },
-  { depth: 2, slug: 'principles', text: '我的原则' },
   { depth: 2, slug: 'about-site', text: '关于本站' },
   { depth: 2, slug: 'contact', text: '联系我' }
 ]
@@ -14,44 +14,39 @@ const headings = [
 <PageLayout title='关于' {headings}>
   <h2 id='about-me'>关于我</h2>
   <p>
-    你好，我是 Sia，一名喜欢技术、产品与创造的开发者。我享受从模糊想法出发，经过设计、编码和反复打磨，最终做出真实可用作品的过程。
+    你好，我是 Sia，目前生活在北京，就读于北京邮电大学，是电子科学与技术专业硕士研究生。
   </p>
   <p>
-    这里不会只展示完成后的结果，也会记录学习路径、踩过的坑和仍在思考的问题。随着经历增加，这一页也会持续更新。
+    这个网站用于整理我的学习过程、技术实践和个人项目。我希望它不仅是一份静态简历，也是一块能够长期更新的数字空间。
   </p>
 
-  <h2 id='interests'>关注方向</h2>
+  <h2 id='education'>教育经历</h2>
   <ul>
-    <li>Web 开发与用户体验</li>
-    <li>AI 工具与个人效率</li>
-    <li>开源项目与独立产品</li>
-    <li>知识整理与持续学习</li>
+    <li><strong>北京邮电大学</strong></li>
+    <li>硕士研究生 · 电子科学与技术</li>
+    <li>状态：在读</li>
   </ul>
 
-  <h2 id='principles'>我的原则</h2>
-  <ul>
-    <li>保持好奇，先理解问题，再选择工具。</li>
-    <li>从小而完整的版本开始，让作品在使用中生长。</li>
-    <li>公开记录过程，让经验变成可以复用的知识。</li>
-  </ul>
+  <h2 id='interests'>关注方向</h2>
+  <p>具体研究方向、技术栈和兴趣领域将在后续补充。</p>
 
   <h2 id='about-site'>关于本站</h2>
-  <p>这个网站是我的个人主页、作品集和数字花园，使用 Astro 与 Pure 构建，并部署在 Vercel。</p>
+  <p>本站是我的个人主页、作品集和数字花园，使用 Astro 与 Pure 构建，并部署在 Vercel。</p>
   <Timeline
     events={[
       {
         date: '2026-07',
-        content: '创建 Sia\'s Space，开始整理个人项目与长期内容。'
+        content: '创建 Sia\'s Space，开始整理个人资料、项目与长期内容。'
       },
       {
         date: 'Next',
-        content: '持续补充真实项目、技术文章、学习笔记与个人经历。'
+        content: '持续补充技术文章、学习笔记、项目和研究经历。'
       }
     ]}
   />
 
   <h2 id='contact'>联系我</h2>
-  <p>欢迎通过 GitHub 了解我的项目，或就技术、创意和合作进行交流。</p>
+  <p>欢迎通过 GitHub 了解我的项目，或就学习、技术与合作进行交流。</p>
   <Button
     title='访问 GitHub'
     class='w-fit'
