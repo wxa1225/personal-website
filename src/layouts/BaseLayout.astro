@@ -2,7 +2,6 @@
 import { Footer, Header, ThemeProvider } from 'astro-pure/components/basic'
 import type { SiteMeta } from 'astro-pure/types'
 import BaseHead from '@/components/BaseHead.astro'
-import DevTerminal from '@/components/DevTerminal.astro'
 import config from '@/site-config'
 
 // Import the global.css file here so that it is included on
@@ -48,8 +47,6 @@ const {
       </div>
       <Footer />
     </div>
-    <DevTerminal />
-
     {/* Set highlight color */}
     <style define:vars={{ highlightColor }}>
       :global(.highlight) {

@@ -1,49 +1,37 @@
-<button
-  id='terminal-trigger'
-  type='button'
-  class='fixed bottom-4 end-4 z-40 rounded-xl border bg-background/90 px-3 py-2 font-mono text-sm text-muted-foreground shadow-lg backdrop-blur transition-all hover:-translate-y-0.5 hover:text-foreground md:bottom-6 md:end-6'
-  aria-label='打开开发者终端'
-  title='开发者终端（按 ` 打开）'
->
-  <span aria-hidden='true'>$_</span>
-</button>
+<section id='interactive-terminal' class='animate mb-12 w-full max-w-4xl' aria-labelledby='terminal-heading'>
+  <div class='mb-3 flex flex-wrap items-center gap-3 px-1 font-mono text-xs text-muted-foreground sm:text-sm'>
+    <span class='rounded-full border border-dashed px-3 py-1'>// power user?</span>
+    <span>跳过滚动，试试交互式 CLI。输入 <code>help</code>、<code>whoami</code> 或 <code>ls</code>。</span>
+  </div>
 
-<div
-  id='developer-terminal'
-  class='fixed inset-0 z-[100] hidden items-center justify-center bg-black/55 p-4 backdrop-blur-sm'
-  role='dialog'
-  aria-modal='true'
-  aria-labelledby='terminal-title'
-  aria-hidden='true'
->
-  <div class='terminal-window flex max-h-[min(38rem,90dvh)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border shadow-2xl'>
-    <div class='terminal-bar flex items-center gap-3 border-b px-4 py-3'>
+  <div class='terminal-window overflow-hidden rounded-2xl border shadow-lg'>
+    <div class='terminal-bar grid grid-cols-[auto_1fr_auto] items-center gap-3 border-b px-4 py-3'>
       <div class='flex gap-2' aria-hidden='true'>
-        <span class='size-3 rounded-full bg-red-400'></span>
-        <span class='size-3 rounded-full bg-amber-400'></span>
-        <span class='size-3 rounded-full bg-green-400'></span>
+        <span class='size-3 rounded-full border bg-background'></span>
+        <span class='size-3 rounded-full border bg-background'></span>
+        <span class='size-3 rounded-full border bg-background'></span>
       </div>
-      <p id='terminal-title' class='min-w-0 flex-1 truncate text-center font-mono text-xs text-muted-foreground'>
-        sia@siaspace: ~
+      <p id='terminal-heading' class='truncate text-center font-mono text-xs text-muted-foreground sm:text-sm'>
+        sia@siaspace — terminal
       </p>
       <button
-        id='terminal-close'
+        id='terminal-focus'
         type='button'
         class='rounded-md px-2 py-1 font-mono text-xs text-muted-foreground hover:bg-muted hover:text-foreground'
-        aria-label='关闭终端'
+        aria-label='聚焦终端输入框'
       >
-        esc
+        press `
       </button>
     </div>
 
     <div
       id='terminal-output'
-      class='min-h-72 flex-1 overflow-y-auto whitespace-pre-wrap px-5 py-4 font-mono text-sm leading-6'
+      class='min-h-64 max-h-[28rem] overflow-y-auto whitespace-pre-wrap px-5 py-5 font-mono text-sm leading-6'
       aria-live='polite'
     ></div>
 
-    <form id='terminal-form' class='flex items-center gap-2 border-t px-5 py-3'>
-      <label for='terminal-input' class='shrink-0 font-mono text-sm text-green-500'>sia@web:~$</label>
+    <form id='terminal-form' class='flex items-center gap-2 border-t px-5 py-4'>
+      <label for='terminal-input' class='shrink-0 font-mono text-sm text-sky-600 dark:text-sky-400'>sia@web:~$</label>
       <input
         id='terminal-input'
         type='text'
@@ -55,12 +43,11 @@
       />
     </form>
   </div>
-</div>
+</section>
 
 <script>
-  const terminal = document.querySelector<HTMLElement>('#developer-terminal')
-  const trigger = document.querySelector<HTMLButtonElement>('#terminal-trigger')
-  const closeButton = document.querySelector<HTMLButtonElement>('#terminal-close')
+  const terminal = document.querySelector<HTMLElement>('#interactive-terminal')
+  const focusButton = document.querySelector<HTMLButtonElement>('#terminal-focus')
   const form = document.querySelector<HTMLFormElement>('#terminal-form')
   const input = document.querySelector<HTMLInputElement>('#terminal-input')
   const output = document.querySelector<HTMLElement>('#terminal-output')
@@ -69,14 +56,8 @@
   let historyIndex = 0
 
   const routes: Record<string, string> = {
-    home: '/',
-    blog: '/blog',
-    notes: '/notes',
-    talks: '/talks',
-    projects: '/projects',
-    links: '/links',
-    about: '/about',
-    contact: '/contact'
+    home: '/', blog: '/blog', notes: '/notes', talks: '/talks', projects: '/projects',
+    links: '/links', about: '/about', contact: '/contact'
   }
 
   function print(text = '', tone: 'normal' | 'muted' | 'accent' | 'error' = 'normal') {
@@ -89,29 +70,16 @@
   }
 
   function printWelcome() {
-    print('SIA SPACE TERMINAL', 'accent')
-    print('一个运行在浏览器里的安全交互界面，不会执行真实系统命令。', 'muted')
-    print('输入 help 查看可用命令。')
+    print('SIA TERM V0.1 · SIASPACE', 'accent')
+    print('an interactive shell into this site — try help, whoami, or ls.', 'muted')
+    print()
+    print("type 'help' to get started · 'whoami' for the short version")
     print()
   }
 
-  function openTerminal() {
-    if (!terminal || !input) return
-    terminal.classList.remove('hidden')
-    terminal.classList.add('flex')
-    terminal.setAttribute('aria-hidden', 'false')
-    document.body.style.overflow = 'hidden'
-    if (output && output.childElementCount === 0) printWelcome()
-    window.setTimeout(() => input.focus(), 20)
-  }
-
-  function closeTerminal() {
-    if (!terminal) return
-    terminal.classList.add('hidden')
-    terminal.classList.remove('flex')
-    terminal.setAttribute('aria-hidden', 'true')
-    document.body.style.overflow = ''
-    trigger?.focus()
+  function focusTerminal() {
+    terminal?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    window.setTimeout(() => input?.focus(), 250)
   }
 
   function navigate(destination: string) {
@@ -127,12 +95,11 @@
   function runCommand(rawCommand: string) {
     const raw = rawCommand.trim()
     if (!raw) return
-
     print(`sia@web:~$ ${raw}`, 'muted')
     const [command, ...args] = raw.toLowerCase().split(/\s+/)
 
     if (command === 'help') {
-      print('可用命令：', 'accent')
+      print('Available commands', 'accent')
       print('  about / whoami     查看 Sia 的简介')
       print('  ls                 列出网站栏目')
       print('  cd <page>          打开指定栏目')
@@ -142,80 +109,61 @@
       print('  theme              切换深浅主题')
       print('  date               显示当前时间')
       print('  clear              清空终端')
-      print('  exit               关闭终端')
       return
     }
-
     if (command === 'about' || command === 'whoami') {
       print('Sia — Developer · Builder · Lifelong Learner', 'accent')
       print('在这里记录技术、项目与持续发生的思考。')
       return
     }
-
     if (command === 'ls') {
       print(Object.keys(routes).join('  '))
       return
     }
-
     if (command === 'pwd') {
       print(window.location.pathname)
       return
     }
-
     if (command === 'cd') {
       if (!args[0] || args[0] === '~') navigate('home')
       else navigate(args[0].replace(/^\//, ''))
       return
     }
-
     if (command in routes) {
       navigate(command)
       return
     }
-
     if (command === 'github') {
       print('正在打开 github.com/wxa1225 ...', 'muted')
       window.open('https://github.com/wxa1225', '_blank', 'noopener,noreferrer')
       return
     }
-
     if (command === 'status') {
       print('● ONLINE', 'accent')
       print('Host: Vercel  |  Framework: Astro  |  Domain: siaspace.vercel.app')
       return
     }
-
     if (command === 'theme') {
       document.querySelector<HTMLButtonElement>('#toggleDarkMode')?.click()
       print('主题已切换。', 'accent')
       return
     }
-
     if (command === 'date') {
       print(new Intl.DateTimeFormat('zh-CN', { dateStyle: 'full', timeStyle: 'medium' }).format(new Date()))
       return
     }
-
     if (command === 'clear') {
-      if (output) output.replaceChildren()
+      output?.replaceChildren()
       return
     }
-
     if (command === 'exit' || command === 'quit') {
-      closeTerminal()
+      print('终端已留在首页，随时可以继续输入命令。', 'muted')
+      input?.blur()
       return
     }
-
     print(`command not found: ${command}`, 'error')
     print('输入 help 查看可用命令。', 'muted')
   }
-
-  trigger?.addEventListener('click', openTerminal)
-  closeButton?.addEventListener('click', closeTerminal)
-
-  terminal?.addEventListener('click', (event) => {
-    if (event.target === terminal) closeTerminal()
-  })
 
   function submitCurrentCommand() {
     if (!input) return
@@ -228,11 +176,16 @@
     runCommand(command)
   }
 
+  printWelcome()
+  focusButton?.addEventListener('click', focusTerminal)
+  terminal?.addEventListener('click', (event) => {
+    if ((event.target as HTMLElement).closest('a, button, input')) return
+    input?.focus()
+  })
   form?.addEventListener('submit', (event) => {
     event.preventDefault()
     submitCurrentCommand()
   })
-
   input?.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault()
@@ -247,59 +200,22 @@
       input.value = history[historyIndex] ?? ''
     }
   })
-
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && terminal?.getAttribute('aria-hidden') === 'false') {
-      closeTerminal()
-      return
-    }
-
     const target = event.target as HTMLElement | null
     const isTyping = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable
     if (event.key === '`' && !isTyping) {
       event.preventDefault()
-      if (terminal?.getAttribute('aria-hidden') === 'false') closeTerminal()
-      else openTerminal()
+      focusTerminal()
     }
   })
 </script>
 
 <style>
-  .terminal-window {
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
-
-  .terminal-bar {
-    background: hsl(var(--muted) / 0.6);
-  }
-
-  #terminal-output [data-tone='muted'] {
-    color: hsl(var(--muted-foreground));
-  }
-
-  #terminal-output [data-tone='accent'] {
-    color: #22c55e;
-  }
-
-  #terminal-output [data-tone='error'] {
-    color: #f87171;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .terminal-window {
-      animation: terminal-in 180ms ease-out;
-    }
-  }
-
-  @keyframes terminal-in {
-    from {
-      opacity: 0;
-      transform: translateY(12px) scale(0.985);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
+  .terminal-window { background: hsl(var(--background) / 0.86); color: hsl(var(--foreground)); backdrop-filter: blur(14px); }
+  .terminal-bar { background: hsl(var(--muted) / 0.5); }
+  #terminal-output [data-tone='muted'] { color: hsl(var(--muted-foreground)); }
+  #terminal-output [data-tone='accent'] { color: #0284c7; }
+  :global(.dark) #terminal-output [data-tone='accent'] { color: #38bdf8; }
+  #terminal-output [data-tone='error'] { color: #f87171; }
+  code { border: 1px solid hsl(var(--border)); border-radius: 0.35rem; padding: 0.1rem 0.35rem; color: hsl(var(--foreground)); }
 </style>

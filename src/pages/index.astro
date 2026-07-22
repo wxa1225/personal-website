@@ -1,6 +1,7 @@
 ---
 import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import DevTerminal from '@/components/DevTerminal.astro'
 import ProjectCard from '@/components/home/ProjectCard.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
@@ -45,6 +46,8 @@ const tools = ['Git', 'Vercel']
         <p class='font-medium text-muted-foreground'>Open to ideas and opportunities</p>
       </div>
     </section>
+
+    <DevTerminal />
 
     <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
       <Section title='About'>
