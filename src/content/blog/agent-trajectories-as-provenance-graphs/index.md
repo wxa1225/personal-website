@@ -474,6 +474,9 @@ Capability Loader 记录 Resolution 与快照验证
 
 如果数据模型无法支持这些查询，保存再多原始日志也不一定形成可追溯性。
 
+Replay Manifest、事故 Causal Cone 与供应链影响查询的具体设计，整理在 Note：
+[Trajectory Replay、事故分析与供应链影响查询](/notes/trajectory-replay-incident-impact-analysis)。
+
 ## Provenance 也不能被用来假装确定性
 
 一张细致的图容易制造“系统完全知道为什么模型这样做”的错觉。但图只能表达可观察关系与声明：
