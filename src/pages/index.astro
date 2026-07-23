@@ -66,9 +66,18 @@ const tools = ['Git', 'Vercel', 'Milvus', 'Neo4j', 'OpenTelemetry']
       </Section>
 
       <Section title='Blog'>
-        <div class='rounded-xl border bg-muted/30 px-5 py-6 text-center text-muted-foreground'>
-          第一篇正式文章发布后，将在这里展示近期内容。
-        </div>
+        <a
+          class='group rounded-xl border bg-muted/20 px-5 py-4 no-underline transition-colors hover:bg-muted/40'
+          href='/blog/autonomy-is-a-budget'
+        >
+          <div class='mb-1 text-sm text-muted-foreground'>2026-07-23 · Agent Systems</div>
+          <div class='font-medium text-foreground transition-colors group-hover:text-primary'>
+            Autonomy Is a Budget：Agent 应该把自由度留在哪里？
+          </div>
+          <p class='mt-2 text-sm leading-relaxed text-muted-foreground'>
+            从有状态工具、子 Agent 生命周期、权限边界和能力发布出发，讨论概率模型与确定性系统应该如何分工。
+          </p>
+        </a>
         <Button title='More blogs' class='w-fit self-end' href='/blog' variant='ahead' />
       </Section>
 
