@@ -1,5 +1,6 @@
 ---
 import { Button, Card, Icon, Label } from 'astro-pure/user'
+import { PostPreview } from 'astro-pure/components/pages'
 import { getCollection } from 'astro:content'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import Terminal from '@/components/terminal/Terminal.astro'
@@ -21,8 +22,6 @@ const publishedNotes = (await getCollection('notes', ({ data }) => !data.draft))
 )
 const recentBlogs = publishedBlogs.slice(0, 5)
 const recentNotes = publishedNotes.slice(0, 4)
-const formatDate = (date: Date) =>
-  new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }).format(date)
 ---
 
 <PageLayout meta={{ title: '首页' }} highlightColor='#659EB9'>
@@ -78,40 +77,33 @@ const formatDate = (date: Date) =>
       </Section>
 
       <Section title='Blog'>
-        <ul class='divide-y rounded-xl border bg-muted/10 px-4 sm:px-5'>
+        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
           {recentBlogs.map((post) => (
-            <li>
-              <a class='group grid gap-1 py-3.5 no-underline sm:grid-cols-[7.5rem_1fr] sm:items-baseline sm:gap-4' href={`/blog/${post.id}`}>
-                <time class='text-xs tabular-nums text-muted-foreground' datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate)}</time>
-                <span class='font-medium leading-snug text-foreground transition-colors group-hover:text-primary'>{post.data.title}</span>
-              </a>
+            <li class='flex flex-col gap-x-2 sm:flex-row'>
+              <PostPreview post={post} />
             </li>
           ))}
         </ul>
-        <div class='flex items-center justify-between gap-3'>
-          <span class='text-xs text-muted-foreground'>共 {publishedBlogs.length} 篇文章</span>
-          <Button title='全部 Blog' class='w-fit' href='/blog' variant='ahead' />
-        </div>
+        <Button title='More blogs' class='w-fit self-end' href='/blog' variant='ahead' />
       </Section>
 
       <Section title='Notes'>
-        <ul class='divide-y rounded-xl border bg-muted/10 px-4 sm:px-5'>
+        <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
           {recentNotes.map((note) => (
-            <li>
-              <a class='group block py-3.5 no-underline' href={`/notes/${note.id}`}>
-                <div class='flex flex-wrap items-center gap-x-2 gap-y-1'>
-                  <span class='rounded-full border bg-background px-2 py-0.5 text-[11px] text-muted-foreground'>{note.data.status}</span>
-                  <span class='font-medium leading-snug text-foreground transition-colors group-hover:text-primary'>{note.data.title}</span>
+            <li class='post-preview group/card relative flex flex-col rounded-2xl border bg-background px-5 py-2.5 transition-colors ease-in-out hover:bg-muted'>
+              <a class='group/link flex w-full flex-col transition-all hover:text-primary sm:flex-row' href={`/notes/${note.id}`} data-astro-prefetch>
+                <span class='min-w-[95px] py-1 text-xs text-muted-foreground'>研究</span>
+                <div class='z-10 flex-grow'>
+                  <div class='flex justify-between gap-3'>
+                    <span>{note.data.title}</span>
+                    <span class='my-1 shrink-0 text-muted-foreground transition-transform duration-300 group-hover/link:translate-x-1 group-hover/link:text-primary'>→</span>
+                  </div>
                 </div>
-                <div class='mt-1.5 line-clamp-1 text-xs leading-relaxed text-muted-foreground'>{note.data.description}</div>
               </a>
             </li>
           ))}
         </ul>
-        <div class='flex items-center justify-between gap-3'>
-          <span class='text-xs text-muted-foreground'>共 {publishedNotes.length} 篇笔记</span>
-          <Button title='全部 Notes' class='w-fit' href='/notes' variant='ahead' />
-        </div>
+        <Button title='More notes' class='w-fit self-end' href='/notes' variant='ahead' />
       </Section>
 
       <Section title='Experience'>

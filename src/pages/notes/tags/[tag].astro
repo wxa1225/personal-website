@@ -1,0 +1,35 @@
+---
+import type { GetStaticPaths } from 'astro'
+import { getCollection } from 'astro:content'
+import { Button } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+
+export const getStaticPaths = (async () => {
+  const notes = await getCollection('notes', ({ data }) => !data.draft)
+  const tags = [...new Set(notes.flatMap((note) => note.data.tags))]
+  return tags.map((tag) => ({ params: { tag }, props: { tag } }))
+}) satisfies GetStaticPaths
+
+const { tag } = Astro.props as { tag: string }
+const notes = (await getCollection('notes', ({ data }) => !data.draft && data.tags.includes(tag))).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+)
+const formatDate = (date: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }).format(date)
+---
+
+<PageLayout title={`Notes · ${tag}`}>
+  <Button title='All Note Tags' href='/notes/tags' variant='back' />
+  <p class='mt-6 text-muted-foreground'>标签 #{tag} 下共 {notes.length} 篇 Notes。</p>
+  <div class='not-prose mt-8 flex flex-col gap-3'>
+    {notes.map((note) => (
+      <a class='group rounded-xl border bg-muted/15 px-5 py-4 no-underline transition-colors hover:bg-muted/35' href={`/notes/${note.id}`}>
+        <div class='flex items-start justify-between gap-3'>
+          <h2 class='font-medium leading-snug text-foreground group-hover:text-primary'>{note.data.title}</h2>
+          <span class='shrink-0 text-xs text-muted-foreground'>{note.data.status}</span>
+        </div>
+        <p class='mt-2 text-sm leading-relaxed text-muted-foreground'>{note.data.description}</p>
+        <time class='mt-3 block text-xs text-muted-foreground' datetime={note.data.publishDate.toISOString()}>{formatDate(note.data.publishDate)}</time>
+      </a>
+    ))}
+  </div>
+</PageLayout>

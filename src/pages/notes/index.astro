@@ -13,7 +13,7 @@ const tagCounts = notes.reduce<Record<string, number>>((counts, note) => {
   for (const tag of note.data.tags) counts[tag] = (counts[tag] ?? 0) + 1
   return counts
 }, {})
-const popularTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 12)
+const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
 const formatDate = (date: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }).format(date)
 ---
 
@@ -40,8 +40,7 @@ const formatDate = (date: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'num
           <p class='text-sm leading-relaxed text-muted-foreground'>{note.data.description}</p>
           <div class='mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground'>
             <time datetime={note.data.publishDate.toISOString()}>{formatDate(note.data.publishDate)}</time>
-            {note.data.tags.slice(0, 4).map((tag) => <span>#{tag}</span>)}
-            {note.data.tags.length > 4 && <span>+{note.data.tags.length - 4}</span>}
+            {note.data.tags.map((tag) => <a class='rounded-md bg-muted px-2 py-0.5 no-underline hover:text-primary' href={`/notes/tags/${encodeURIComponent(tag)}`}>{tag}</a>)}
           </div>
         </a>
         ))}
@@ -49,16 +48,24 @@ const formatDate = (date: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'num
     </section>
     <aside class='space-y-7 sm:sticky sm:top-24 sm:self-start' aria-label='Notes overview'>
       <div>
-        <h2 class='mb-3 text-sm font-medium text-foreground'>Status</h2>
+        <div class='mb-3 flex items-center justify-between gap-3'>
+          <h2 class='text-sm font-medium text-foreground'>Tags</h2>
+          <a class='text-xs text-muted-foreground' href='/notes/tags'>查看全部 →</a>
+        </div>
         <div class='flex flex-wrap gap-2'>
-          {Object.entries(statusCounts).map(([status, count]) => <span class='rounded-full border bg-muted/15 px-2.5 py-1 text-xs text-muted-foreground'>{status} · {count}</span>)}
+          {sortedTags.map(([tag]) => <a class='rounded-md border px-2 py-1 text-xs no-underline transition-colors hover:bg-muted' href={`/notes/tags/${encodeURIComponent(tag)}`}>{tag}</a>)}
         </div>
       </div>
       <div>
-        <h2 class='mb-3 text-sm font-medium text-foreground'>Tags</h2>
-        <div class='flex flex-wrap gap-2'>
-          {popularTags.map(([tag, count]) => <span class='rounded-full border bg-muted/15 px-2.5 py-1 text-xs text-muted-foreground'>{tag} · {count}</span>)}
-        </div>
+        <h2 class='mb-3 text-sm font-medium text-foreground'>Status</h2>
+        <ul class='space-y-2 text-sm'>
+          {Object.entries(statusCounts).map(([status, count]) => (
+            <li class='flex items-center justify-between gap-3'>
+              <span class='flex items-center gap-2'><span class='size-2 rounded-full bg-green-500'></span>{status}</span>
+              <span class='text-xs text-muted-foreground'>{count}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </aside>
   </div>

@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content'
+import { Button } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+
+const notes = await getCollection('notes', ({ data }) => import.meta.env.DEV || !data.draft)
+const tagCounts = notes.reduce<Record<string, number>>((counts, note) => {
+  for (const tag of note.data.tags) counts[tag] = (counts[tag] ?? 0) + 1
+  return counts
+}, {})
+const tags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+---
+
+<PageLayout title='Note Tags'>
+  <Button title='Back to Notes' href='/notes' variant='back' />
+  <p class='mt-6 text-muted-foreground'>共 {tags.length} 个标签，覆盖 {notes.length} 篇 Notes。</p>
+  <div class='not-prose mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2'>
+    {tags.map(([tag, count]) => (
+      <a class='flex items-center justify-between rounded-xl border bg-muted/15 px-4 py-3 no-underline transition-colors hover:bg-muted/35' href={`/notes/tags/${encodeURIComponent(tag)}`}>
+        <span class='font-medium text-foreground'>{tag}</span>
+        <span class='text-xs text-muted-foreground'>{count} 篇</span>
+      </a>
+    ))}
+  </div>
+</PageLayout>
