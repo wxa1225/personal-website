@@ -3,60 +3,92 @@ import { Button, Timeline } from 'astro-pure/user'
 import PageLayout from '@/layouts/CommonPage.astro'
 
 const headings = [
-  { depth: 2, slug: 'about-me', text: '关于我' },
-  { depth: 2, slug: 'education', text: '教育经历' },
-  { depth: 2, slug: 'interests', text: '关注方向' },
-  { depth: 2, slug: 'about-site', text: '关于本站' },
-  { depth: 2, slug: 'contact', text: '联系我' }
+  { depth: 2, slug: 'now', text: 'Now' },
+  { depth: 2, slug: 'project', text: 'Project' },
+  { depth: 2, slug: 'engineering', text: 'Engineering' },
+  { depth: 2, slug: 'writing', text: 'Writing' },
+  { depth: 2, slug: 'this-site', text: 'This Site' },
+  { depth: 2, slug: 'contact', text: 'Contact' }
 ]
 ---
 
-<PageLayout title='关于' {headings}>
-  <h2 id='about-me'>关于我</h2>
+<PageLayout title='About' {headings}>
+  <p>AI Agents · LLM Training · Backend Systems</p>
   <p>
-    你好，我是 Sia，目前在北京邮电大学攻读电子科学与技术专业硕士学位，主要关注 AI Agent、LLM 训练与系统工程。
+    你好，我是 Sia，目前在北京邮电大学攻读电子科学与技术专业硕士学位。
+    我主要关注 AI Agent、LLM 训练与系统工程，也在尝试把模型、算法和后端基础设施连接成真正可用的产品。
   </p>
   <p>
-    在个人项目 <strong>SkillClaw Summarizer GRPO</strong> 中，我围绕 Agent 轨迹摘要，完成训练与评测数据构建、SFT/GRPO 流程、组合奖励设计、质量门控和推理服务接入，希望让摘要结果更准确、简洁，也更适合后续的技能生成与演化。
-  </p>
-  <p>
-    在加和科技（GoalfyAI）实习期间，我参与企业级 Agent 平台研发，接触了 Agent Runtime、MCP 文件工具与 Go 后端服务，以及工具执行、记忆、任务调度、权限、检索和可观测性等工程模块。这些经历让我不仅关注模型“能不能做”，也关注 Agent 系统能否稳定运行、被评估并真正交付。
+    我做过 Agent 轨迹摘要与 SFT/GRPO 相关的个人项目，也曾在加和科技（GoalfyAI）参与企业级 Agent 平台研发。
+    这些经历让我逐渐意识到：Agent 不只是一次模型调用，它还需要可靠的工具、状态管理、评测、可观测性，以及能够持续迭代的数据闭环。
   </p>
 
-  <h2 id='education'>教育经历</h2>
+  <h2 id='now'>Now</h2>
+  <p>
+    现阶段，我正在继续整理和完善 <strong>SkillClaw Summarizer GRPO</strong>，关注如何将冗长的 Agent 交互轨迹压缩为准确、简洁并保留关键因果信息的摘要。
+  </p>
+  <p>
+    我特别想弄清楚几个实际问题：什么样的摘要对后续技能生成真正有用？事实一致性、信息覆盖和简洁性应该怎样共同评估？
+    SFT 与强化学习的数据质量、奖励设计和质量门控，最终会怎样影响模型表现？
+  </p>
+
+  <h2 id='project'>Project</h2>
+  <p>
+    在 SkillClaw Summarizer GRPO 中，我搭建了围绕 Agent 轨迹摘要的数据与训练流程，包括训练和评测数据构建、SFT/GRPO 数据格式、组合奖励、质量扫描、后处理以及推理服务接入。
+  </p>
+  <p>
+    这个项目让我开始从完整链路思考模型优化：不仅看单次输出是否“像一个好摘要”，也关心数据如何产生、指标是否可信、失败样本如何定位，以及能力怎样稳定地接入上游系统。
+  </p>
+  <Button
+    title='View on GitHub'
+    class='w-fit'
+    href='https://github.com/wxa1225/skillclaw-summarizer-grpo'
+    target='_blank'
+    variant='ahead'
+  />
+
+  <h2 id='engineering'>Engineering</h2>
+  <p>
+    在加和科技（GoalfyAI）实习期间，我参与了企业级 AI Agent 产品与平台基础设施研发，接触过 Python Agent Runtime、MCP 文件工具服务与 Go 后端平台。
+  </p>
   <ul>
-    <li><strong>北京邮电大学</strong></li>
-    <li>硕士研究生 · 电子科学与技术</li>
-    <li>状态：在读</li>
+    <li><strong>Agent Runtime</strong>：LLM 调用、工具执行、记忆、任务调度、消息队列与运行状态。</li>
+    <li><strong>MCP Tooling</strong>：远程文件操作、权限校验、文档生成、指标监控与错误处理。</li>
+    <li><strong>Platform Backend</strong>：Agent、工具和提示词等资产的管理、发布、分享、检索与权限控制。</li>
+    <li><strong>Infrastructure</strong>：Redis、消息队列、向量检索、知识图谱、容器化与可观测性。</li>
   </ul>
+  <p>
+    相比只让 Demo 跑起来，我更在意系统进入真实环境后的问题：工具是否可靠、权限边界是否清楚、任务失败后能否定位，以及整个链路是否可记录、可评估、可恢复。
+  </p>
 
-  <h2 id='interests'>关注方向</h2>
-  <ul>
-    <li>AI Agent、技能演化与 Agent Runtime</li>
-    <li>LLM 训练与评测：SFT、GRPO、奖励设计和质量门控</li>
-    <li>MCP 工具生态与企业级 Agent 平台工程</li>
-    <li>分布式后端、向量检索、知识图谱与可观测性</li>
-  </ul>
+  <h2 id='writing'>Writing</h2>
+  <p>
+    我希望在这里记录真实的学习和开发过程，包括项目复盘、论文与技术阅读、训练实验、工程问题和调试经验。
+    有些内容会是完整文章，有些只是阶段性笔记，但我希望它们都能说明：问题是什么、为什么值得关注，以及我的理解如何被实践不断修正。
+  </p>
 
-  <h2 id='about-site'>关于本站</h2>
-  <p>本站是我的个人主页、作品集和数字花园，使用 Astro 与 Pure 构建，并部署在 Vercel。</p>
+  <h2 id='this-site'>This Site</h2>
+  <p>
+    Sia's Space 是我的个人主页、项目档案和长期笔记空间。它目前使用 Astro 与 Pure 构建，部署在 Vercel；
+    未来会逐步补充项目记录、技术文章和真正值得反复查看的资料。
+  </p>
   <Timeline
     events={[
       {
         date: '2026-07',
-        content: '创建 Sia\'s Space，开始整理个人资料、项目与长期内容。'
+        content: '创建 Sia\'s Space，整理个人资料与项目经历。'
       },
       {
-        date: 'Next',
-        content: '持续补充技术文章、学习笔记、项目和研究经历。'
+        date: 'Now',
+        content: '持续完善项目页面，并开始沉淀技术文章与学习笔记。'
       }
     ]}
   />
 
-  <h2 id='contact'>联系我</h2>
-  <p>欢迎通过 GitHub 了解我的项目，或就学习、技术与合作进行交流。</p>
+  <h2 id='contact'>Contact</h2>
+  <p>如果你也在关注 AI Agent、LLM 训练或相关工程问题，欢迎通过 GitHub 与我交流。</p>
   <Button
-    title='访问 GitHub'
+    title='GitHub · wxa1225'
     class='w-fit'
     href='https://github.com/wxa1225'
     target='_blank'
