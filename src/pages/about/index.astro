@@ -5,7 +5,7 @@ import PageLayout from '@/layouts/CommonPage.astro'
 const headings = [
   { depth: 2, slug: 'now', text: 'Now' },
   { depth: 2, slug: 'project', text: 'Project' },
-  { depth: 2, slug: 'engineering', text: 'Engineering' },
+  { depth: 2, slug: 'systems', text: 'Systems' },
   { depth: 2, slug: 'writing', text: 'Writing' },
   { depth: 2, slug: 'this-site', text: 'This Site' },
   { depth: 2, slug: 'contact', text: 'Contact' }
@@ -13,19 +13,21 @@ const headings = [
 ---
 
 <PageLayout title='About' {headings}>
-  <p>AI Agents · LLM Training · Backend Systems</p>
-  <p>
-    你好，我是 Sia，目前在北京邮电大学攻读电子科学与技术专业硕士学位。
-    我主要关注 AI Agent、LLM 训练与系统工程，也在尝试把模型、算法和后端基础设施连接成真正可用的产品。
+  <p class='!mt-0 text-lg text-muted-foreground sm:text-xl'>
+    AI Agents · LLM Training · Backend Systems
   </p>
   <p>
-    我做过 Agent 轨迹摘要与 SFT/GRPO 相关的个人项目，也曾在加和科技（GoalfyAI）参与企业级 Agent 平台研发。
-    这些经历让我逐渐意识到：Agent 不只是一次模型调用，它还需要可靠的工具、状态管理、评测、可观测性，以及能够持续迭代的数据闭环。
+    我是 Sia，目前在北京邮电大学攻读电子科学与技术专业硕士学位。
+    最近主要在做 Agent 轨迹摘要、LLM 后训练和 Agent 系统相关的事情。
+  </p>
+  <p>
+    我独立开发过基于 SFT/GRPO 的摘要优化项目，也曾在加和科技（GoalfyAI）参与企业级 Agent 平台建设。
+    这些经历让我对 Agent 有了更具体的理解：它不只是一次模型调用，而是一套需要工具执行、状态管理、评测、观测和持续改进的工程系统。
   </p>
 
   <h2 id='now'>Now</h2>
   <p>
-    现阶段，我正在继续整理和完善 <strong>SkillClaw Summarizer GRPO</strong>，关注如何将冗长的 Agent 交互轨迹压缩为准确、简洁并保留关键因果信息的摘要。
+    现阶段，我正在继续完善 <strong>SkillClaw Summarizer GRPO</strong>，尝试将冗长的 Agent 交互轨迹压缩为准确、简洁并保留关键因果信息的摘要。
   </p>
   <p>
     我特别想弄清楚几个实际问题：什么样的摘要对后续技能生成真正有用？事实一致性、信息覆盖和简洁性应该怎样共同评估？
@@ -33,30 +35,64 @@ const headings = [
   </p>
 
   <h2 id='project'>Project</h2>
+  <div class='not-prose my-5 rounded-xl border bg-muted/20 p-5 sm:p-6'>
+    <div class='mb-2 flex flex-wrap items-center justify-between gap-2'>
+      <h3 class='text-lg font-medium'>SkillClaw Summarizer GRPO</h3>
+      <span class='rounded-full border bg-background px-2.5 py-1 text-xs text-muted-foreground'>
+        Personal Project
+      </span>
+    </div>
+    <p class='mb-4 leading-relaxed text-muted-foreground'>
+      面向 Agent 技能演化链路的轨迹摘要优化项目。搭建训练与评测数据、SFT/GRPO、组合奖励、质量门控、后处理和推理服务接入流程。
+    </p>
+    <div class='mb-5 flex flex-wrap gap-2 text-xs text-muted-foreground'>
+      <span class='rounded-md bg-muted px-2 py-1'>Python</span>
+      <span class='rounded-md bg-muted px-2 py-1'>SFT / GRPO</span>
+      <span class='rounded-md bg-muted px-2 py-1'>Reward Design</span>
+      <span class='rounded-md bg-muted px-2 py-1'>Evaluation</span>
+    </div>
+    <Button
+      title='View on GitHub'
+      class='w-fit'
+      href='https://github.com/wxa1225/skillclaw-summarizer-grpo'
+      target='_blank'
+      variant='ahead'
+    />
+  </div>
   <p>
-    在 SkillClaw Summarizer GRPO 中，我搭建了围绕 Agent 轨迹摘要的数据与训练流程，包括训练和评测数据构建、SFT/GRPO 数据格式、组合奖励、质量扫描、后处理以及推理服务接入。
+    这个项目让我开始从完整链路思考模型优化：不仅看单次输出是否像一个好摘要，也关心数据如何产生、指标是否可信、失败样本如何定位，以及能力怎样稳定地接入上游系统。
   </p>
-  <p>
-    这个项目让我开始从完整链路思考模型优化：不仅看单次输出是否“像一个好摘要”，也关心数据如何产生、指标是否可信、失败样本如何定位，以及能力怎样稳定地接入上游系统。
-  </p>
-  <Button
-    title='View on GitHub'
-    class='w-fit'
-    href='https://github.com/wxa1225/skillclaw-summarizer-grpo'
-    target='_blank'
-    variant='ahead'
-  />
 
-  <h2 id='engineering'>Engineering</h2>
+  <h2 id='systems'>Systems</h2>
   <p>
     在加和科技（GoalfyAI）实习期间，我参与了企业级 AI Agent 产品与平台基础设施研发，接触过 Python Agent Runtime、MCP 文件工具服务与 Go 后端平台。
   </p>
-  <ul>
-    <li><strong>Agent Runtime</strong>：LLM 调用、工具执行、记忆、任务调度、消息队列与运行状态。</li>
-    <li><strong>MCP Tooling</strong>：远程文件操作、权限校验、文档生成、指标监控与错误处理。</li>
-    <li><strong>Platform Backend</strong>：Agent、工具和提示词等资产的管理、发布、分享、检索与权限控制。</li>
-    <li><strong>Infrastructure</strong>：Redis、消息队列、向量检索、知识图谱、容器化与可观测性。</li>
-  </ul>
+  <div class='not-prose my-5 grid grid-cols-1 gap-3 sm:grid-cols-2'>
+    <div class='rounded-xl border p-4'>
+      <h3 class='mb-1 font-medium'>Agent Runtime</h3>
+      <p class='text-sm leading-relaxed text-muted-foreground'>
+        LLM 调用、工具执行、记忆、任务调度与运行状态。重点是长链路任务中的状态承接和失败定位。
+      </p>
+    </div>
+    <div class='rounded-xl border p-4'>
+      <h3 class='mb-1 font-medium'>MCP Tooling</h3>
+      <p class='text-sm leading-relaxed text-muted-foreground'>
+        远程文件操作、权限校验、文档生成和指标监控。工具不仅要能调用，也要有清楚的边界和可诊断的错误。
+      </p>
+    </div>
+    <div class='rounded-xl border p-4'>
+      <h3 class='mb-1 font-medium'>Platform Backend</h3>
+      <p class='text-sm leading-relaxed text-muted-foreground'>
+        Agent、工具和提示词资产的管理、发布、分享、检索与权限控制，涉及 Go / Gin / GORM 后端体系。
+      </p>
+    </div>
+    <div class='rounded-xl border p-4'>
+      <h3 class='mb-1 font-medium'>AI Infrastructure</h3>
+      <p class='text-sm leading-relaxed text-muted-foreground'>
+        Redis、消息队列、向量检索、知识图谱、容器化与可观测性，支撑 Agent 服务稳定运行。
+      </p>
+    </div>
+  </div>
   <p>
     相比只让 Demo 跑起来，我更在意系统进入真实环境后的问题：工具是否可靠、权限边界是否清楚、任务失败后能否定位，以及整个链路是否可记录、可评估、可恢复。
   </p>
