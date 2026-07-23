@@ -163,6 +163,9 @@ Authority graph        A can cause read, write, publish through B and C
 
 > 依赖解析决定 Agent 具有什么能力，Policy 决定这些能力在当前任务中能产生什么后果。
 
+依赖闭包、权限衰减与组合风险的具体分析，整理在 Note：
+[Capability 权限闭包与组合风险](/notes/capability-authority-closure-composition-risk)。
+
 ## 测试一个 Capability 到底在测试什么
 
 传统单元测试可以固定输入并断言输出。Agent Capability 面临三个额外变量：
