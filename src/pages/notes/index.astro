@@ -1,10 +1,37 @@
 ---
+import { getCollection } from 'astro:content'
 import PageLayout from '@/layouts/CommonPage.astro'
+
+const notes = (await getCollection('notes', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+)
 ---
 
 <PageLayout title='Notes'>
-  <p>这里用于整理短笔记、精选资料和不适合写成长文章的内容。</p>
-  <div class='not-prose mt-8 rounded-xl border bg-muted/30 px-5 py-10 text-center text-muted-foreground'>
-    Notes 内容待补充
+  <p>
+    这里记录源码阅读、机制分析和仍在演化的技术理解。Notes 注重准确、可复现和方便继续更新；完整的个人判断与经验叙事放在 Blog。
+  </p>
+
+  <div class='not-prose mt-8 flex flex-col gap-3'>
+    {
+      notes.map((note) => (
+        <a
+          class='rounded-xl border bg-muted/20 px-5 py-4 no-underline transition-colors hover:bg-muted/40'
+          href={`/notes/${note.id}`}
+        >
+          <div class='mb-2 flex flex-wrap items-center justify-between gap-2'>
+            <h2 class='font-medium text-foreground'>{note.data.title}</h2>
+            <span class='rounded-full border bg-background px-2.5 py-1 text-xs text-muted-foreground'>
+              {note.data.status}
+            </span>
+          </div>
+          <p class='text-sm leading-relaxed text-muted-foreground'>{note.data.description}</p>
+          <div class='mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground'>
+            <span>{note.data.publishDate.toISOString().slice(0, 10)}</span>
+            {note.data.tags.map((tag) => <span>#{tag}</span>)}
+          </div>
+        </a>
+      ))
+    }
   </div>
 </PageLayout>

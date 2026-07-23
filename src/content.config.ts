@@ -41,6 +41,22 @@ const blog = defineCollection({
     })
 })
 
+// Define notes collection
+const notes = defineCollection({
+  loader: glob({ base: './src/content/notes', pattern: '**/*.{md,mdx}' }),
+  schema: () =>
+    z.object({
+      title: z.string().max(80),
+      description: z.string().max(180),
+      publishDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+      language: z.string().optional(),
+      status: z.enum(['待补充', '整理中', '已整理']).default('整理中'),
+      draft: z.boolean().default(false)
+    })
+})
+
 // Define docs collection
 const docs = defineCollection({
   loader: glob({ base: './src/content/docs', pattern: '**/*.{md,mdx}' }),
@@ -57,4 +73,4 @@ const docs = defineCollection({
     })
 })
 
-export const collections = { blog, docs }
+export const collections = { blog, notes, docs }

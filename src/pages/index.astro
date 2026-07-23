@@ -81,22 +81,20 @@ const tools = ['Git', 'Vercel', 'Milvus', 'Neo4j', 'OpenTelemetry']
         <Button title='More blogs' class='w-fit self-end' href='/blog' variant='ahead' />
       </Section>
 
-      <Section title='Curated'>
-        <div class='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-          <ProjectCard
-            href='/notes'
-            heading='精选内容 · 01'
-            subheading='值得反复阅读的资料、工具或观点，内容待补充'
-            imagePath='/src/assets/projects/1.avif'
-          />
-          <ProjectCard
-            href='/notes'
-            heading='精选内容 · 02'
-            subheading='可以是论文、项目、报告或长期参考资料'
-            imagePath='/src/assets/projects/2.avif'
-          />
-        </div>
-        <Button title='More curated' class='w-fit self-end' href='/notes' variant='ahead' />
+      <Section title='Notes'>
+        <a
+          class='group rounded-xl border bg-muted/20 px-5 py-4 no-underline transition-colors hover:bg-muted/40'
+          href='/notes/parallel-tool-calls-lost-update'
+        >
+          <div class='mb-1 text-sm text-muted-foreground'>研究 · 2026-07-23 · 已整理</div>
+          <div class='font-medium text-foreground transition-colors group-hover:text-primary'>
+            Parallel Tool Calls、Lost Update 与执行分组
+          </div>
+          <p class='mt-2 text-sm leading-relaxed text-muted-foreground'>
+            用一个可复现的异步写入案例，分析为什么 Tool Call 能并发执行不代表它们在业务语义上可以安全并行。
+          </p>
+        </a>
+        <Button title='More notes' class='w-fit self-end' href='/notes' variant='ahead' />
       </Section>
 
       <Section title='Experience'>

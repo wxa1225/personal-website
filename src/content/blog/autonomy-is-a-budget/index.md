@@ -131,6 +131,9 @@ T2: write {name: old, description: new}
 
 > 模型可以提出行动计划，但只有系统知道哪些状态变化可以安全地同时发生。
 
+这一问题的可复现案例、执行分组和修复方案，整理在 Note：
+[Parallel Tool Calls、Lost Update 与执行分组](/notes/parallel-tool-calls-lost-update)。
+
 ## 观察二：启动子 Agent 容易，可靠地结束它很难
 
 创建一个后台子任务可能只需要一行代码：
