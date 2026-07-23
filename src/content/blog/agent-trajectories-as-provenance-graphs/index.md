@@ -411,6 +411,9 @@ input → [redacted] → report
 
 Redaction 事件本身也应进入 Provenance：由谁、依据什么 Policy、在何时删除了什么类型的数据。
 
+Hash/Merkle 完整性证据、Payload 分层、加密擦除和保留状态机的具体设计，整理在 Note：
+[Trajectory 完整性、Redaction 与保留策略](/notes/trajectory-integrity-redaction-retention)。
+
 ## 从事件流构造图，而不是让模型自报
 
 模型可以生成引用和解释，但不应成为系统 Provenance 的唯一来源。更可靠的事件产生点包括：
