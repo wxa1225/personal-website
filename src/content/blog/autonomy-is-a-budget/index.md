@@ -214,6 +214,9 @@ Tool Runtime:    执行、记录并返回结构化结果
 
 > Prompt 负责表达意图，Policy 负责决定权限；两者不能合并。
 
+文件工具从参数解析到执行层授权的完整拆解，整理在 Note：
+[Tool Schema、Policy 与 MCP 文件授权](/notes/tool-schema-policy-mcp-file-authorization)。
+
 ## Commit Boundary 应该放在哪里
 
 如果自主性不是越多越好，那么是不是应该把所有 Agent 都改回固定 Workflow？我认为也不是。
