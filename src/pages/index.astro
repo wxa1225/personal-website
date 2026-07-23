@@ -1,5 +1,6 @@
 ---
 import { Button, Card, Icon, Label } from 'astro-pure/user'
+import { getCollection } from 'astro:content'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import Terminal from '@/components/terminal/Terminal.astro'
 import ProjectCard from '@/components/home/ProjectCard.astro'
@@ -11,6 +12,17 @@ const languages = ['Python', 'Go', 'TypeScript', 'SQL']
 const development = ['FastAPI', 'FastMCP', 'Gin', 'Redis', 'Docker']
 const ai = ['LLM Agent', 'MCP', 'SFT / GRPO', 'Vector Search', 'Knowledge Graph']
 const tools = ['Git', 'Vercel', 'Milvus', 'Neo4j', 'OpenTelemetry']
+
+const publishedBlogs = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+)
+const publishedNotes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+)
+const recentBlogs = publishedBlogs.slice(0, 5)
+const recentNotes = publishedNotes.slice(0, 4)
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }).format(date)
 ---
 
 <PageLayout meta={{ title: '首页' }} highlightColor='#659EB9'>
@@ -66,35 +78,40 @@ const tools = ['Git', 'Vercel', 'Milvus', 'Neo4j', 'OpenTelemetry']
       </Section>
 
       <Section title='Blog'>
-        <a
-          class='group rounded-xl border bg-muted/20 px-5 py-4 no-underline transition-colors hover:bg-muted/40'
-          href='/blog/autonomy-is-a-budget'
-        >
-          <div class='mb-1 text-sm text-muted-foreground'>2026-07-23 · Agent Systems</div>
-          <div class='font-medium text-foreground transition-colors group-hover:text-primary'>
-            Autonomy Is a Budget：Agent 应该把自由度留在哪里？
-          </div>
-          <p class='mt-2 text-sm leading-relaxed text-muted-foreground'>
-            从有状态工具、子 Agent 生命周期和权限边界出发，讨论 Execution Harness 应该如何管理模型行为的后果。
-          </p>
-        </a>
-        <Button title='More blogs' class='w-fit self-end' href='/blog' variant='ahead' />
+        <ul class='divide-y rounded-xl border bg-muted/10 px-4 sm:px-5'>
+          {recentBlogs.map((post) => (
+            <li>
+              <a class='group grid gap-1 py-3.5 no-underline sm:grid-cols-[7.5rem_1fr] sm:items-baseline sm:gap-4' href={`/blog/${post.id}`}>
+                <time class='text-xs tabular-nums text-muted-foreground' datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate)}</time>
+                <span class='font-medium leading-snug text-foreground transition-colors group-hover:text-primary'>{post.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div class='flex items-center justify-between gap-3'>
+          <span class='text-xs text-muted-foreground'>共 {publishedBlogs.length} 篇文章</span>
+          <Button title='全部 Blog' class='w-fit' href='/blog' variant='ahead' />
+        </div>
       </Section>
 
       <Section title='Notes'>
-        <a
-          class='group rounded-xl border bg-muted/20 px-5 py-4 no-underline transition-colors hover:bg-muted/40'
-          href='/notes/parallel-tool-calls-lost-update'
-        >
-          <div class='mb-1 text-sm text-muted-foreground'>研究 · 2026-07-23 · 已整理</div>
-          <div class='font-medium text-foreground transition-colors group-hover:text-primary'>
-            Parallel Tool Calls、Lost Update 与执行分组
-          </div>
-          <p class='mt-2 text-sm leading-relaxed text-muted-foreground'>
-            用一个可复现的异步写入案例，分析为什么 Tool Call 能并发执行不代表它们在业务语义上可以安全并行。
-          </p>
-        </a>
-        <Button title='More notes' class='w-fit self-end' href='/notes' variant='ahead' />
+        <ul class='divide-y rounded-xl border bg-muted/10 px-4 sm:px-5'>
+          {recentNotes.map((note) => (
+            <li>
+              <a class='group block py-3.5 no-underline' href={`/notes/${note.id}`}>
+                <div class='flex flex-wrap items-center gap-x-2 gap-y-1'>
+                  <span class='rounded-full border bg-background px-2 py-0.5 text-[11px] text-muted-foreground'>{note.data.status}</span>
+                  <span class='font-medium leading-snug text-foreground transition-colors group-hover:text-primary'>{note.data.title}</span>
+                </div>
+                <div class='mt-1.5 line-clamp-1 text-xs leading-relaxed text-muted-foreground'>{note.data.description}</div>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div class='flex items-center justify-between gap-3'>
+          <span class='text-xs text-muted-foreground'>共 {publishedNotes.length} 篇笔记</span>
+          <Button title='全部 Notes' class='w-fit' href='/notes' variant='ahead' />
+        </div>
       </Section>
 
       <Section title='Experience'>
@@ -151,11 +168,11 @@ const tools = ['Git', 'Vercel', 'Milvus', 'Neo4j', 'OpenTelemetry']
       <Section title='站点统计'>
         <div class='grid grid-cols-2 gap-3 sm:grid-cols-4'>
           <div class='rounded-xl border bg-muted/30 px-4 py-3 text-center'>
-            <div class='text-2xl font-medium tabular-nums'>0</div>
+            <div class='text-2xl font-medium tabular-nums'>{publishedBlogs.length}</div>
             <div class='mt-1 text-xs text-muted-foreground'>文章</div>
           </div>
           <div class='rounded-xl border bg-muted/30 px-4 py-3 text-center'>
-            <div class='text-2xl font-medium tabular-nums'>0</div>
+            <div class='text-2xl font-medium tabular-nums'>{publishedNotes.length}</div>
             <div class='mt-1 text-xs text-muted-foreground'>笔记</div>
           </div>
           <div class='rounded-xl border bg-muted/30 px-4 py-3 text-center'>
@@ -163,7 +180,7 @@ const tools = ['Git', 'Vercel', 'Milvus', 'Neo4j', 'OpenTelemetry']
             <div class='mt-1 text-xs text-muted-foreground'>分享</div>
           </div>
           <div class='rounded-xl border bg-muted/30 px-4 py-3 text-center'>
-            <div class='text-2xl font-medium tabular-nums'>0</div>
+            <div class='text-2xl font-medium tabular-nums'>2</div>
             <div class='mt-1 text-xs text-muted-foreground'>项目</div>
           </div>
         </div>
