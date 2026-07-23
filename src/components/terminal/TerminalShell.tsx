@@ -82,7 +82,7 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
     if (command === 'whoami' || command === 'about') {
       push([
         { tone: 'primary', text: 'Sia' },
-        { text: '北京邮电大学硕士在读 · 电子科学与技术' },
+        { text: '北京邮电大学研究生 · 计算机类方向 · 2025 - Present' },
         { text: 'AI Agent · LLM Systems · Backend Engineering' },
         { tone: 'muted', text: 'Built SkillClaw Summarizer GRPO · Interned at GoalfyAI.' }
       ])
