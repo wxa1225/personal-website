@@ -174,6 +174,9 @@ task = asyncio.create_task(run_sub_agent(query))
 
 > 一个系统是否真正拥有子 Agent，不取决于它能不能启动子 Agent，而取决于它能不能在任何时刻可靠地结束子 Agent。
 
+任务取消、结构化并发和资源所有权的实现细节，整理在 Note：
+[取消一个子 Agent：结构化并发与资源所有权](/notes/sub-agent-cancellation-resource-ownership)。
+
 ## 观察三：合法的 Tool Call 仍然不能被信任
 
 Tool Schema 可以约束参数类型：
