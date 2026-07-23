@@ -1,72 +1,153 @@
 ---
 import { getCollection } from 'astro:content'
-import PageLayout from '@/layouts/CommonPage.astro'
+import { Button, Icon } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
 
 const notes = (await getCollection('notes', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
 )
+
 const statusCounts = notes.reduce<Record<string, number>>((counts, note) => {
   counts[note.data.status] = (counts[note.data.status] ?? 0) + 1
   return counts
 }, {})
+
 const tagCounts = notes.reduce<Record<string, number>>((counts, note) => {
   for (const tag of note.data.tags) counts[tag] = (counts[tag] ?? 0) + 1
   return counts
 }, {})
+
 const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-const formatDate = (date: Date) => new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }).format(date)
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }).format(date)
+
+const statusStyles: Record<string, string> = {
+  已整理: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+  整理中: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+  待补充: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+}
+
+const statusDotStyles: Record<string, string> = {
+  已整理: 'bg-green-500',
+  整理中: 'bg-yellow-500',
+  待补充: 'bg-red-500'
+}
+
+const meta = {
+  title: 'Notes',
+  description: '源码阅读、机制分析与仍在演化的技术理解。'
+}
 ---
 
-<PageLayout title='Notes'>
-  <p>
-    这里记录源码阅读、机制分析和仍在演化的技术理解。Notes 注重准确、可复现和方便继续更新；完整的个人判断与经验叙事放在 Blog。
-  </p>
+<PageLayout {meta}>
+  <Button title='Back' href='/' variant='back' />
 
-  <div class='not-prose mt-8 grid gap-8 sm:grid-cols-[minmax(0,3fr)_minmax(10rem,1fr)]'>
-    <section aria-label='Notes list'>
-      <div class='mb-4 text-sm text-muted-foreground'>共 {notes.length} 篇 · 按发布时间倒序</div>
-      <div class='flex flex-col gap-3'>
-        {notes.map((note) => (
-        <a
-          class='group rounded-xl border bg-muted/15 px-5 py-4 no-underline transition-colors hover:bg-muted/35'
-          href={`/notes/${note.id}`}
-        >
-          <div class='mb-2 flex flex-wrap items-start justify-between gap-2'>
-            <h2 class='font-medium leading-snug text-foreground transition-colors group-hover:text-primary'>{note.data.title}</h2>
-            <span class='shrink-0 rounded-full border bg-background px-2.5 py-1 text-[11px] text-muted-foreground'>
-              {note.data.status}
-            </span>
-          </div>
-          <p class='text-sm leading-relaxed text-muted-foreground'>{note.data.description}</p>
-          <div class='mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground'>
-            <time datetime={note.data.publishDate.toISOString()}>{formatDate(note.data.publishDate)}</time>
-            {note.data.tags.map((tag) => <a class='rounded-md bg-muted px-2 py-0.5 no-underline hover:text-primary' href={`/notes/tags/${encodeURIComponent(tag)}`}>{tag}</a>)}
-          </div>
-        </a>
-        ))}
-      </div>
-    </section>
-    <aside class='space-y-7 sm:sticky sm:top-24 sm:self-start' aria-label='Notes overview'>
-      <div>
-        <div class='mb-3 flex items-center justify-between gap-3'>
-          <h2 class='text-sm font-medium text-foreground'>Tags</h2>
-          <a class='text-xs text-muted-foreground' href='/notes/tags'>查看全部 →</a>
+  <main class='mt-6 lg:mt-10'>
+    <header id='content-header' class='animate'>
+      <div class='mb-4 flex items-center gap-3'>
+        <div class='flex size-12 items-center justify-center rounded-xl border bg-muted/40 text-2xl shadow-sm' aria-hidden='true'>
+          ◫
         </div>
-        <div class='flex flex-wrap gap-2'>
-          {sortedTags.map(([tag]) => <a class='rounded-md border px-2 py-1 text-xs no-underline transition-colors hover:bg-muted' href={`/notes/tags/${encodeURIComponent(tag)}`}>{tag}</a>)}
+        <div>
+          <h1 class='text-3xl font-medium'>Notes</h1>
+          <p class='mt-1 text-sm text-muted-foreground'>一手笔记 · 持续整理中</p>
         </div>
       </div>
-      <div>
-        <h2 class='mb-3 text-sm font-medium text-foreground'>Status</h2>
-        <ul class='space-y-2 text-sm'>
-          {Object.entries(statusCounts).map(([status, count]) => (
-            <li class='flex items-center justify-between gap-3'>
-              <span class='flex items-center gap-2'><span class='size-2 rounded-full bg-green-500'></span>{status}</span>
-              <span class='text-xs text-muted-foreground'>{count}</span>
+      <p class='max-w-3xl leading-relaxed text-muted-foreground'>
+        这里记录源码阅读、机制分析和仍在演化的技术理解。Notes 更接近研究现场：重视准确、可复现和方便继续更新；完整的个人判断与经验叙事放在 Blog。
+      </p>
+    </header>
+
+    <div class='mt-10 grid gap-y-12 sm:grid-cols-[minmax(0,3fr)_minmax(11rem,1fr)] sm:gap-x-8'>
+      <section id='content' class='animate' aria-label='Note entries'>
+        <div class='mb-5 flex flex-col justify-between gap-1 text-sm text-muted-foreground sm:flex-row'>
+          <span>显示 1–{notes.length} 条，共 {notes.length} 条</span>
+          <span>按发布时间倒序</span>
+        </div>
+
+        <ul class='flex flex-col gap-y-4 text-start'>
+          {notes.map((note) => (
+            <li>
+              <a
+                href={`/notes/${note.id}`}
+                class='group block rounded-xl border border-border bg-card px-5 py-5 no-underline transition-all hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-sm'
+                data-astro-prefetch
+              >
+                <div class='flex items-start justify-between gap-4'>
+                  <div class='min-w-0 flex-1 space-y-2'>
+                    <h2 class='text-lg font-medium leading-tight text-foreground transition-colors group-hover:text-primary'>
+                      {note.data.title}
+                    </h2>
+                    <p class='text-sm leading-6 text-muted-foreground'>{note.data.description}</p>
+
+                    <div class='flex flex-wrap items-center gap-x-2 gap-y-2 text-xs text-muted-foreground'>
+                      <span class='rounded-md bg-teal-100 px-2 py-0.5 font-medium text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'>
+                        研究
+                      </span>
+                      <span>·</span>
+                      <time datetime={note.data.publishDate.toISOString()}>{formatDate(note.data.publishDate)}</time>
+                      {note.data.updatedDate && (
+                        <><span>·</span><span>更新于 {formatDate(note.data.updatedDate)}</span></>
+                      )}
+                      {note.data.tags.length > 0 && <span>·</span>}
+                      <div class='flex flex-wrap gap-1.5'>
+                        {note.data.tags.map((tag) => (
+                          <span class='rounded-md bg-muted px-2 py-0.5'>{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <span class={`mt-0.5 shrink-0 rounded-md px-2 py-1 text-xs font-medium ${statusStyles[note.data.status] ?? 'bg-muted text-muted-foreground'}`}>
+                    {note.data.status}
+                  </span>
+                </div>
+              </a>
             </li>
           ))}
         </ul>
-      </div>
-    </aside>
-  </div>
+      </section>
+
+      <aside class='animate sm:sticky sm:top-24 sm:self-start' id='sidebar' aria-label='Notes filters'>
+        {sortedTags.length > 0 && (
+          <section class='mb-9'>
+            <div class='mb-4 flex items-center justify-between gap-3'>
+              <h2 class='flex items-center text-lg font-semibold'>
+                <Icon name='tag-2' class='me-2 size-5' />
+                Tags
+              </h2>
+              <a href='/notes/tags' class='text-xs text-muted-foreground hover:text-foreground'>查看全部 →</a>
+            </div>
+            <ul class='flex flex-wrap gap-2'>
+              {sortedTags.map(([tag]) => (
+                <li>
+                  <a href={`/notes/tags/${encodeURIComponent(tag)}`} class='inline-flex rounded-md border border-border px-2 py-1 text-xs no-underline transition hover:border-foreground/20 hover:bg-muted'>
+                    {tag}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section>
+          <h2 class='mb-4 flex items-center text-lg font-semibold'>
+            <Icon name='list' class='me-2 size-5' />
+            Status
+          </h2>
+          <ul class='space-y-2.5 text-sm'>
+            {Object.entries(statusCounts).map(([status, count]) => (
+              <li class='flex items-center justify-between gap-3'>
+                <span class='flex items-center gap-2'>
+                  <span class={`inline-block size-2 rounded-full ${statusDotStyles[status] ?? 'bg-gray-400'}`}></span>
+                  <span class='text-foreground'>{status}</span>
+                </span>
+                <span class='text-xs tabular-nums text-muted-foreground'>{count}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </main>
 </PageLayout>
