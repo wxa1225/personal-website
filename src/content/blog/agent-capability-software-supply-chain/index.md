@@ -191,6 +191,9 @@ Capability Evaluation 至少应该分成几层：
 
 更重要的是，测试结果应该附着在快照上，而不是附着在名字上。`research-skill passed` 没有足够信息；`snapshot sha256:… 在 model X、harness Y、policy Z 下通过 suite Q` 才是一条可以追溯的证据。
 
+评测 Attestation、行为面 Review 与渐进发布的完整设计，整理在 Note：
+[Capability 评测证据、审核与渐进发布](/notes/capability-evidence-review-progressive-delivery)。
+
 ## Review 不能只是阅读 Prompt
 
 对 Capability 做人工审核时，最直观的动作是打开 Markdown 看一遍。但真正的行为面可能分散在：
