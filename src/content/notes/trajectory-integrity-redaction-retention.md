@@ -9,7 +9,7 @@ tags:
   - Privacy
   - Data Retention
 language: '中文'
-status: '已整理'
+status: '待补充'
 ---
 
 > 核心结论：Trajectory 的完整性与隐私不是“全部记录”和“全部删除”的二选一。系统应把图关系、敏感 Payload 与完整性承诺分开管理，并明确每种机制能证明什么、删除后还保留什么。
@@ -628,4 +628,3 @@ Capability 名称、边和时间仍泄露敏感行为。
 - OWASP: [Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)
 - Google Cloud: [Envelope Encryption](https://cloud.google.com/kms/docs/envelope-encryption)
 - W3C: [PROV-DM — The PROV Data Model](https://www.w3.org/TR/prov-dm/)
-

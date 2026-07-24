@@ -9,7 +9,7 @@ tags:
   - Structured Concurrency
   - Lifecycle
 language: '中文'
-status: '已整理'
+status: '待补充'
 ---
 
 > 核心结论：`task.cancel()` 只是向任务注入一个取消请求。可靠地结束子 Agent，需要同时关闭它的执行树、回收它拥有的资源，并阻止过期结果越过 Commit Boundary。
@@ -329,4 +329,3 @@ except BaseException:
 - Python documentation: [`Task Groups`](https://docs.python.org/3/library/asyncio-task.html#task-groups)
 - Nathaniel J. Smith: [Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/)
 - Trio documentation: [Structured concurrency](https://trio.readthedocs.io/en/stable/reference-core.html#structured-concurrency)
-

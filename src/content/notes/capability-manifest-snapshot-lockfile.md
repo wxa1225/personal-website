@@ -9,7 +9,7 @@ tags:
   - Dependency Resolution
   - Reproducibility
 language: '中文'
-status: '已整理'
+status: '待补充'
 ---
 
 > 核心结论：Manifest 表达作者的约束，Snapshot 固定被发布的内容，Lockfile 记录解析器最终选择的完整依赖闭包。三者不能相互替代。
@@ -519,4 +519,3 @@ affected agents / environments / runs
 - IETF RFC 8785: [JSON Canonicalization Scheme](https://www.rfc-editor.org/rfc/rfc8785)
 - OCI: [Image Manifest Specification](https://github.com/opencontainers/image-spec/blob/main/manifest.md)
 - Python Packaging User Guide: [Reproducible Environments](https://packaging.python.org/en/latest/guides/index-mirrors-and-caches/)
-

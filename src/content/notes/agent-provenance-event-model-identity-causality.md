@@ -9,7 +9,7 @@ tags:
   - Distributed Systems
   - Observability
 language: '中文'
-status: '已整理'
+status: '待补充'
 ---
 
 > 核心结论：时间戳只能帮助排列事件，不能单独证明因果。Agent Provenance 需要由执行边界产生稳定身份和显式关系，并对每条边记录它是观察、声明、验证还是推断所得。
@@ -659,4 +659,3 @@ file:v7 wasDerivedFrom file:v6                     [declared/verified by store]
 - W3C: [Trace Context](https://www.w3.org/TR/trace-context/)
 - Lamport, [Time, Clocks, and the Ordering of Events in a Distributed System](https://lamport.azurewebsites.net/pubs/time-clocks.pdf)
 - Kleppmann et al., [Local-First Software: You Own Your Data, in spite of the Cloud](https://www.inkandswitch.com/local-first/)
-

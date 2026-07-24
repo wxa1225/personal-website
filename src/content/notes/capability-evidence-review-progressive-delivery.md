@@ -9,7 +9,7 @@ tags:
   - Progressive Delivery
   - Reliability
 language: '中文'
-status: '已整理'
+status: '待补充'
 ---
 
 > 核心结论：`passed` 不是 Capability 的永久属性，而是一条有作用域的证据。它必须绑定不可变快照、依赖闭包、模型、Harness、Policy、评测集与统计方法；发布系统只能在证据适用于目标环境时使用它。
@@ -523,4 +523,3 @@ Shadow 无法覆盖真实写入、用户交互和下游反馈。
 - SLSA: [Provenance](https://slsa.dev/provenance/)
 - Google SRE Workbook: [Canarying Releases](https://sre.google/workbook/canarying-releases/)
 - Argo Rollouts: [Progressive Delivery](https://argo-rollouts.readthedocs.io/)
-

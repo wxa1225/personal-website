@@ -9,7 +9,7 @@ tags:
   - Python
   - Tool Calling
 language: '中文'
-status: '已整理'
+status: '待补充'
 ---
 
 > 核心结论：并行性不是 Tool Call 的语法属性，而是 Tool 对共享状态产生何种影响的语义属性。
@@ -377,4 +377,3 @@ C → A → B
 - Python documentation: [`asyncio.gather`](https://docs.python.org/3/library/asyncio-task.html#asyncio.gather)
 - PostgreSQL documentation: [Transaction Isolation](https://www.postgresql.org/docs/current/transaction-iso.html)
 - [ToolSandbox: A Stateful, Conversational, Interactive Evaluation Benchmark for LLM Tool Use Capabilities](https://arxiv.org/abs/2408.04682)
-

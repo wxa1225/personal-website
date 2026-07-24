@@ -9,7 +9,7 @@ tags:
   - Composition
   - Least Privilege
 language: '中文'
-status: '已整理'
+status: '待补充'
 ---
 
 > 核心结论：权限闭包不是依赖声明权限的简单并集。系统真正需要判断的是，在当前数据流、调用关系和 Policy 下，一个 Capability 组合能够到达哪些外部后果。
@@ -517,4 +517,3 @@ Capability 通过自我声明扩权，Policy 失去意义。
 - Birgisson et al., [Macaroons: Cookies with Contextual Caveats for Decentralized Authorization](https://research.google/pubs/macaroons-cookies-with-contextual-caveats-for-decentralized-authorization-in-the-cloud/)
 - OWASP: [Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)
 - NIST: [Attribute Based Access Control](https://csrc.nist.gov/projects/attribute-based-access-control)
-

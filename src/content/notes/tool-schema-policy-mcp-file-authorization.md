@@ -9,7 +9,7 @@ tags:
   - Authorization
   - Security
 language: '中文'
-status: '已整理'
+status: '待补充'
 ---
 
 > 核心结论：Tool Schema 证明一次调用“长得像合法请求”，Policy 才决定“这个主体能否对这个资源执行这个操作”，而执行器必须保证检查对象与实际操作对象是同一个。
@@ -358,4 +358,3 @@ write_file succeeded
 - OWASP: [Path Traversal](https://owasp.org/www-community/attacks/Path_Traversal)
 - MITRE CWE-367: [Time-of-check Time-of-use Race Condition](https://cwe.mitre.org/data/definitions/367.html)
 - Linux manual: [`openat2(2)`](https://man7.org/linux/man-pages/man2/openat2.2.html)
-
