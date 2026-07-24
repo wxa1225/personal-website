@@ -127,60 +127,21 @@ const recentNotes = publishedNotes.slice(0, 4)
         </Card>
       </Section>
 
-      <Section title='Selected Work'>
-        <p class='text-sm leading-relaxed text-muted-foreground'>
-          一个公开的个人项目，以及一段在真实 Agent 平台中的工程实践。这里区分独立完成与实习参与，不把公司产品写成个人所有。
-        </p>
-        <div class='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-          <article class='rounded-2xl border bg-background p-6'>
-            <div class='flex flex-wrap items-start justify-between gap-4'>
-              <div>
-                <div class='text-xs font-medium uppercase tracking-wider text-primary'>Personal Project</div>
-                <h3 class='mt-1.5 text-xl font-medium text-foreground'>SkillClaw Summarizer GRPO</h3>
-              </div>
-              <span class='text-xs text-muted-foreground'>Independent</span>
-            </div>
-            <p class='mt-4 text-sm leading-6 text-muted-foreground'>
-              面向 Agent 长轨迹摘要的训练与评测项目，围绕数据构建、监督微调和基于奖励的策略优化组织完整实验流程。
-            </p>
-            <ul class='mt-4 space-y-2 text-sm leading-6 text-muted-foreground'>
-              <li class='flex gap-3'><span class='mt-2 size-1.5 shrink-0 rounded-full bg-primary'></span><span>构建 Agent 轨迹数据的清洗、组织与摘要样本生成流程。</span></li>
-              <li class='flex gap-3'><span class='mt-2 size-1.5 shrink-0 rounded-full bg-primary'></span><span>探索 SFT、GRPO、奖励设计与离线评测之间的实验闭环。</span></li>
-            </ul>
-            <div class='mt-5 flex flex-wrap gap-2 text-xs text-muted-foreground'>
-              {['Python', 'SFT', 'GRPO', 'Agent Trajectory', 'Evaluation'].map((tech) => <span class='rounded-full bg-muted px-3 py-1'>{tech}</span>)}
-            </div>
-            <a
-              href='https://github.com/wxa1225/skillclaw-summarizer-grpo'
-              target='_blank'
-              rel='noreferrer'
-              class='mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary no-underline hover:underline'
-            >
-              GitHub <span aria-hidden='true'>↗</span>
-            </a>
-          </article>
-
-          <article class='rounded-2xl border bg-background p-6'>
-            <div class='flex flex-wrap items-start justify-between gap-4'>
-              <div>
-                <div class='text-xs font-medium uppercase tracking-wider text-primary'>Internship Work</div>
-                <h3 class='mt-1.5 text-xl font-medium text-foreground'>GoalfyAI Agent Platform Engineering</h3>
-              </div>
-              <span class='text-xs text-muted-foreground'>Contributor</span>
-            </div>
-            <p class='mt-4 text-sm leading-6 text-muted-foreground'>
-              在加和科技实习期间参与 Agent 平台相关研发，工作范围涉及 Runtime、MCP 工具服务与平台后端；以下描述为参与范围，不代表独立负责整个平台。
-            </p>
-            <ul class='mt-4 space-y-2 text-sm leading-6 text-muted-foreground'>
-              <li class='flex gap-3'><span class='mt-2 size-1.5 shrink-0 rounded-full bg-primary'></span><span>参与 Agent Runtime 与工具执行相关工程，接触任务生命周期、调度和执行状态管理。</span></li>
-              <li class='flex gap-3'><span class='mt-2 size-1.5 shrink-0 rounded-full bg-primary'></span><span>参与 MCP 工具服务和平台后端相关研发，理解文件授权、能力资产与版本发布链路。</span></li>
-            </ul>
-            <div class='mt-5 flex flex-wrap gap-2 text-xs text-muted-foreground'>
-              {['Python', 'FastAPI', 'MCP', 'Agent Runtime', 'Backend Systems'].map((tech) => <span class='rounded-full bg-muted px-3 py-1'>{tech}</span>)}
-            </div>
-            <div class='mt-5 text-xs text-muted-foreground'>Company product · Source code not public</div>
-          </article>
-        </div>
+      <Section title='Open Source'>
+        <Card
+          as='a'
+          href='https://github.com/wxa1225/skillclaw-summarizer-grpo'
+          target='_blank'
+          heading='SkillClaw Summarizer GRPO'
+          subheading='面向 Agent 轨迹摘要的数据构建、SFT/GRPO 训练、奖励设计与离线评测'
+        >
+          <div class='flex flex-wrap gap-2 text-xs text-muted-foreground'>
+            <span class='rounded-md bg-muted px-2 py-1'>Python</span>
+            <span class='rounded-md bg-muted px-2 py-1'>SFT / GRPO</span>
+            <span class='rounded-md bg-muted px-2 py-1'>Agent Trajectory</span>
+            <span class='rounded-md bg-muted px-2 py-1'>Evaluation</span>
+          </div>
+        </Card>
         <Button title='More projects' class='w-fit self-end' href='/projects' variant='ahead' />
       </Section>
 
