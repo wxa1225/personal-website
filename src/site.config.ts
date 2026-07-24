@@ -26,8 +26,8 @@ export const theme: ThemeUserConfig = {
   },
   /** Set a logo image to show in the homepage. */
   logo: {
-    src: '/avatar.svg',
-    alt: 'Sia 的字母头像'
+    src: '/avatar.png',
+    alt: 'Sia 的 GitHub 头像'
   },
 
   titleDelimiter: '•',
@@ -123,7 +123,7 @@ export const integ: IntegrationUserConfig = {
       { name: 'Link', val: 'https://siaspace.vercel.app/' },
       {
         name: 'Avatar',
-        val: 'https://siaspace.vercel.app/avatar.svg'
+        val: 'https://siaspace.vercel.app/avatar.png'
       }
     ],
     // Cache avatars in `public/avatars/` to improve user experience.
