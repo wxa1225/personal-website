@@ -5,14 +5,13 @@ import ProjectSection from '@/components/projects/ProjectSection.astro'
 
 const headings = [
   { depth: 2, slug: 'skillclaw', text: 'SkillClaw Summarizer GRPO' },
-  { depth: 2, slug: 'goalfyai', text: 'GoalfyAI Agent Platform' },
   { depth: 2, slug: 'stack', text: '技术实践' }
 ]
 ---
 
 <PageLayout title='项目' {headings}>
   <p>
-    这里记录我的个人项目与工程实践。公开项目提供源码链接；实习项目仅介绍适合公开的产品方向、技术栈和参与内容。
+    这里放我正在做的项目。记录它想解决什么、怎么做，以及还有哪些地方值得继续试。
   </p>
   <Button title='访问我的 GitHub' class='w-fit' href='https://github.com/wxa1225' target='_blank'>
     <Icon class='size-5' name='github' slot='before' />
@@ -20,7 +19,7 @@ const headings = [
 
   <h2 id='skillclaw'>SkillClaw Summarizer GRPO</h2>
   <p>
-    围绕 SkillClaw 技能演化链路开发的 Agent 轨迹摘要优化项目，目标是把冗长的真实交互轨迹压缩为简洁、可验证且保留关键因果信息的摘要，为后续技能生成与演化提供更稳定的输入。
+    一次 Agent 任务会留下很多交互记录。这个项目尝试把它们整理成简洁、准确的摘要，保留关键决策和失败尝试，让后续的技能生成有据可循。
   </p>
   <ProjectSection
     projects={[
@@ -38,30 +37,6 @@ const headings = [
         name: 'Evaluation & Inference Integration',
         description: '整理离线评测、数据质量报告，并将小模型摘要能力接入技能演化服务。',
         links: [{ type: 'github', href: 'https://github.com/wxa1225/skillclaw-summarizer-grpo' }]
-      }
-    ]}
-  />
-
-  <h2 id='goalfyai'>GoalfyAI Agent Platform</h2>
-  <p>
-    在加和科技（GoalfyAI）实习期间，参与企业级 AI Agent 产品与平台基础设施研发。产品代码涉及多个协作仓库，因此这里仅概括适合公开的技术方向，不展示内部源码、配置和业务数据。
-  </p>
-  <ProjectSection
-    projects={[
-      {
-        name: 'Agent Runtime & Core',
-        description: '参与 Python Agent 框架相关工程，涉及 LLM 调用、工具执行、记忆、任务调度、消息队列与可观测性。',
-        links: []
-      },
-      {
-        name: 'MCP File Tooling',
-        description: '参与基于 FastMCP 的文件工具服务，覆盖远程文件操作、权限校验、PDF 生成与指标监控。',
-        links: []
-      },
-      {
-        name: 'GoalfyHub Backend',
-        description: '接触 Go / Gin / GORM 后端体系，以及 Agent 工具、提示词等资产的管理、发布、分享、检索与权限控制。',
-        links: []
       }
     ]}
   />

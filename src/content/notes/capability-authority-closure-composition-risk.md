@@ -1,7 +1,8 @@
 ---
-title: 'Capability 权限闭包与组合风险'
-description: '依赖权限不能只做集合并集：分析可达后果、组合风险、委托衰减、Confused Deputy 与运行时授权。'
+title: '能读文件，也能联网，组合起来意味着什么？'
+description: '逐个看都合理的工具权限，组合后可能让数据走到意料之外的地方。'
 publishDate: '2026-07-23'
+updatedDate: '2026-09-20'
 tags:
   - Agent
   - Capability Security
@@ -12,38 +13,13 @@ language: '中文'
 status: '待补充'
 ---
 
-> 核心结论：权限闭包不是依赖声明权限的简单并集。系统真正需要判断的是，在当前数据流、调用关系和 Policy 下，一个 Capability 组合能够到达哪些外部后果。
+读工作区和发网络请求，单独看都是常见能力。但把它们交给同一个任务，就可能多出一条路径：工作区里的内容被发送到外部。
 
-## 三个集合经常被误认为一个
+这也是我在看 Skill 依赖时比较在意的问题。逐个列出工具权限之后，还需要把它们接起来看，看看数据最后可能走到哪里。
 
-假设 Capability Manifest 声明：
+## 申请过，不等于拿到了，也不等于用过
 
-```yaml
-permissions:
-  - resource: workspace
-    operations: [read]
-  - resource: network:https
-    operations: [connect]
-```
-
-至少需要区分：
-
-```text
-Requested Authority   Capability 声明希望获得什么
-Granted Authority     当前安装/任务实际授予什么
-Exercised Authority   某次执行真正使用了什么
-```
-
-它们应满足：
-
-```text
-Exercised ⊆ Granted ⊆ PolicyCeiling
-Requested 不一定等于 Granted
-```
-
-Manifest 只提供 Requested Authority。它可以帮助安装器解释需求，却不能自我授权。Granted Authority 由用户、组织 Policy、任务上下文和父 Agent 的权限共同决定；Exercised Authority 则来自真实 Trace。
-
-还有第四个更重要的概念：**Reachable Consequences**。即使一次运行尚未实际外发数据，只要一个组合同时具备读取敏感数据与向外发送的路径，就已经形成潜在后果。
+下面几件事值得分开记录：
 
 ```text
 Requested → 申请了什么
@@ -52,31 +28,13 @@ Reachable → 组合后可能造成什么
 Exercised → 这一次实际做了什么
 ```
 
-供应链审核关注 Requested 与 Reachable，Execution Harness 强制 Granted，审计记录 Exercised。
+一个 Skill 可以申请联网，安装者只允许访问指定域名，而这次运行最后根本没发出请求。这三种记录都叫“权限”，排查时就很容易说不清。
 
-## 为什么权限并集仍然不够
+我会把“组合后可能造成什么”再单独拿出来。它描述的是潜在路径，还不是这次运行已经发生的事实。后面的影响分析也需要保留这个区别。
 
-最直接的闭包计算是遍历依赖图并取并集：
+## 为什么把权限合并起来还不够
 
-```python
-def declared_authority_closure(root, graph):
-    permissions = set(root.permissions)
-    for dependency in transitive_dependencies(root, graph):
-        permissions |= set(dependency.permissions)
-    return permissions
-```
-
-它能回答“依赖树中出现过哪些权限声明”，却不能回答这些权限能否在同一条执行路径上组合。
-
-考虑三个单独看似合理的 Capability：
-
-```text
-document-reader   → secret:read
-summarizer        → no external authority
-web-publisher     → network:write
-```
-
-单独审核 `document-reader` 时，它不能外发；单独审核 `web-publisher` 时，它没有敏感数据。但同一个 Agent 可以把前者输出传给后者：
+假设有三个组件：读文档、做摘要、发布网页。摘要组件本身没有网络或文件权限，看起来很简单。但它处理的是读文档组件交来的内容：
 
 ```text
 secret:read
@@ -86,20 +44,9 @@ summarizer
 network:write
 ```
 
-集合并集会显示 `{secret:read, network:write}`，但真正的风险不是同时出现两个标签，而是存在一条从敏感 Source 到外部 Sink 的可达路径。
+最终发布的是摘要，也仍然可能含有原文中的敏感信息。只检查每个组件自己的权限列表，容易漏掉这条跨组件的数据流。
 
-因此至少要同时构建：
-
-1. **Dependency Graph**：谁依赖谁。
-2. **Invocation Graph**：谁可以调用哪个 Tool/Capability。
-3. **Authority Graph**：每个节点能对哪些资源执行什么操作。
-4. **Information-flow Graph**：哪些数据可能从 Source 到达 Sink。
-
-权限闭包提供预筛选，组合风险需要图上的路径分析。
-
-## 一个最小的效果模型
-
-为了分析组合，需要比 `read/write` 更具体的声明：
+因此，除了读写动作，我还想知道输入来自哪里、属于什么数据类别、输出会去哪个目标。下面是一个描述效果的示意结构：
 
 ```yaml
 effects:
@@ -117,74 +64,21 @@ effects:
   externalSideEffects: []
 ```
 
-发布工具可能声明：
+这样的声明能帮助分析，但不能直接当成行为已经得到证明。组件可能写漏，工具实现也可能变化，执行时仍需要检查。
 
-```yaml
-effects:
-  inputs:
-    - channel: content
-      accepts: [public-data]
-  externalSideEffects:
-    - operation: publish
-      destination: https:{approved_domain}
-```
+## 资源范围比一个 read 更具体
 
-系统随后可以发现：Reader 输出的是 `derived-workspace-data`，Publisher 只接受 `public-data`。二者不是因为参数 Schema 兼容就可以安全连接，中间还需要显式的 declassification：例如用户确认某份内容可以公开。
+允许读当前项目的 Markdown，和允许读整个工作区，差别很大；允许发布到一个指定接口，和允许向任意域名发送数据，也不是同一件事。
 
-这类声明不可能完美描述模型行为，但仍有价值：它把高后果组合从隐含 Prompt 约定变成可检查的系统约束。
+授权需要同时带上主体、操作和资源范围。有时还要限制文件大小、目标域名、调用次数或有效期。只留下 `read`、`write` 两个词，等工具真正接到参数时就会缺少判断依据。
 
-## 权限要带资源范围，而不只是动作名
+路径和 URL 的匹配也需要规范化，不能把简单字符串前缀当作所有场景下的资源边界。文件这一侧的细节，可以接着看[文件授权笔记](/notes/tool-schema-policy-mcp-file-authorization)。
 
-下面两个权限不能被视为同一个 `files:read`：
+## 子任务只拿这次需要的那一部分
 
-```text
-read /workspace/current/**/*.md
-read /workspace/**
-```
+调用依赖时，把整个 Agent 上下文传下去很省事，但也可能顺便传下了不需要的凭证和权限。
 
-同样，两个网络权限风险也不同：
-
-```text
-POST https://api.company.example/report
-POST https://*
-```
-
-可以把授权表示为：
-
-```python
-@dataclass(frozen=True)
-class Grant:
-    principal: str
-    operation: str
-    resource_pattern: str
-    constraints: tuple["Constraint", ...]
-    expires_at: datetime
-    delegation_depth: int
-```
-
-`constraints` 可能限制：
-
-- 允许的 HTTP Method 与域名；
-- 文件根、扩展名和最大字节数；
-- 只允许创建，不允许覆盖；
-- 只能处理当前 Turn 产生的 Artifact；
-- 操作次数、成本或时间预算；
-- 是否要求用户确认；
-- 数据分类上限。
-
-最小权限的核心不是让权限标签更少，而是让**主体、动作、资源与时间范围更窄**。
-
-## 依赖不应该默认继承调用者全部权限
-
-一种危险实现是把 Agent 的完整 Context 传给每个 Skill：
-
-```python
-await dependency.run(agent_context)
-```
-
-即使依赖只需要读取一个临时文件，它也可能拿到工作区写权限、凭证与外发工具。这违反了权限衰减原则：子 Capability 获得的权限不应超过调用者，也不应超过本次调用所需范围。
-
-理想关系是：
+我更倾向于根据这次调用重新收窄授权：
 
 ```text
 Grant(child)
@@ -194,23 +88,9 @@ Grant(child)
   ∩ OrganizationPolicy
 ```
 
-示意实现：
+这里的交集是约束思路，不意味着资源范围都能用简单字符串集合完成计算。比如“只能发布到这个站点的某个栏目”，需要真正理解资源语义。
 
-```python
-def attenuate(parent_grants, child_request, invocation_scope, policy):
-    grants = intersect(parent_grants, child_request)
-    grants = intersect(grants, invocation_scope)
-    grants = intersect(grants, policy.ceiling)
-    return bind_to_subject_and_expiry(grants)
-```
-
-这里的交集不是简单字符串比较。资源 Pattern 需要做包含关系判断，约束需要取更严格值：最大文件大小取较小值、过期时间取较早值、允许域名取交集。
-
-如果某类约束无法可靠比较，默认拒绝比默认放宽更安全。
-
-## Capability Token 应该携带什么
-
-运行时可以把衰减后的授权封装为短期 Capability Token 或不可伪造句柄：
+跨服务传递时，可以用受验证的授权凭证表达范围。下面仍是一份示意：
 
 ```json
 {
@@ -227,290 +107,36 @@ def attenuate(parent_grants, child_request, invocation_scope, policy):
 }
 ```
 
-重要性质包括：
+接收方需要验证来源、受众、过期时间和撤销状态，而不能只相信参数里写着某个用户 ID。服务端拥有更大的技术权限，也不应该把它自动借给每个调用者。这正是 Confused Deputy 问题容易出现的地方。
 
-- **Least authority**：只包含本次调用需要的操作和资源。
-- **Audience restriction**：只能交给指定 Server 使用。
-- **Temporal bound**：生命周期短于任务或 Turn。
-- **Context binding**：绑定 Turn/generation，旧任务不能重放。
-- **Delegation control**：明确是否还能继续下放。
-- **Integrity**：由可信授权服务签名，或作为服务端不可伪造句柄保存。
+## 安装时看可能性，执行时看实际参数
 
-Token 不是把 Policy 逻辑搬进一段 JSON。Server 仍需验证签名、audience、有效期、资源匹配与撤销状态，并避免把 Token 写入模型上下文、普通日志或 Tool Result。
+安装时可以发现“读取私有数据后还能外发”这样的潜在路径，也可以确定授权上限。但实际读取哪个文件、发往哪个地址，经常只有执行时才知道。
 
-## Confused Deputy：权限属于谁
+所以这两次检查各有作用：前者帮助决定是否接受这组能力，后者判断当前这次调用是否仍在允许范围内。策略改变、工具绑定改变或授权过期以后，旧的分析结果也需要重新评估。
 
-Confused Deputy 指一个拥有权限的服务被低权限调用者诱导，使用自己的权限替调用者完成未获准操作。
+如果模型见过敏感内容，不能仅凭它说“已经脱敏”就允许随意外发。可以采用保守标签传播、独立脱敏检查，或将敏感上下文与可外发任务隔离。选哪种办法，要看具体数据和任务能接受什么限制。
 
-在 Agent 系统里，一个文件 MCP Server 可能以服务账户运行，可以读取多个工作区。如果它只验证路径存在，而不验证调用者对目标工作区的授权，就会成为 Deputy：
+## 拒绝时，也需要让人知道原因
 
-```text
-Low-privilege Agent
-    ↓ asks for workspace B
-Privileged File Server
-    ↓ uses server credential
-Workspace B data
-```
+一句“权限不足”很难帮助用户调整任务。比较有用的说明是：当前任务没有向这个外部目标发送工作区数据的授权。
 
-避免这一问题需要 **on-behalf-of** 语义：Server 的基础凭证证明“它有技术能力访问存储”，调用上下文证明“它代表哪个主体、为了哪个 Turn、可以访问哪个资源”。最终权限是二者交集，而不是 Server 自身权限。
+同时，解释本身不能泄露调用者原本无权知道的资源名称和内部规则。给模型的错误、给用户的说明和内部审计记录，可以保留不同粒度的信息。
 
-```text
-Effective request authority
-  = Server technical authority
-  ∩ Caller delegated authority
-  ∩ Current policy
-```
+审计里则应能查到当前主体、策略版本、资源、决定和依据。这样才能区分“没有申请”“没有授予”和“已被撤回”，而不是让它们都变成同一个失败状态。
 
-Tool Schema 中传入 `user_id` 不能建立这一关系，因为模型可以修改普通参数。主体身份必须来自受信任调用通道或经过验证的 Token。
+## 还想继续做的小实验
 
-## 组合风险不满足“分别安全，所以一起安全”
+我想先搭一个“读取—摘要—发布”的最小组合，分别改变数据标签、发布目标和子任务授权，看限制是否真正跟着数据流生效。
 
-安全属性通常不是可加的。下面几类组合值得单独识别。
+尤其想验证两种情况：一个依赖被替换后，旧授权分析会不会继续被复用；父任务权限减少后，已经发出去的子任务凭证能否及时失效。
 
-### 1. Read + Egress
+权限列表是很好的起点，但读完以后，我还会多问一步：把这些动作连在一起，究竟会发生什么？
 
-一个读取敏感数据，一个向外部发送。组合后形成泄露路径。
+## 继续读
 
-### 2. Write + Execute
-
-一个只能写配置或脚本，另一个能执行。组合后产生代码执行能力。
-
-### 3. Discover + Invoke
-
-一个枚举其他租户或资源标识，另一个按 ID 操作。组合后可能绕过不可猜测性假设。
-
-### 4. Create + Publish
-
-一个生成内容，另一个公开发布。单独的草稿操作变成不可逆外部状态。
-
-### 5. Read Instruction + Modify Instruction Source
-
-Agent 可以修改未来会再次加载的 Skill 或记忆，形成持久化 Prompt Injection。
-
-### 6. Approve + Execute
-
-同一主体既生成审批结论又执行高风险操作，自我批准破坏职责分离。
-
-因此可以维护一组禁止或需要升级确认的组合规则：
-
-```yaml
-compositionPolicies:
-  - when:
-      source: data:secret
-      sink: network:external
-    require: explicit_declassification
-
-  - when:
-      capabilities: [instruction:write, instruction:load]
-    denyWithinSamePrincipal: true
-
-  - when:
-      capabilities: [approval:issue, action:commit]
-    requireDistinctPrincipals: true
-```
-
-规则不应只匹配 Capability 名称，而应匹配解析后的效果和资源范围。
-
-## 静态闭包与动态授权需要同时存在
-
-安装时分析有两个优势：可以向用户解释风险，也可以在 Capability 进入生产前阻止明显危险组合。但它无法知道运行时参数：
-
-```text
-read_file(path=?)
-publish(destination=?)
-```
-
-同一个 Tool Call 对公开 README 与私有密钥的风险不同，发布到内部草稿库与公开互联网也不同。
-
-因此需要两阶段模型：
-
-```text
-Install / Activation time
-  → 计算声明权限闭包
-  → 分析潜在 Source-to-Sink 路径
-  → 确认 Policy Ceiling
-
-Execution / Commit time
-  → 根据真实参数解析资源
-  → 生成最小调用授权
-  → 检查当前数据标签与目标 Sink
-  → 执行或要求确认
-```
-
-静态分析控制最大攻击面，动态 Policy 控制这一次真实后果。二者不是替代关系。
-
-## 数据标签如何穿过模型
-
-传统 Information Flow Control 可以给值附加标签并跟踪转换。Agent 系统中，模型会读取多份内容再生成新文本，很难精确证明输出只来自哪一部分。
-
-一种保守规则是标签并集：
-
-```text
-model_output.labels = union(all_visible_input.labels)
-```
-
-如果模型同时看到 `public` 与 `secret`，输出继承 `secret`。这能避免漏标，却会快速造成 label creep：长会话读取过一次敏感数据后，所有后续内容都无法外发。
-
-可行的改进包括：
-
-- 缩小每个子 Agent 的可见上下文；
-- 把敏感处理放进隔离的子任务，输出结构化、可验证结果；
-- 只给发布 Agent 公开数据，而不是给它整段历史会话；
-- 使用确定性转换器完成脱敏，而非让同一模型自我声明“已脱敏”；
-- 对 declassification 要求用户或独立 Policy 决策。
-
-最有效的控制往往不是更聪明的标签算法，而是减少不必要的数据与能力共处在同一执行主体中。
-
-## 权限闭包也有时间维度
-
-一次安装计算出的权限闭包可能因以下变化失效：
-
-- 依赖 Resolution 更新；
-- Tool Server 改变效果或资源范围；
-- Organization Policy 收紧；
-- 用户权限被撤销；
-- Turn 已结束或被新 generation 替换；
-- Capability Snapshot 被紧急撤销。
-
-所以闭包应该绑定：
-
-```text
-Resolution ID
-Policy version
-Tool binding digest
-Principal
-Activation ID
-Validity interval
-```
-
-它是一份有上下文和有效期的决策材料，不是 Capability 的永久属性。排队很久的 Tool Call 在 Commit 前需要重新验证，而不能使用安装时生成的无限期 allow。
-
-## 一份 Authority Closure Record
-
-在 Note 1 的 Lockfile 之外，可以生成一份权限闭包记录：
-
-```json
-{
-  "resolution": "sha256:72cd…",
-  "policyVersion": "sha256:b519…",
-  "principal": "agent-profile:researcher",
-  "declared": [
-    {"operation": "read", "resource": "workspace:**"},
-    {"operation": "connect", "resource": "https:**"}
-  ],
-  "ceiling": [
-    {"operation": "read", "resource": "workspace:current/**"},
-    {"operation": "connect", "resource": "https:approved-domains/**"}
-  ],
-  "compositionFindings": [
-    {
-      "source": "workspace:confidential",
-      "sink": "network:external",
-      "disposition": "requires_declassification"
-    }
-  ],
-  "recordId": "sha256:4af1…"
-}
-```
-
-这份记录适合安装与审核阶段展示，不应直接作为永久执行 Token。运行时仍根据真实主体、资源参数与时效签发更窄的 Grant。
-
-## Policy 决策需要可解释但不能泄密
-
-授权拒绝如果只返回 `permission denied`，模型可能不断重试；如果返回完整内部 Policy，又可能泄露资源结构和安全规则。
-
-可以把解释分层：
-
-```text
-Model-visible:
-  当前 Capability 未获得向外部域名发送 workspace 数据的权限。
-
-User-visible:
-  发布内容可能包含当前工作区数据，需要确认目标域名和公开范围。
-
-Audit-only:
-  policy rule R-184, source label confidential,
-  sink https://example.net, resolution sha256:…
-```
-
-决策事件至少记录主体、操作、解析后的逻辑资源、Policy 版本、结果与原因码，但不复制 Secret、Token 或敏感正文。
-
-## 常见失败模式
-
-### 1. 把 Manifest 权限当成 Granted 权限
-
-Capability 通过自我声明扩权，Policy 失去意义。
-
-### 2. 只展示顶层 Capability 权限
-
-传递依赖引入外发、执行或修改共享资源的能力，安装者不可见。
-
-### 3. 权限闭包只取字符串并集
-
-忽略资源范围、约束交集和 Source-to-Sink 组合路径。
-
-### 4. 子 Capability 继承完整 Agent Context
-
-依赖获得与其任务无关的凭证、工具和工作区权限。
-
-### 5. 把主体放在普通 Tool 参数中
-
-模型可以伪造 `user_id`、`workspace_id`，造成 Confused Deputy。
-
-### 6. 安装时授权，运行时不复验
-
-依赖、Policy、主体权限或 Turn 状态变化后，旧授权仍可执行。
-
-### 7. 认为数据经过模型总结后就变成公开信息
-
-派生文本仍可能泄露敏感事实，declassification 需要独立依据。
-
-### 8. 用长期 Token 解决所有调用
-
-泄露后的重放范围过大，也无法绑定具体 Agent、Turn 和 Server。
-
-## 应该测试哪些不变量
-
-1. Granted Authority 永不超过父授权、Capability 请求与 Organization Policy 的交集。
-2. 每次委托只会保持或收窄权限，不能扩大资源范围或有效期。
-3. 传递依赖的权限变化会改变 Authority Closure Record。
-4. `secret/read → external/write` 路径在没有 declassification 时被阻止。
-5. 同一 Capability 在不同参数下解析到不同资源，并获得对应最小 Grant。
-6. MCP Server 不信任模型提供的主体字段，只接受受信通道身份。
-7. 过期、错误 audience、旧 generation 和已撤销 Token 均被拒绝。
-8. Tool 返回的 Prompt Injection 不能扩大后续 Tool Call 的 Granted Authority。
-9. 审批与执行需要职责分离时，同一主体不能完成两步。
-10. Policy 拒绝会留下不包含敏感内容的结构化证据。
-
-组合测试应基于效果类别生成 Capability 对与三元组，而不只是逐个测试单一 Skill。风险往往恰好不存在于任何一个单独组件中。
-
-## 当前理解 / 结论
-
-1. Requested、Granted、Exercised Authority 与 Reachable Consequences 必须分开记录。
-2. 依赖权限并集是闭包分析的起点，不是最终风险结论。
-3. 组合风险来自 Source、变换与 Sink 之间的可达路径。
-4. 子 Capability 权限应由父授权、子请求、调用需要和组织 Policy 共同衰减得到。
-5. Confused Deputy 的根因是服务只使用自身权限，没有验证代表谁行动。
-6. 安装时分析潜在攻击面，执行时根据真实资源参数强制授权。
-7. 模型处理过敏感数据后，不能自行宣告输出已经安全；上下文隔离通常比乐观去污更可靠。
-8. 权限闭包绑定 Resolution、Policy、主体和有效期，不是静态永久标签。
-
-它与 Blog 2 的关系可以概括为：
-
-> Dependency Graph 告诉我们 Agent 加载了什么；Authority 与 Information-flow Graph 才告诉我们这些组件放在一起后可能做成什么。
-
-## 待补充
-
-- 定义资源 Pattern 的包含、交集和规范化算法。
-- 实现一个最小的 Authority Closure 与 Source-to-Sink 分析器。
-- 比较 Macaroons、OAuth Token Exchange 与服务端 Capability Handle 的衰减语义。
-- 为 MCP Tool 定义 effects、data classification 与 audience 元数据实验。
-- 使用组合测试生成器验证 read/egress、write/execute 和 approve/commit 规则。
-
-## 相关链接 / 来源
-
-- [When Agent Capabilities Become a Supply Chain](/blog/agent-capability-software-supply-chain)
-- [Capability Manifest、不可变快照与依赖锁定](/notes/capability-manifest-snapshot-lockfile)
+- [装进 Agent 的 Skill，后来变成了什么？](/blog/agent-capability-software-supply-chain)
+- [同名 Skill 还是昨天那一份吗？](/notes/capability-manifest-snapshot-lockfile)
 - Miller et al., [Capability Myths Demolished](https://srl.cs.jhu.edu/pubs/SRL2003-02.pdf)
 - Hardy, [The Confused Deputy](https://dl.acm.org/doi/10.1145/357172.357176)
 - IETF RFC 8693: [OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693)

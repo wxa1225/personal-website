@@ -29,7 +29,7 @@ interface Props {
 const { page, uniqueTags, collectionsCount } = Astro.props
 
 const meta = {
-  description: '关于 Agent 系统、能力供应链与可追溯性的完整思考。',
+  description: '聊聊 Agent 开发里遇到的问题，以及我现在的理解。',
   title: 'Blog'
 }
 
@@ -49,7 +49,7 @@ const paginationProps = {
     <div id='content-header' class='animate'>
       <h1 class='mb-3 mt-6 text-3xl font-medium sm:mt-10'>Blog</h1>
       <p class='mb-8 max-w-2xl text-muted-foreground'>
-        这里放完整的经验叙事与工程判断；可复现机制、实现细节和仍在演化的理解放在 Notes。
+        一些愿意多花点时间讲清楚的问题。从一个例子出发，聊聊 Agent、模型和系统；代码细节与阅读笔记放在 Notes。
       </p>
     </div>
     {

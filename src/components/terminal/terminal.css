@@ -161,6 +161,8 @@
 @media (max-width: 640px) {
   .wt-intro { font-size: 12px; }
   .wt-title { display: none; }
+  .wt-title--peek { display: inline-flex; font-size: 11px; }
+  .wt-shell--collapsed .wt-hint { display: none; }
   .wt-body { height: 360px; max-height: 65vh; font-size: 12px; }
   .wt-input-hint { font-size: 11px; }
 }

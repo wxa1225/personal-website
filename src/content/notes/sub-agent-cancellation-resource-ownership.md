@@ -1,7 +1,8 @@
 ---
-title: '取消一个子 Agent：结构化并发与资源所有权'
-description: '从 asyncio 的取消语义出发，分析子 Agent 的任务注册、取消传播、清理超时、资源所有权与结果提交。'
+title: '点了取消，子 Agent 为什么还在跑？'
+description: '从 task.cancel() 开始，整理取消传播、资源清理和迟到结果的处理方式。'
 publishDate: '2026-07-23'
+updatedDate: '2026-09-20'
 tags:
   - Agent
   - Harness
@@ -12,90 +13,25 @@ language: '中文'
 status: '待补充'
 ---
 
-> 核心结论：`task.cancel()` 只是向任务注入一个取消请求。可靠地结束子 Agent，需要同时关闭它的执行树、回收它拥有的资源，并阻止过期结果越过 Commit Boundary。
+启动一个子 Agent 可以很简单：创建任务，等它返回结果。用户改变主意、父任务超时，或者服务准备退出时，真正麻烦的部分才会出现。
 
-## 问题不在于怎样启动，而在于谁负责收尾
+这篇笔记沿着“取消”往下看。关心的事情有三件：工作怎样停下来，资源由谁清理，迟到的结果还能不能提交。下面涉及业务存储的代码都是伪代码，用来说明约束，不是可以直接用于生产的完整实现。
 
-一个最小的后台子任务只需要：
+## cancel 发出去以后，发生了什么
 
-```python
-task = asyncio.create_task(run_sub_agent(query))
-```
+在 asyncio 里，`Task.cancel()` 请求任务在后续执行中接收 `CancelledError`。任务需要获得执行机会，并正确处理这个异常，取消过程才能往下走。
 
-但这行代码隐去了三个关系：
+因此，调用 `cancel()` 后不能马上把任务当成已经结束。没有让出执行权的同步代码不会因此立刻停下；远程服务已经接到的请求，也不会自动撤回。
 
-1. **父子关系**：父任务结束时，子任务是否仍被允许运行？
-2. **所有权关系**：子任务创建或借用了哪些资源，分别由谁释放？
-3. **提交关系**：子任务完成后，它的结果是否仍然属于当前 Turn？
+清理通常放在 `finally` 中。需要捕获 `CancelledError` 时，完成必要处理后应继续传播，避免上层把一次取消误判成正常完成。尤其要注意 `except BaseException` 这样的宽泛捕获，它可能连取消也一起吞掉。
 
-只保存一个 `Task` 对象无法完整回答这些问题。如果父 Agent 超时、用户撤回请求或当前 Turn 已被替换，仍在运行的子任务可能继续调用工具、写入状态，最后把一个已经过期的结果交给新的上下文。
+取消的业务原因最好另外记录。用户撤回、父任务结束、超过预算和服务关闭，后续处理可能不同，不必都塞进一段异常文本里再反向解析。
 
-因此，“停止计算”只是取消协议的一部分。完整目标应该是：
+## 先让子任务有一个明确的归属
 
-```text
-不再产生新的外部副作用
-∧ 最终状态可观察
-∧ 自有资源被释放
-∧ 借用资源保持有效
-∧ 过期结果不能提交
-```
+随手调用 `create_task` 很方便，但句柄放在哪里、异常由谁接收、父任务退出时谁来等待，都需要自己管理。
 
-## `asyncio.cancel()` 实际做了什么
-
-在 Python 中，`Task.cancel()` 会安排任务在下一次获得执行机会时抛出 `CancelledError`。它不是线程终止，也不是立即中断：
-
-```python
-async def worker():
-    try:
-        await do_work()
-    finally:
-        await cleanup()
-
-task.cancel()
-await task
-```
-
-这里至少存在四种情况：
-
-- 任务在下一个可取消点收到 `CancelledError`，随后进入 `finally`。
-- 被等待的协程正确传播取消，整条调用链开始退出。
-- 某层捕获 `CancelledError` 却没有重新抛出，取消被吞掉。
-- 某段同步阻塞代码长时间不让出控制权，取消迟迟无法被观察。
-
-所以 `cancel_requested`、`cancelling` 和 `cancelled` 不是同一状态。调用 `cancel()` 后立刻把业务任务标记为 `CANCELLED`，会制造一个危险窗口：控制面认为它已经结束，数据面却可能仍在执行。
-
-更准确的状态机可以是：
-
-```text
-CREATED → RUNNING → CANCEL_REQUESTED → CLEANING_UP → CANCELLED
-                    ↘ FAILED
-RUNNING → SUCCEEDED
-```
-
-`CANCEL_REQUESTED` 表示系统已经改变意图；`CANCELLED` 应表示执行树已经停止，并完成了规定范围内的清理。
-
-## 取消原因不是异常文本
-
-不同取消原因对应不同的上游行为：
-
-```python
-class CancelReason(str, Enum):
-    USER_REVOKED = "user_revoked"
-    PARENT_CANCELLED = "parent_cancelled"
-    DEADLINE_EXCEEDED = "deadline_exceeded"
-    TURN_SUPERSEDED = "turn_superseded"
-    SERVICE_SHUTDOWN = "service_shutdown"
-```
-
-例如，超时可能允许从检查点重试；用户撤回通常不应自动重试；Turn 被替换时，结果必须作废，但某些只读缓存工作未必需要立刻终止。
-
-`CancelledError` 负责控制流，`CancelReason` 负责业务语义。把原因作为结构化状态保存，才能让父任务、日志和恢复逻辑得到一致结论。
-
-## 结构化并发解决的是任务所有权
-
-非结构化的 `create_task` 类似手动分配内存：灵活，但调用者必须自己保存句柄、处理异常并保证回收。结构化并发要求子任务的生命周期不逃出一个明确的作用域。
-
-Python 3.11 的 `TaskGroup` 提供了基本语义：
+如果任务关系适合放在同一个作用域里，可以考虑 `TaskGroup`：
 
 ```python
 async def run_turn(request):
@@ -106,28 +42,15 @@ async def run_turn(request):
     return researcher.result(), reviewer.result()
 ```
 
-作用域退出前，组内任务必须完成；其中一个任务以非取消异常失败时，其余任务会被取消，异常最终以 `ExceptionGroup` 汇总。这比裸 `gather` 更接近“这组子任务共同属于当前操作”。
+这里的研究和审阅任务都归这次调用管理。离开作用域时，不能把它们当作与父任务无关的后台工作丢在那里。不过，正常退出 TaskGroup 通常会等待子任务完成，并不等于自动取消所有子任务；具体取消和异常传播仍要按它的语义处理。
 
-但 `TaskGroup` 不会自动解决：
+结构化并发能帮助我们管理任务关系，但它不知道哪个临时目录属于谁，也不知道某次工具调用是否已经在远端写入。后面这些还是业务层的工作。
 
-- Sandbox、浏览器会话和临时文件由谁拥有；
-- 已经发出的远程请求是否支持取消；
-- 外部副作用是否需要补偿；
-- 业务取消原因如何持久化；
-- 结果是否仍有资格写入当前 Turn。
+## 用过一个资源，不代表拥有它
 
-结构化并发给出了任务树，Harness 仍需为资源树和提交规则建模。
+一个子任务可能自己创建 Sandbox，也可能借用父任务的浏览器或连接池。这两类资源退出时不该走同一条清理逻辑。
 
-## 资源应该区分 owned 与 borrowed
-
-子 Agent 使用的资源至少分成两类：
-
-| 类型 | 示例 | 子 Agent 结束时 |
-|---|---|---|
-| `owned` | 自己创建的临时 Sandbox、临时目录、专属浏览器页 | 由子 Agent 释放 |
-| `borrowed` | 父 Agent 的工作区、共享客户端、会话级缓存 | 只解除引用，不能销毁底层资源 |
-
-可以把所有权明确写入租约：
+可以给资源记录一个简单的租约：
 
 ```python
 @dataclass
@@ -137,58 +60,23 @@ class ResourceLease:
     close: Callable[[], Awaitable[None]] | None
 ```
 
-清理规则随后变得可测试：
+`owned` 表示当前任务负责释放，`borrowed` 表示只是在使用。共享资源需要引用计数或独立的管理者；如果所有权会转移，也应有明确的交接，不能靠“最后碰过它的人”来猜。
 
-```python
-async def release(lease: ResourceLease):
-    if lease.ownership == "owned" and lease.close is not None:
-        await lease.close()
-```
+这是我觉得很容易在正常流程里看不出来的问题：任务顺利完成时都没事，一旦父子任务接连取消，同一份资源就可能被释放两次，或者谁都没释放。
 
-如果不区分这两种关系，系统会在两个方向犯错：不释放自有资源造成泄漏，或者错误关闭借用资源，破坏仍在运行的父任务和兄弟任务。
+## 清理也可能超时
 
-所有权还应支持转移。例如子任务生成一个工件并成功提交后，工件可能从 `child-owned` 转移为 `turn-owned`；如果提交前被取消，则仍由子任务清理。资源转移本身就是一个 Commit Boundary。
+把释放操作放进 `finally` 是起点，还要考虑释放本身卡住的情况。有些短小的必要操作可以用 `shield` 避免被外层取消一并打断，但被保护的任务仍可能继续运行。
 
-## `shield` 只能保护 await，不能创造清理协议
+因此，加一个 `wait_for` 超时，并不意味着里面的工作已经被终止；特别是内层任务受到 `shield` 保护时，上层不等了，它可能仍在执行。需要保留任务引用，安排后续回收或记录清理失败，而不是超时后就忘掉它。
 
-取消发生后，某些短小且必要的清理步骤不应再次被外层取消打断。常见做法是：
+如果远程资源确实无法及时关闭，可以把它记为待清理事项，交给独立回收流程。任务状态也应该能反映“业务已取消，但清理尚未完成”，这样排查时不会只看到一个过于乐观的 cancelled。
 
-```python
-async def bounded_cleanup(resource):
-    cleanup_task = asyncio.create_task(resource.close())
-    try:
-        await asyncio.wait_for(
-            asyncio.shield(cleanup_task),
-            timeout=5,
-        )
-    except TimeoutError:
-        record_cleanup_debt(resource.id)
-```
+## 取消和提交，可能同时发生
 
-这里三个机制各自解决不同问题：
+假设父任务刚更新为新一轮，旧子任务就返回了一份结果。只靠之前发出的取消信号，未必来得及阻止写入。
 
-- `shield`：外层等待被取消时，不自动取消被保护的清理任务。
-- `wait_for`：清理不能无限阻塞关闭流程。
-- `cleanup debt`：超时不等于资源已经消失，需要记录并交给后台回收或告警。
-
-不应把整个子 Agent 放进 `shield`。那会让父任务失去生命周期控制，也正是孤儿任务的来源之一。保护范围应尽量小，只覆盖维持系统不变量所必需的清理或提交步骤。
-
-## 取消不是回滚
-
-假设子 Agent 已经执行：
-
-```text
-创建草稿 → 上传文件 → 发送通知
-```
-
-取消发生在“上传文件”之后，`CancelledError` 无法撤回已经完成的远程副作用。此时系统需要显式选择：
-
-- 接受部分完成，并记录可观察状态；
-- 执行补偿操作，例如删除已上传但未提交的临时文件；
-- 使用服务端事务或 prepare/commit 协议；
-- 在高后果操作前再次验证取消状态与授权。
-
-这也是取消与 Commit Boundary 的连接点：取消信号只能阻止未来的 Python 控制流；真正阻止过期副作用，需要执行器在每个不可逆提交之前重新验证任务租约。
+一种思路是在任务上记录 generation，把结果和它开始执行时的那一代绑定：
 
 ```python
 async def commit_result(ctx, result):
@@ -204,127 +92,29 @@ async def commit_result(ctx, result):
     )
 ```
 
-这里检查两次仍不必然消除竞态，因此最终提交最好由带版本条件的原子操作完成。取消标志负责表达意图，generation/CAS 负责保证旧执行不能覆盖新状态。
+这段伪代码里，前面的读取检查只是提前发现失效。最后的条件提交才需要在存储层原子地验证 generation。取消也必须使提交所依赖的版本或租约失效，否则“检查通过到真正写入之间”仍然留着窗口。
 
-## 一个最小的生命周期骨架
+对于已经发往远程服务的操作，还需要对方支持相应的条件写入或 fencing 机制。如果它完全不支持取消和版本校验，就不能假装本地任务退出以后，远端也一定停止了；应保留结果未知的状态，再查询或补偿。
 
-下面的伪代码把注册、取消、清理与注销放进同一协议：
+## 已经发生的事情，要另行处理
 
-```python
-async def run_registered_child(registry, spec):
-    handle = await registry.register(
-        parent_id=spec.parent_id,
-        turn_id=spec.turn_id,
-        generation=spec.generation,
-    )
+假设流程是创建草稿、上传文件、发送通知。走到第三步时取消，前两步未必可以自动撤回。
 
-    try:
-        await registry.mark_running(handle.id)
-        result = await run_child(spec, handle)
-        await commit_result(handle.context, result)
-        await registry.mark_succeeded(handle.id)
-        return result
+是否删除草稿、清理上传文件，需要按产品语义决定；通知是否已发送，也可能要向外部服务核对。这里处理的是补偿和幂等，不能只依赖协程的取消异常。
 
-    except asyncio.CancelledError:
-        await registry.mark_cleaning_up(handle.id)
-        raise
+所以，任务最后除了成功和失败，还可能有“已取消但留下部分结果”“远端结果未知”这样的状态。把它们如实记录下来，后续才知道该恢复什么。
 
-    except Exception as exc:
-        await registry.mark_failed(handle.id, summarize(exc))
-        raise
+## 我想补的几个实验
 
-    finally:
-        await bounded_release_owned_resources(handle.resources)
-        await registry.finalize(handle.id)
-```
+下一步想把 TaskGroup、任务注册表和资源租约放进一个小例子里，在读取、写入、清理几个位置分别触发取消。
 
-对应的取消入口不伪装成同步完成：
+检查时会特别看：自有资源是否只释放一次，借用资源是否仍可使用，旧 generation 的结果能否被拒绝，以及清理超时有没有留下可处理的记录。只断言抛出了 `CancelledError`，覆盖不到这些问题。
 
-```python
-async def request_cancel(registry, task, reason):
-    await registry.mark_cancel_requested(task.id, reason)
-    task.runtime_task.cancel(reason.value)
+我现在对“取消完成”的理解也因此具体了一些：任务不再产生新的、未经允许的后果，已有结果和未完成的清理都能被上层看见。至于远端不能撤回的部分，需要明确留下来，不能用一个状态字段把它抹平。
 
-    try:
-        await asyncio.wait_for(task.runtime_task, timeout=10)
-    except asyncio.CancelledError:
-        pass
-    except TimeoutError:
-        await registry.mark_cleanup_timed_out(task.id)
-```
+## 继续读
 
-生产实现还需处理注册与启动之间的竞态、进程崩溃后的租约过期、远程 worker 失联和重复取消。这个骨架的价值不在于覆盖全部情况，而是让每个状态变化都有明确责任人。
-
-## 常见失败模式
-
-### 1. 创建任务后丢失强引用
-
-后台任务既没有注册表也没有结果消费者，异常无人观察，服务关闭时也无法枚举和取消。
-
-### 2. 吞掉 `CancelledError`
-
-```python
-try:
-    await work()
-except BaseException:
-    return fallback
-```
-
-宽泛捕获可能把取消变成普通成功。需要单独重新抛出 `CancelledError`，并谨慎使用 `uncancel()` 等机制。
-
-### 3. 先标记 cancelled，再等待真实退出
-
-状态与现实脱节，上游可能启动替代任务，而旧任务仍在写同一资源。
-
-### 4. 清理没有超时
-
-一个失联的浏览器或远程 worker 会让整个关闭流程永久挂起。
-
-### 5. 清理超时后假装成功
-
-系统失去资源泄漏的证据。至少需要保存 cleanup debt、资源标识和后续回收状态。
-
-### 6. 只检查任务是否取消，不检查结果是否过期
-
-取消与提交并发时，旧结果仍可能越过边界。结果提交需要 Turn/generation 条件，而非只读一次布尔标志。
-
-## 应该测试哪些不变量
-
-生命周期测试不应只断言“抛出了 `CancelledError`”。更有价值的是验证：
-
-1. 父任务取消后，不存在仍可提交结果的子任务。
-2. 一个子任务失败时，同组兄弟任务按策略退出。
-3. 每个 `owned` 资源恰好释放一次，`borrowed` 资源从未被子任务关闭。
-4. 清理超时会留下可追踪的 cleanup debt。
-5. 旧 generation 的结果无法覆盖新 Turn。
-6. 重复发送取消请求不会造成重复补偿或状态倒退。
-7. 进程重启后，过期租约能够被发现和回收。
-
-测试时应主动把取消注入到 `register`、资源创建、远程调用返回、提交前和清理中等边界，而不是只在任务稳定等待时取消。真正的错误往往藏在这些相邻状态之间。
-
-## 当前理解 / 结论
-
-1. 取消是协作式协议，不是强制终止指令。
-2. 结构化并发约束任务作用域，但资源所有权仍需单独建模。
-3. `owned`、`borrowed` 与 ownership transfer 决定谁可以释放资源。
-4. `shield` 适合保护有界清理，不适合让整个子 Agent 逃离父任务。
-5. 取消不能撤回已经发生的副作用；补偿、事务和提交前校验解决的是另一层问题。
-6. 可靠性最终取决于执行租约：旧任务即使尚未停止，也不能再跨过 Commit Boundary。
-
-它与 Blog 1 的关系可以概括为：
-
-> 父任务决定子 Agent 是否还值得继续，Execution Harness 决定一个已经失去资格的执行不能再产生什么后果。
-
-## 待补充
-
-- 将示例扩展成可运行的 `TaskGroup` 故障注入实验。
-- 对比本地 Task Registry 与分布式租约的失效模型。
-- 补充远程 Tool Call 不支持取消时的 fencing token 设计。
-- 研究清理债务的重试、告警和人工处置策略。
-
-## 相关链接 / 来源
-
-- [Autonomy Is a Budget：Agent 应该把自由度留在哪里？](/blog/autonomy-is-a-budget)
+- [Agent 可以自己做主到哪一步？](/blog/autonomy-is-a-budget)
 - Python documentation: [`Task Cancellation`](https://docs.python.org/3/library/asyncio-task.html#task-cancellation)
 - Python documentation: [`Task Groups`](https://docs.python.org/3/library/asyncio-task.html#task-groups)
 - Nathaniel J. Smith: [Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/)

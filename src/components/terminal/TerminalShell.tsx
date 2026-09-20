@@ -9,7 +9,6 @@ const pages: Record<string, string> = {
   home: '/',
   blog: '/blog',
   notes: '/notes',
-  talks: '/talks',
   projects: '/projects',
   links: '/links',
   about: '/about',
@@ -22,7 +21,7 @@ const commandNames = [
 ]
 
 export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(true)
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
   const [entries, setEntries] = useState<Entry[]>([])
@@ -66,25 +65,25 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
 
     if (command === 'help') {
       push([
-        { tone: 'primary', text: 'Available commands — try them out.' },
-        { text: '  help                 list available commands' },
-        { text: '  whoami / about       short introduction' },
-        { text: '  ls                   list site sections' },
-        { text: '  cd <page>            navigate to a section' },
-        { text: '  open <page>          open a section' },
-        { text: '  github               open GitHub profile' },
-        { text: '  status               show deployment status' },
-        { text: '  theme                toggle light / dark mode' },
-        { text: '  clear                clear terminal history' }
+        { tone: 'primary', text: '可以试试这些命令：' },
+        { text: '  help                 查看可用命令' },
+        { text: '  whoami / about       认识一下我' },
+        { text: '  ls                   查看网站栏目' },
+        { text: '  cd <page>            前往一个栏目' },
+        { text: '  open <page>          打开一个栏目' },
+        { text: '  github               打开 GitHub 主页' },
+        { text: '  status               查看站点信息' },
+        { text: '  theme                切换明暗主题' },
+        { text: '  clear                清空终端记录' }
       ])
       return
     }
     if (command === 'whoami' || command === 'about') {
       push([
         { tone: 'primary', text: 'Sia' },
-        { text: '北京邮电大学研究生 · 计算机类方向 · 2025 - Present' },
+        { text: '北京邮电大学 · 电子类研究生' },
         { text: 'AI Agent · LLM Systems · Backend Engineering' },
-        { tone: 'muted', text: 'Built SkillClaw Summarizer GRPO · Interned at GoalfyAI.' }
+        { tone: 'muted', text: '在做 SkillClaw Summarizer GRPO · 目前在深势科技实习。' }
       ])
       return
     }
@@ -103,14 +102,14 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
     }
     if (command === 'status') {
       push([
-        { tone: 'ok', text: '● ONLINE' },
+        { tone: 'ok', text: '● SIA’S SPACE' },
         { text: 'Vercel · Astro · https://siaspace.vercel.app' }
       ])
       return
     }
     if (command === 'theme') {
       document.querySelector<HTMLButtonElement>('#toggleDarkMode')?.click()
-      push([{ tone: 'ok', text: 'theme toggled' }])
+      push([{ tone: 'ok', text: '已切换主题' }])
       return
     }
     if (command === 'date') {
@@ -136,8 +135,8 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
       return
     }
     push([
-      { tone: 'err', text: `command not found: ${command}` },
-      { tone: 'muted', text: "type 'help' to see available commands" }
+      { tone: 'err', text: `没有这个命令： ${command}` },
+      { tone: 'muted', text: "输入 help 查看可用命令" }
     ])
   }, [push])
 
@@ -185,37 +184,38 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
     }
   }
 
-  const peek = useMemo(() => "click or press ` to open", [])
+  const peek = useMemo(() => "点击或按 ` 打开终端", [])
 
   return (
     <div
       className={`wt-shell ${collapsed ? 'wt-shell--collapsed' : ''}`}
       onClick={collapsed ? focusInput : () => inputRef.current?.focus()}
       role={collapsed ? 'button' : undefined}
+      onKeyDown={collapsed ? (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); focusInput() } } : undefined}
       aria-expanded={!collapsed}
       tabIndex={collapsed ? 0 : undefined}
     >
       <div className='wt-titlebar'>
         <div className='wt-lights'>
-          <button type='button' className='wt-light wt-light--r' aria-label='close terminal' onClick={(event) => { event.stopPropagation(); setCollapsed(true) }} />
-          <button type='button' className='wt-light wt-light--y' aria-label='minimize terminal' onClick={(event) => { event.stopPropagation(); setCollapsed(true) }} />
-          <button type='button' className='wt-light wt-light--g' aria-label='expand terminal' onClick={(event) => { event.stopPropagation(); focusInput() }} />
+          <button type='button' className='wt-light wt-light--r' aria-label='收起终端' onClick={(event) => { event.stopPropagation(); setCollapsed(true) }} />
+          <button type='button' className='wt-light wt-light--y' aria-label='最小化终端' onClick={(event) => { event.stopPropagation(); setCollapsed(true) }} />
+          <button type='button' className='wt-light wt-light--g' aria-label='展开终端' onClick={(event) => { event.stopPropagation(); focusInput() }} />
         </div>
         {collapsed ? (
           <div className='wt-title wt-title--peek'><span className='wt-prompt-sigil'>$</span>{peek}<span className='wt-caret wt-caret--idle' /></div>
         ) : (
           <div className='wt-title'>{user}@{host} — terminal</div>
         )}
-        <div className='wt-hint'>press <span className='wt-kbd'>`</span> to focus</div>
+        <div className='wt-hint'>按 <span className='wt-kbd'>`</span> 输入</div>
       </div>
 
-      <div className='wt-body' ref={bodyRef} aria-hidden={collapsed}>
+      <div className='wt-body' ref={bodyRef} aria-hidden={collapsed} inert={collapsed}>
         <div className='wt-banner'>
           <span className='wt-banner-title'>WTERM V0.1 · SIA.SH</span>
-          <span className='wt-banner-sub'>an interactive shell into this site — try help, whoami, or ls.</span>
+          <span className='wt-banner-sub'>换个方式逛逛：help 看命令，whoami 看介绍，ls 看栏目。</span>
         </div>
         {entries.length === 0 && (
-          <div className='wt-entry wt-tone-muted'>type 'help' to get started · 'whoami' for the short version</div>
+          <div className='wt-entry wt-tone-muted'>输入 help 开始，或用 whoami 认识一下我</div>
         )}
         {entries.map((entry, index) => entry.kind === 'input' ? (
           <div className='wt-entry' key={index}>
@@ -231,7 +231,7 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
           <span className='wt-input-display'>
             <span className='wt-tone-fg'>{input}</span>
             <span className={`wt-caret ${focused ? '' : 'wt-caret--idle'}`} />
-            {!input && !focused && <span className='wt-tone-muted wt-input-hint'>click or press <span className='wt-kbd'>`</span> then type <span className='wt-tone-primary'>help</span></span>}
+            {!input && !focused && <span className='wt-tone-muted wt-input-hint'>输入 <span className='wt-tone-primary'>help</span> 开始</span>}
             <input
               ref={inputRef}
               className='wt-input-hidden'
@@ -243,7 +243,7 @@ export default function TerminalShell({ user = 'sia', host = 'siaspace' }) {
               spellCheck={false}
               autoCapitalize='off'
               autoCorrect='off'
-              aria-label='terminal input'
+              aria-label='终端命令输入'
             />
           </span>
         </div>

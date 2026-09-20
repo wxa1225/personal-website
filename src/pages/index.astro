@@ -3,6 +3,7 @@ import { Button, Card, Icon, Label } from 'astro-pure/user'
 import { PostPreview } from 'astro-pure/components/pages'
 import { getCollection } from 'astro:content'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import Intro from '@/components/home/Intro.astro'
 import Terminal from '@/components/terminal/Terminal.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
@@ -24,6 +25,7 @@ const recentNotes = publishedNotes.slice(0, 4)
 ---
 
 <PageLayout meta={{ title: '首页' }} highlightColor='#659EB9'>
+  <Intro />
   <main class='flex w-full flex-col items-center'>
     <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
       <img
@@ -53,7 +55,7 @@ const recentNotes = publishedNotes.slice(0, 4)
           <span class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'></span>
           <span class='size-2 rounded-full bg-green-400'></span>
         </span>
-        <p class='font-medium text-muted-foreground'>Open to ideas and opportunities</p>
+        <p class='font-medium text-muted-foreground'>欢迎交流，一起做点有意思的事</p>
       </div>
     </section>
 
@@ -67,15 +69,15 @@ const recentNotes = publishedNotes.slice(0, 4)
       <Section title='About'>
         <p class='text-muted-foreground'>AI Agents · LLM Training · Backend Systems</p>
         <p class='text-muted-foreground'>
-          北京邮电大学计算机类方向研究生，关注 AI Agent 与 LLM 系统工程。
-          我在个人实验中探索 Agent 轨迹摘要、训练数据构建与 SFT/GRPO；
-          也曾在加和科技（GoalfyAI）参与 Agent 平台研发，并在医渡科技基础模型组参与临床循证 Agent 产品研发。
-          我希望把模型能力做成稳定、可评估、真正可用的系统。
+          我是 Sia，在北京邮电大学读电子类研究生，目前在深势科技实习。
+          最近主要在做 Agent 轨迹摘要，也在尝试 SFT / GRPO。想弄清楚怎么把很长的交互记录压缩成后续任务真正用得上的信息。
+          这里放我的项目和学习笔记。做过的尝试、读到的资料，还有暂时没想明白的问题，都会慢慢记下来。
         </p>
         <Button title='More about me' class='w-fit self-end' href='/about' variant='ahead' />
       </Section>
 
       <Section title='Blog'>
+        <p class='text-sm text-muted-foreground'>把一个问题想清楚，再把过程写下来。</p>
         <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
           {recentBlogs.map((post) => (
             <li class='flex flex-col gap-x-2 sm:flex-row'>
@@ -87,6 +89,7 @@ const recentNotes = publishedNotes.slice(0, 4)
       </Section>
 
       <Section title='Notes'>
+        <p class='text-sm text-muted-foreground'>读到的、试过的、还没弄懂的，先记在这里。</p>
         <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
           {recentNotes.map((note) => (
             <li class='post-preview group/card relative flex flex-col rounded-2xl border bg-background px-5 py-2.5 transition-colors ease-in-out hover:bg-muted'>
@@ -106,31 +109,13 @@ const recentNotes = publishedNotes.slice(0, 4)
       </Section>
 
       <Section title='Experience'>
-        <Card
-          heading='加和科技（GoalfyAI）'
-          subheading='AI Agent 平台研发实习'
-        >
-          <ul class='ms-4 list-disc text-muted-foreground'>
-            <li>参与 Agent Runtime、MCP 工具服务和平台后端相关研发。</li>
-          </ul>
-        </Card>
-        <Card
-          as='a'
-          href='https://www.yidutech.com/news-detail.html?id=335'
-          target='_blank'
-          heading='医渡科技（Yidu Tech）'
-          subheading='基础模型组 · Agent 开发实习'
-        >
-          <ul class='ms-4 list-disc text-muted-foreground'>
-            <li>参与“医渡智循”的研发——面向医生临床诊疗与科研场景的临床循证智能体。</li>
-          </ul>
-        </Card>
+        <Card heading='深势科技' subheading='实习' date='2026.08 — 至今' />
       </Section>
 
       <Section title='Education'>
         <Card
           heading='北京邮电大学'
-          subheading='研究生 · 计算机类方向'
+          subheading='研究生 · 电子类'
           date='2025 - Present'
         />
       </Section>
@@ -153,7 +138,7 @@ const recentNotes = publishedNotes.slice(0, 4)
             <div class='mt-1 text-xs text-muted-foreground'>笔记</div>
           </div>
           <div class='rounded-xl border bg-muted/30 px-4 py-3 text-center'>
-            <div class='text-2xl font-medium tabular-nums'>2</div>
+            <div class='text-2xl font-medium tabular-nums'>1</div>
             <div class='mt-1 text-xs text-muted-foreground'>经历</div>
           </div>
           <div class='rounded-xl border bg-muted/30 px-4 py-3 text-center'>
