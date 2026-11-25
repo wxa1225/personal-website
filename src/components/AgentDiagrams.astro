@@ -1,0 +1,98 @@
+<script is:inline src='/vendor/agent-handbook/mermaid.min.js'></script>
+
+<dialog id='agent-diagram-dialog' aria-label='放大框图'>
+  <div class='agent-dialog-toolbar'>
+    <button type='button' data-diagram-zoom='in'>放大</button>
+    <button type='button' data-diagram-zoom='out'>缩小</button>
+    <button type='button' data-diagram-zoom='reset'>重置</button>
+    <button type='button' data-diagram-close>关闭</button>
+  </div>
+  <div class='agent-diagram-canvas'></div>
+</dialog>
+
+<script>
+  type MermaidApi = {
+    initialize: (options: Record<string, unknown>) => void
+    render: (id: string, source: string) => Promise<{ svg: string }>
+  }
+  const getMermaid = () => (window as Window & { mermaid?: MermaidApi }).mermaid
+  let generation = 0
+  let renderQueue = Promise.resolve()
+
+  function setupDiagrams() {
+    const nodes = [...document.querySelectorAll<HTMLElement>('.agent-diagram .mermaid:not([data-rendered])')]
+    if (!nodes.length) return
+    const api = getMermaid()
+    if (!api) return
+    api.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'neutral', fontFamily: 'PingFang SC, Microsoft YaHei, sans-serif', flowchart: { htmlLabels: false } })
+    const thisGeneration = ++generation
+    renderQueue = renderQueue.then(async () => {
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i]!
+        if (!node.isConnected || thisGeneration !== generation) return
+        try {
+          const { svg } = await api.render(`agent-graph-${thisGeneration}-${i}`, node.textContent ?? '')
+          if (!node.isConnected || thisGeneration !== generation) return
+          node.innerHTML = svg
+          node.dataset.rendered = 'true'
+          const button = node.closest('figure')?.querySelector<HTMLButtonElement>('[data-expand-diagram]')
+          if (button) {
+            button.disabled = false
+            button.addEventListener('click', () => openDiagram(svg))
+          }
+        } catch {
+          node.dataset.rendered = 'error'
+          const message = document.createElement('p')
+          message.textContent = '此图暂未渲染，可展开下方源码查看。'
+          node.before(message)
+        }
+      }
+    })
+  }
+
+  function openDiagram(svg: string) {
+    const dialog = document.querySelector<HTMLDialogElement>('#agent-diagram-dialog')
+    const canvas = dialog?.querySelector<HTMLElement>('.agent-diagram-canvas')
+    if (!dialog || !canvas) return
+    canvas.innerHTML = svg
+    let zoom = 1
+    const resize = () => {
+      const picture = canvas.querySelector('svg')
+      if (picture) {
+        picture.style.width = `${Math.max(650, picture.viewBox.baseVal.width) * zoom}px`
+        picture.style.height = 'auto'
+      }
+    }
+    dialog.querySelectorAll<HTMLButtonElement>('[data-diagram-zoom]').forEach(button => {
+      button.onclick = () => {
+        const action = button.dataset.diagramZoom
+        zoom = action === 'reset' ? 1 : action === 'in' ? Math.min(4, zoom * 1.25) : Math.max(.25, zoom / 1.25)
+        resize()
+      }
+    })
+    const close = dialog.querySelector<HTMLButtonElement>('[data-diagram-close]')
+    if (close) close.onclick = () => dialog.close()
+    resize()
+    dialog.showModal()
+  }
+  document.addEventListener('astro:page-load', setupDiagrams)
+  document.addEventListener('astro:before-swap', () => { generation++ })
+  setupDiagrams()
+</script>
+
+<style is:global>
+  .agent-diagram { margin: 1.75rem 0; border: 1px solid #cbd5e1; border-radius: .75rem; padding: 1rem; background: #fff; color: #172c47; }
+  .agent-diagram .mermaid { overflow: auto; background: #fff; border: 0; padding: .25rem; margin: .5rem 0; text-align: center; }
+  .agent-diagram .mermaid svg { max-width: 100%; height: auto; }
+  .agent-diagram-actions { display: flex; justify-content: flex-end; }
+  .agent-diagram button, .agent-dialog-toolbar button { padding: .35rem .8rem; border: 1px solid #b9c7da; border-radius: .4rem; background: #fff; color: #172c47; font-size: .875rem; cursor: pointer; }
+  .agent-diagram button:disabled { cursor: wait; opacity: .5; }
+  .agent-diagram details { color: #465971; font-size: .875rem; margin-top: .75rem; }
+  .agent-diagram details pre { white-space: pre-wrap; background: #f1f5f9; color: #172c47; padding: 1rem; }
+  #agent-diagram-dialog { width: 95vw; height: 90vh; max-width: 1500px; max-height: 95vh; border: 1px solid #94a3b8; border-radius: .75rem; padding: 1rem; background: #fff; color: #172c47; }
+  #agent-diagram-dialog::backdrop { background: #122038a8; }
+  .agent-dialog-toolbar { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .agent-diagram-canvas { overflow: auto; height: calc(100% - 4rem); padding: 1rem; }
+  .agent-diagram-canvas svg { max-width: none !important; }
+  @media print { .agent-diagram-actions, .agent-diagram details, #agent-diagram-dialog { display: none; } }
+</style>

@@ -1,0 +1,56 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content'
+import { TOC } from 'astro-pure/components/pages'
+import 'katex/dist/katex.min.css'
+import PageLayout from '@/layouts/ContentLayout.astro'
+import AgentDiagrams from '@/components/AgentDiagrams.astro'
+
+export const prerender = true
+
+export async function getStaticPaths() {
+  const chapters = (await getCollection('agentHandbook')).sort((a, b) => a.data.order - b.data.order)
+  return chapters.map(chapter => ({
+    params: { slug: chapter.data.order === 0 ? undefined : chapter.id },
+    props: { chapter, chapters }
+  }))
+}
+
+type Props = { chapter: CollectionEntry<'agentHandbook'>; chapters: CollectionEntry<'agentHandbook'>[] }
+const { chapter, chapters } = Astro.props
+const { Content, headings } = await render(chapter)
+const position = chapters.findIndex(item => item.id === chapter.id)
+const previous = chapters[position - 1]
+const next = chapters[position + 1]
+const pathFor = (entry: CollectionEntry<'agentHandbook'>) => entry.data.order === 0 ? '/learn/agent' : `/learn/agent/${entry.id}`
+---
+
+<PageLayout meta={{ title: chapter.data.title, description: chapter.data.description }} back='/learn/agent'>
+  <Fragment slot='sidebar'>
+    <nav class='handbook-nav' aria-label='学习手册章节'>
+      <h2>知识总图与章节</h2>
+      {chapters.map(item => <a href={pathFor(item)} aria-current={item.id === chapter.id ? 'page' : undefined}>{item.data.title}</a>)}
+    </nav>
+    {!!headings.length && <TOC {headings} />}
+  </Fragment>
+  <Fragment slot='header'>
+    <p class='mb-3 text-sm text-muted-foreground'>Agent 研发原理与实践 · 持续更新的学习专栏</p>
+    <h1 class='text-2xl font-medium sm:text-3xl'>{chapter.data.title}</h1>
+    <p class='mt-3 leading-relaxed text-muted-foreground'>{chapter.data.description}</p>
+    <p class='mt-4 text-sm'><a href='/agent-handbook/agent-handbook-markdown.zip' download>下载 Markdown 笔记库</a><span class='mx-3 text-muted-foreground'>·</span><span class='text-muted-foreground'>更新于 {chapter.data.updatedDate.toISOString().slice(0, 10)}</span></p>
+  </Fragment>
+  <Content />
+  <nav slot='bottom' class='handbook-pager' aria-label='相邻章节'>
+    {previous && <a href={pathFor(previous)}>上一章 · {previous.data.title}</a>}
+    {next && <a href={pathFor(next)}>下一章 · {next.data.title}</a>}
+  </nav>
+</PageLayout>
+<AgentDiagrams />
+
+<style>
+  .handbook-nav { margin-bottom: 2rem; font-size: .9rem; }
+  .handbook-nav h2 { font-size: 1rem; font-weight: 600; margin-bottom: .8rem; }
+  .handbook-nav a { display: block; padding: .6rem .75rem; border-radius: .45rem; margin: .2rem 0; line-height: 1.6; text-decoration: none; }
+  .handbook-nav a:hover, .handbook-nav a[aria-current=page] { background: color-mix(in srgb, currentColor 9%, transparent); }
+  .handbook-pager { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .handbook-pager a { border: 1px solid; border-color: color-mix(in srgb, currentColor 20%, transparent); border-radius: .5rem; padding: .75rem 1rem; font-size: .9rem; }
+</style>

@@ -8,6 +8,7 @@ import remarkMath from 'remark-math'
 
 // Local integrations
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
+import remarkAgentDiagrams from './src/plugins/remark-agent-diagrams.ts'
 // Shiki
 import {
   addCollapse,
@@ -74,7 +75,7 @@ export default defineConfig({
 
   // [Markdown]
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkMath, remarkAgentDiagrams],
     rehypePlugins: [
       [rehypeKatex, {}],
       rehypeHeadingIds,

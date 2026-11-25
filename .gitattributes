@@ -1,0 +1,2 @@
+# Preserve the upstream renderer bytes and avoid unreadable minified diffs.
+public/vendor/agent-handbook/mermaid.min.js -diff linguist-vendored
