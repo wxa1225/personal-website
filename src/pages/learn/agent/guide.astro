@@ -1,0 +1,23 @@
+---
+import { getEntry, render } from 'astro:content'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import LearningNav from '@/components/LearningNav.astro'
+import AgentDiagrams from '@/components/AgentDiagrams.astro'
+import { integ } from '@/site-config'
+const chapter = await getEntry('agentHandbook', '00-overview')
+if (!chapter) throw new Error('Missing learning overview')
+const { Content, headings } = await render(chapter)
+export const prerender = true
+---
+<BaseLayout meta={{ title:'全景导读 · 大模型学习', description:chapter.data.description }}>
+  <main class='mx-auto max-w-4xl py-8'>
+    <p class='text-sm text-muted-foreground'>学习专栏 / 从全景开始</p>
+    <h1 class='mt-3 text-3xl font-semibold'>先认识对象，再理解关系</h1>
+    <LearningNav active='/learn/agent/guide' />
+    <details class='guide-toc'><summary>本篇目录</summary><ul>{headings.filter(h=>h.depth===2).map(h=><li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ul></details>
+    <article class={`guide-body ${integ.typography.class}`}><Content /></article>
+    <p class='mt-8'><a class='underline underline-offset-4' href='/learn/agent'>回到知识地图，选择一个分支</a></p>
+  </main>
+</BaseLayout>
+<AgentDiagrams />
+<style>.guide-toc{font-size:1rem;line-height:1.9;padding:1rem 1.25rem;background:hsl(var(--muted));border-radius:.5rem;margin:1.5rem 0 2rem}.guide-toc summary{cursor:pointer;font-weight:600}.guide-toc ul{padding-left:1.2rem;list-style:disc;margin-top:.75rem}.guide-toc a{text-decoration:underline}.guide-body{max-width:72ch;margin:auto;font-size:1rem}</style>

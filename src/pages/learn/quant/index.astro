@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
+import LearningNav from '@/components/LearningNav.astro'
 import { quantNodes, knowledgeLink } from '../../../lib/radar'
 export const prerender = true
 const bridges = [
@@ -10,8 +11,9 @@ const bridges = [
 ---
 <BaseLayout meta={{ title: '量化研究学习地图', description: '从市场与数据到信号、组合、回测、执行和 AI 研究，把收益主张还原为可检验链路。' }}>
   <main class='mx-auto max-w-5xl py-8'>
-    <p class='text-sm'><a href='/radar/quant'>量化与市场每日观察</a> · <a href='/learn/agent'>大模型知识树</a></p>
+    <p class='text-sm text-muted-foreground'>学习专栏 / 量化研究</p>
     <h1 class='mt-6 text-3xl font-medium'>量化研究：从信息走到可检验的决策</h1>
+    <LearningNav active='/learn/quant' />
     <p class='mt-4 max-w-3xl leading-loose'>先回答信息何时可知，再问它是否有预测力；把预测变成受约束的仓位后，还要考虑交易成本、成交概率和实盘反馈。这是一条研究链路，每一环都可能使漂亮的回测失效。</p>
     <p class='mt-4 max-w-3xl leading-loose text-muted-foreground'>为什么与 AI 放在一起学：<a class='underline underline-offset-4' href='https://www.high-flyer.cn/history/'>幻方公开发展历程</a>展示了量化研究、机器学习与算力工程的长期联系。它们共享统计、数据和系统能力，但研究目标、噪声来源与验证方式各有约束。</p>
     <ol class='quant-map'>{quantNodes.map((node, index) => <li><span class='step'>研究环节 {index + 1}</span><h2><a href={`/learn/quant/${node.slug}`}>{node.title}</a></h2><p>{node.question}</p><a class='read' href={`/learn/quant/${node.slug}`}>进入原理、算例与自测</a></li>)}</ol>
@@ -21,5 +23,5 @@ const bridges = [
   </main>
 </BaseLayout>
 <style>
-.quant-map{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:2rem;counter-reset:step}.quant-map li{border:1px solid var(--border);border-radius:.5rem;padding:1.25rem;line-height:1.8}.step{font-size:.875rem;color:var(--muted-foreground)}.quant-map h2{font-size:1.2rem;font-weight:600;margin:.3rem 0}.quant-map p{margin:.5rem 0}.read,.bridge a{text-decoration:underline;text-underline-offset:.25rem;font-size:.95rem}.bridge{border-top:1px solid var(--border);padding:1.5rem 0;line-height:1.85}.bridge h3{font-weight:600;font-size:1.1rem;margin-bottom:.5rem}.links{display:flex;gap:.5rem 1rem;flex-wrap:wrap;margin-top:.75rem}@media(max-width:640px){.quant-map{grid-template-columns:1fr}}
+.quant-map{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:2rem;counter-reset:step}.quant-map li{border:1px solid hsl(var(--border));border-radius:.5rem;padding:1.25rem;line-height:1.8}.step{font-size:.875rem;color:hsl(var(--muted-foreground))}.quant-map h2{font-size:1.2rem;font-weight:600;margin:.3rem 0}.quant-map p{margin:.5rem 0}.read,.bridge a{text-decoration:underline;text-underline-offset:.25rem;font-size:.95rem}.bridge{border-top:1px solid hsl(var(--border));padding:1.5rem 0;line-height:1.85}.bridge h3{font-weight:600;font-size:1.1rem;margin-bottom:.5rem}.links{display:flex;gap:.5rem 1rem;flex-wrap:wrap;margin-top:.75rem}@media(max-width:640px){.quant-map{grid-template-columns:1fr}}
 </style>

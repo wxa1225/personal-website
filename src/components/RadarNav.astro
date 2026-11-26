@@ -1,13 +1,10 @@
 ---
 const { active = '' } = Astro.props
-const links = [
-  ['今日观察', '/radar'], ['AI 前沿', '/radar/ai'], ['量化与市场', '/radar/quant'],
-  ['往期', '/radar/archive'], ['信息源', '/radar/sources'], ['编辑方法', '/radar/method']
-]
+const links = [['全部动态', '/radar'], ['AI 前沿', '/radar/ai'], ['量化与市场', '/radar/quant'], ['往期', '/radar/archive']]
 ---
-<nav class='radar-nav' aria-label='每日观察导航'>
+<nav class='radar-nav' aria-label='前沿动态导航'>
   {links.map(([label, href]) => <a href={href} aria-current={active === href ? 'page' : undefined}>{label}</a>)}
 </nav>
 <style>
-.radar-nav{display:flex;gap:.5rem 1.25rem;flex-wrap:wrap;margin:1.25rem 0 2rem;border-bottom:1px solid var(--border);padding-bottom:1rem;font-size:.95rem}.radar-nav a[aria-current]{font-weight:650;text-decoration:underline;text-underline-offset:.5rem}.radar-nav a:hover{text-decoration:underline}
+.radar-nav{display:flex;gap:1.5rem;overflow-x:auto;white-space:nowrap;margin:1.75rem 0;border-bottom:1px solid hsl(var(--border));font-size:.95rem}.radar-nav a{padding:.65rem 0 .8rem;color:hsl(var(--muted-foreground));border-bottom:2px solid transparent}.radar-nav a[aria-current]{font-weight:650;color:hsl(var(--foreground));border-bottom-color:hsl(var(--primary))}.radar-nav a:hover{color:hsl(var(--primary))}@media(max-width:420px){.radar-nav{gap:1.05rem;font-size:.9rem}}
 </style>

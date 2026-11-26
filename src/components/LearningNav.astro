@@ -1,0 +1,8 @@
+---
+const { active = '/learn/agent' } = Astro.props
+const links = [['知识地图','/learn/agent'],['学习路线','/learn/agent/routes'],['全景导读','/learn/agent/guide'],['原始资料','/learn/resources'],['量化学习','/learn/quant']]
+---
+<nav class='learning-nav' aria-label='学习专栏导航'>{links.map(([title,href]) => <a href={href} aria-current={active === href ? 'page' : undefined}>{title}</a>)}</nav>
+<style>
+.learning-nav{display:flex;gap:1.4rem;overflow-x:auto;white-space:nowrap;border-bottom:1px solid hsl(var(--border));margin:1.5rem 0;font-size:.95rem}.learning-nav a{padding:.7rem 0;border-bottom:2px solid transparent;color:hsl(var(--muted-foreground))}.learning-nav a[aria-current]{color:hsl(var(--foreground));font-weight:600;border-bottom-color:hsl(var(--primary))}.learning-nav a:hover{color:hsl(var(--primary))}
+</style>

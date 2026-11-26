@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import { parse as parseYaml } from 'yaml'
 import katex from 'katex'
 import { freshness } from '../src/lib/radar-dates.ts'
+import { recentPublication, groupByPublication } from '../src/lib/radar-feed.ts'
 
 const root = new URL('../', import.meta.url)
 const read = file => fs.readFileSync(new URL(file, root), 'utf8')
@@ -39,7 +40,7 @@ test('all knowledge nodes have actionable reading cards with public primary-sour
   }
 })
 
-test('editions distinguish evidence, interpretation, dates, coverage and unanswered questions', () => {
+test('news editions preserve source dates and facts without requiring teaching commentary', () => {
   assert.ok(issues.length > 0)
   for (const { file, issue } of issues) {
     date(issue.date); date(issue.checkedAt); date(issue.coverage.start); date(issue.coverage.end)
@@ -58,11 +59,11 @@ test('editions distinguish evidence, interpretation, dates, coverage and unanswe
       assert.ok(!urls.has(item.url), 'duplicate source in issue: ' + item.url); urls.add(item.url)
       if (item.publishedAt !== null) { date(item.publishedAt); assert.ok(item.publishedAt <= item.checkedAt) }
       assert.ok(item.checkedAt <= issue.checkedAt)
-      for (const key of ['facts','interpretation','limits','readFocus','followUp']) assert.ok(typeof item[key] === 'string' && item[key].length >= 12, item.id + ': ' + key)
-      assert.ok(item.conceptIds.length > 0)
-      for (const id of item.conceptIds) assert.ok(ids.has(id), item.id + ' -> ' + id)
+      assert.ok(typeof item.facts === 'string' && item.facts.length >= 12, item.id)
+      if (item.eventAt) { date(item.eventAt); assert.ok(item.eventAt <= issue.checkedAt) }
+      for (const id of item.conceptIds || []) assert.ok(ids.has(id), item.id + ' -> ' + id)
     }
-    for (const takeaway of issue.takeaways) {
+    for (const takeaway of issue.takeaways || []) {
       assert.ok(takeaway.text.length > 10 && takeaway.itemIds.length > 0)
       for (const id of takeaway.itemIds) assert.ok(itemIds.has(id), 'ungrounded takeaway: ' + id)
     }
@@ -99,4 +100,17 @@ test('source library and editorial policy preserve access limits and public/priv
   for (const privateText of ['/Users/dp','TaskArena','Bohrium','飞书群','git.dp.tech','wxid_']) assert.ok(!data.includes(privateText), privateText)
   assert.ok(read('src/pages/radar/method.astro').includes('本地 Codex'))
   assert.ok(read('docs/daily-radar-runbook.md').includes('不 force push'))
+})
+
+
+test('feed separates actual recent events, older material and undated discoveries', () => {
+  const items = [
+    {id:'old', publishedAt:'2015-02-27'},
+    {id:'undated', publishedAt:null},
+    {id:'event', publishedAt:null, eventAt:'2026-11-25'},
+    {id:'today', publishedAt:'2026-11-26'},
+    {id:'future', publishedAt:'2026-11-27'}
+  ]
+  assert.deepEqual(items.filter(x => recentPublication(x,'2026-11-26')).map(x=>x.id), ['event','today'])
+  assert.deepEqual(groupByPublication(items.slice(0,4)).map(g=>g.date), ['2026-11-26','2026-11-25','2015-02-27','日期未注明'])
 })

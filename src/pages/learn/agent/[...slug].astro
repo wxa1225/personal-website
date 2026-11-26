@@ -4,13 +4,13 @@ import { TOC } from 'astro-pure/components/pages'
 import 'katex/dist/katex.min.css'
 import PageLayout from '@/layouts/ContentLayout.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
+import LearningNav from '@/components/LearningNav.astro'
 import AgentDiagrams from '@/components/AgentDiagrams.astro'
 import AgentKnowledgeMap from '@/components/AgentKnowledgeMap.astro'
 import KnowledgePosition from '@/components/KnowledgePosition.astro'
 import KnowledgeSidebar from '@/components/KnowledgeSidebar.astro'
 import LearningResources from '@/components/LearningResources.astro'
 import { concepts, conceptById, lessonUrl } from '../../../lib/agent-curriculum'
-import { integ } from '@/site-config'
 
 export const prerender = true
 export async function getStaticPaths() {
@@ -30,12 +30,16 @@ const meta = { title: chapter.data.title, description: chapter.data.description 
 
 {overview ? <BaseLayout {meta}>
   <main class='knowledge-home py-8'>
-    <p class='text-sm text-muted-foreground'>Sia's Space · 大模型技术学习专栏</p>
-    <h1 class='mt-3 text-3xl font-medium sm:text-4xl'>从知识总图，走到可以讲通的原理</h1>
-    <p class='mt-4 max-w-3xl leading-relaxed text-muted-foreground'>数学与软件基础支撑模型，模型构成应用与 Agent，基础设施让它们可运行，评测让改进有依据。先找到位置，再沿依赖追问。</p>
-    <p class='mt-4 text-sm leading-loose'><a class='underline underline-offset-4' href='/agent-handbook/agent-handbook-markdown.zip' download>下载完整 Markdown 笔记库</a><span class='mx-3'>·</span><a class='underline underline-offset-4' href='#how-to-learn'>怎样使用这张图</a><span class='mx-3'>·</span><a class='underline underline-offset-4' href='/learn/resources'>原始资料阅读库</a><span class='mx-3'>·</span><a class='underline underline-offset-4' href='/radar'>每日前沿观察</a></p>
-    <div class='mt-9'><AgentKnowledgeMap /></div>
-    <article id='how-to-learn' class={`mt-12 max-w-none ${integ.typography.class}`}><Content /></article>
+    <p class='text-sm text-muted-foreground'>Sia's Space / 学习专栏</p>
+    <h1 class='mt-3 text-3xl font-semibold sm:text-4xl'>大模型学习地图</h1>
+    <p class='mt-4 max-w-3xl leading-relaxed text-muted-foreground'>先看全景，找到问题的位置，再沿前置知识深入到原理、算例和自测。</p>
+    <LearningNav />
+    <AgentKnowledgeMap />
+    <section class='learning-start' aria-label='选择学习入口'>
+      <a href='/learn/agent/guide'><h2>刚开始：先看懂整张图</h2><p>模型、应用、工具与运行时各做什么，六个分支为什么互相需要。</p></a>
+      <a href='/learn/agent/routes'><h2>带着问题：沿一条链学透</h2><p>为什么答错、为什么慢、能否安全重试？从问题找到需要的原理。</p></a>
+    </section>
+    <footer class='learning-download'><a href='/agent-handbook/agent-handbook-markdown.zip' download>下载完整 Markdown 笔记库</a><span>可在 Obsidian 等笔记软件中继续补充。</span></footer>
   </main>
 </BaseLayout> : <PageLayout {meta} back='/learn/agent'>
   <Fragment slot='sidebar'>
@@ -64,6 +68,7 @@ const meta = { title: chapter.data.title, description: chapter.data.description 
 <AgentDiagrams />
 <style>
   .knowledge-home { scroll-margin-top:5rem; }
+  .learning-start{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:2rem 0;padding-top:1.5rem;border-top:1px solid hsl(var(--border))}.learning-start h2{font-size:1.1rem;font-weight:600}.learning-start p{font-size:.95rem;line-height:1.8;color:hsl(var(--muted-foreground));margin-top:.5rem}.learning-start a:hover h2{text-decoration:underline;text-underline-offset:.3em}.learning-download{display:flex;flex-wrap:wrap;gap:.5rem 1rem;color:hsl(var(--muted-foreground));font-size:.875rem;margin:1.5rem 0}.learning-download a{text-decoration:underline;text-underline-offset:.2em}@media(max-width:600px){.learning-start{grid-template-columns:1fr}}
   .chapter-lessons { padding:1rem 1.1rem; border:1px solid color-mix(in srgb,currentColor 20%,transparent); border-radius:.6rem; margin-bottom:2rem; line-height:1.7; }
   .chapter-lessons h2 { font-size:1.1rem; font-weight:600; margin:0 0 .5rem; }
   .chapter-lessons ul { margin:1rem 0 0; padding:0; list-style:none; }.chapter-lessons li { margin:.8rem 0; }.chapter-lessons li a { font-weight:600; text-decoration:underline; }.chapter-lessons li p { font-size:.9rem; opacity:.8; margin:.25rem 0; }

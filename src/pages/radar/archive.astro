@@ -4,11 +4,11 @@ import RadarNav from '@/components/RadarNav.astro'
 import { issues } from '../../lib/radar'
 export const prerender = true
 ---
-<BaseLayout meta={{ title: '每日观察 · 往期', description: '可追溯的每日 AI 与量化市场观察，保留当时证据与判断。' }}>
+<BaseLayout meta={{ title: '前沿简报 · 往期', description: '按日期回看 AI、量化与市场动态。' }}>
   <main class='mx-auto max-w-4xl py-8'>
     <RadarNav active='/radar/archive' />
-    <h1 class='text-3xl font-medium'>每日观察 · 往期</h1>
-    <p class='my-4 leading-relaxed text-muted-foreground'>观点保留在产生它的时间点。发生修正时，在原期注明原因与修订时间，便于回看当时知道什么。</p>
+    <h1 class='text-3xl font-medium'>前沿简报 · 往期</h1>
+    <p class='my-4 leading-relaxed text-muted-foreground'>按整理日期回看消息。条目内保留原始发布或事件日期，较早资料单独列出。</p>
     <ul class='mt-8'>{issues.map(issue => <li class='border-t py-6'><time class='text-sm text-muted-foreground'>{issue.date}</time><h2 class='my-2 text-xl font-medium'><a href={`/radar/${issue.date}`}>{issue.title}</a></h2><p class='leading-relaxed'>{issue.summary}</p></li>)}</ul>
   </main>
 </BaseLayout>

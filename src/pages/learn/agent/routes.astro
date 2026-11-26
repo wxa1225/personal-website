@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import LearningNav from '@/components/LearningNav.astro'
+import { problems, learningPaths, roles, conceptById, lessonUrl } from '../../../lib/agent-curriculum'
+export const prerender = true
+---
+<BaseLayout meta={{title:'学习路线 · 大模型学习',description:'从实际问题、理解依赖或工作方向进入知识体系。'}}>
+  <main class='routes-home mx-auto max-w-4xl py-8'>
+    <p class='text-sm text-muted-foreground'>学习专栏 / 选择入口</p><h1>沿一个问题，把几层知识串起来</h1>
+    <LearningNav active='/learn/agent/routes' />
+    <p>先选你想解释的问题，依次读相关节点。已有把握的基础可以跳过；卡住时回到每篇开头的前置关系。</p>
+    <h2>从问题开始</h2>
+    <div class='route-list'>{problems.map(problem=><details><summary>{problem.title}</summary><p>{problem.explanation}</p><ol>{problem.nodes.map(id=>{const n=conceptById(id)!;return <li><a href={lessonUrl(n)}>{n.title}</a><span>{n.question}</span></li>})}</ol></details>)}</div>
+    <h2>想系统补基础</h2>
+    <div class='route-list'>{learningPaths.map(path=><details><summary>{path.title}</summary><p>{path.description}</p><ol>{path.nodes.map(id=>{const n=conceptById(id)!;return <li><a href={lessonUrl(n)}>{n.title}</a></li>})}</ol></details>)}</div>
+    <h2>按工作方向查重心</h2><p>这些路线表示知识重心，具体招聘要求还要看岗位说明和实操经历。</p>
+    <div class='route-list'>{roles.filter(r=>r.id!=='all').map(role=><details><summary>{role.title}</summary><p>{role.description}</p><ul>{role.nodes.map(id=>{const n=conceptById(id)!;return <li><a href={lessonUrl(n)}>{n.title}</a></li>})}</ul></details>)}</div>
+  </main>
+</BaseLayout>
+<style>.routes-home{font-size:1rem;line-height:1.8}.routes-home h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:650;line-height:1.4;margin-top:.75rem}.routes-home h2{font-size:1.35rem;font-weight:650;margin:2.5rem 0 1rem}.routes-home>p{color:hsl(var(--muted-foreground))}.route-list{display:grid;gap:.75rem}.route-list details{border:1px solid hsl(var(--border));border-radius:.5rem;padding:1rem 1.25rem}.route-list summary{cursor:pointer;font-weight:600}.route-list details p{margin:.9rem 0;color:hsl(var(--muted-foreground))}.route-list ol{list-style:decimal;padding-left:1.4rem}.route-list ul{list-style:disc;padding-left:1.4rem}.route-list li{margin:.6rem 0}.route-list li span{display:block;font-size:.9rem;color:hsl(var(--muted-foreground))}.route-list a{text-decoration:underline;text-underline-offset:.2em}</style>

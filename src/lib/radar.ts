@@ -4,14 +4,14 @@ export { freshness } from './radar-dates'
 export type RadarChannel = 'ai' | 'quant'
 export type RadarItem = {
   id: string; channel: RadarChannel; category: string; title: string
-  url: string; publisher: string; publishedAt: string | null; checkedAt: string
-  facts: string; interpretation: string; limits: string; readFocus: string
-  conceptIds: string[]; followUp: string
+  url: string; publisher: string; publishedAt: string | null; eventAt?: string; checkedAt: string
+  facts: string; interpretation?: string; limits?: string; readFocus?: string
+  conceptIds?: string[]; followUp?: string
 }
 export type RadarIssue = {
   date: string; title: string; summary: string; checkedAt: string
   coverage: { start: string; end: string; note: string; gaps: string[] }
-  takeaways: { text: string; itemIds: string[] }[]
+  takeaways?: { text: string; itemIds: string[] }[]
   items: RadarItem[]
   corrections?: { date: string; reason: string }[]
 }

@@ -1,22 +1,16 @@
 ---
-import { channels, freshness, knowledgeLink, type RadarItem } from '../lib/radar'
+import type { RadarItem } from '../lib/radar'
 interface Props { item: RadarItem; date: string }
-const { item, date } = Astro.props
-const related = item.conceptIds.map(id => ({ id, link: knowledgeLink(id) })).filter(x => x.link)
+const { item } = Astro.props
 ---
-<article class='radar-card' id={item.id}>
-  <p class='eyebrow'>{channels[item.channel]} · {item.category} · {freshness(item.publishedAt, date)}</p>
-  <h3><a href={item.url} rel='noopener noreferrer'>{item.title}</a></h3>
-  <p class='source'>{item.publisher} · 原文 {item.publishedAt || '未注明日期'} · 核验 {item.checkedAt}</p>
-  <dl>
-    <div><dt>原文说了什么</dt><dd>{item.facts}</dd></div>
-    <div><dt>为什么关注 · 分析</dt><dd>{item.interpretation}</dd></div>
-    <div><dt>证据边界</dt><dd>{item.limits}</dd></div>
-  </dl>
-  <details><summary>深入读与下一步验证</summary><p><strong>带着问题读：</strong>{item.readFocus}</p><p><strong>继续观察：</strong>{item.followUp}</p></details>
-  <div class='knowledge-links' aria-label='回到知识树'>{related.map(({ id, link }) => <a href={link!.url}>{id} · {link!.title}</a>)}</div>
-  <a class='original' href={item.url} rel='noopener noreferrer'>打开原始资料</a>
+<article class='news-item' id={item.id} data-news-item data-category={item.category} data-news-search={`${item.title} ${item.facts} ${item.publisher} ${item.category}`.toLowerCase()}>
+  <div class='news-topic'>{item.category}{!item.publishedAt && item.eventAt && <span class='event-date'>事件日期</span>}</div>
+  <div class='news-copy'>
+    <h3><a href={item.url} target='_blank' rel='noopener noreferrer'>{item.title}</a></h3>
+    <p>{item.facts}</p>
+    <a class='news-source' href={item.url} target='_blank' rel='noopener noreferrer'>{item.publisher} · 原文 <span class='sr-only'>（新窗口）</span></a>
+  </div>
 </article>
 <style>
-.radar-card{padding:1.5rem 0 1.75rem;border-top:1px solid color-mix(in srgb,currentColor 20%,transparent);scroll-margin-top:6rem}.eyebrow,.source{font-size:.875rem;color:var(--muted-foreground);line-height:1.65}.radar-card h3{font-size:1.3rem;line-height:1.5;font-weight:600;margin:.5rem 0}.radar-card h3 a:hover{text-decoration:underline}.source{margin:.5rem 0 1.2rem}dl{display:grid;gap:.8rem}dt{font-weight:600;font-size:.9rem}dd{margin:.25rem 0 0;line-height:1.85}details{margin-top:1rem;padding:.75rem 1rem;background:var(--muted);border-radius:.5rem}summary{cursor:pointer;font-size:.95rem}details p{line-height:1.85;margin:.75rem 0}.knowledge-links{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}.knowledge-links a{font-size:.875rem;padding:.3rem .6rem;border:1px solid var(--border);border-radius:.3rem}.original{font-size:.95rem;text-decoration:underline;text-underline-offset:.25rem}
+.news-item{display:grid;grid-template-columns:8.2rem minmax(0,1fr);gap:1.25rem;padding:1.5rem 0;border-bottom:1px solid hsl(var(--border));scroll-margin-top:5rem}.news-item[hidden]{display:none}.news-topic{font-size:.875rem;color:hsl(var(--muted-foreground));padding-top:.2rem}.event-date{display:block;font-size:.875rem;margin-top:.3rem}.news-copy h3{font-size:1.125rem;font-weight:650;line-height:1.6;letter-spacing:-.015em}.news-copy h3 a:hover{text-decoration:underline;text-underline-offset:.2em}.news-copy>p{font-size:1rem;line-height:1.85;margin:.55rem 0 .7rem;color:hsl(var(--muted-foreground));overflow-wrap:anywhere}.news-source{font-size:.875rem;text-decoration:underline;text-underline-offset:.25em;color:hsl(var(--primary))}@media(max-width:640px){.news-item{grid-template-columns:1fr;gap:.35rem;padding:1.25rem 0}.news-copy h3{font-size:1.1rem}}
 </style>

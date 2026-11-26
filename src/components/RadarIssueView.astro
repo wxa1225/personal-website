@@ -1,41 +1,92 @@
 ---
 import { channels, type RadarIssue, type RadarChannel } from '../lib/radar'
+import { recentPublication, groupByPublication } from '../lib/radar-feed'
+import RadarNav from './RadarNav.astro'
 import RadarCard from './RadarCard.astro'
-interface Props { issue: RadarIssue; channel?: RadarChannel }
-const { issue, channel } = Astro.props
+interface Props { issue: RadarIssue; channel?: RadarChannel; archive?: boolean }
+const { issue, channel, archive = false } = Astro.props
 const entries = issue.items.filter(item => !channel || item.channel === channel)
-const takeaways = issue.takeaways.filter(item => !channel || item.itemIds.some(id => entries.some(entry => entry.id === id)))
+const recent = entries.filter(item => recentPublication(item, issue.date))
+const older = entries.filter(item => (item.publishedAt || item.eventAt) && !recentPublication(item, issue.date))
+const undated = entries.filter(item => !item.publishedAt && !item.eventAt)
+const categories = [...new Set(entries.map(item => item.category))]
 ---
-<header class='issue-header'>
-  <p class='eyebrow'><time datetime={issue.date}>{issue.date}</time> · 北京时间 · {channel ? channels[channel] : 'AI × 量化与市场'}</p>
-  <h1>{channel ? `${channels[channel]} · ${issue.title}` : issue.title}</h1>
-  <p class='summary'>{issue.summary}</p>
-  <p class='freshness' data-radar-date={issue.date}>最近一期：{issue.date}。文中每条资料保留自己的发布日期。</p>
-</header>
-<section class='takeaways' aria-label='优先关注'>
-  <h2>先记住这些变化</h2>
-  <ol>{takeaways.map(item => <li><p>{item.text}</p><div>{item.itemIds.map(id => { const source = issue.items.find(entry => entry.id === id); return source && <a href={source.url}>{source.publisher}原文</a> })}</div></li>)}</ol>
-</section>
-<details class='coverage'><summary>本期检索范围与缺口</summary>
-  <p>检索窗口：{issue.coverage.start} 至 {issue.coverage.end}；实际核验：{issue.checkedAt}。</p>
-  <p>{issue.coverage.note}</p><ul>{issue.coverage.gaps.map(gap => <li>{gap}</li>)}</ul>
-</details>
-{!!issue.corrections?.length && <section class='coverage' aria-label='修订记录'><h2>修订记录</h2><ul>{issue.corrections.map(correction => <li>{correction.date} · {correction.reason}</li>)}</ul></section>}
-{entries.length > 0 && <details class='coverage'><summary>本期条目目录</summary><nav aria-label='本期条目'><ul>{entries.map(item => <li><a href={`#${item.id}`}>{item.title}</a></li>)}</ul></nav></details>}
-<div>{entries.map(item => <RadarCard {item} date={issue.date} />)}</div>
-{entries.length === 0 && <p>本期此方向没有足够证据支持的新增条目。可先阅读知识树与往期，不以旧闻填充“今日新闻”。</p>}
-<p class='issue-foot'>想继续学：<a href='/learn/agent'>大模型知识树</a> · <a href='/learn/quant'>量化学习地图</a> · <a href='/radar/archive'>全部往期</a> · <a href='/radar/rss.xml'>RSS 订阅</a></p>
+<div data-news-feed>
+  <header class='feed-header'>
+    <p class='column-label'>Sia's Space / 动态简报</p>
+    <h1>{archive ? `${issue.date} · 前沿简报` : channel ? channels[channel] : '每日前沿'}</h1>
+    <p class='feed-description'>{channel === 'quant' ? '量化研究、宏观数据、市场与公司消息。' : channel === 'ai' ? '模型、产品、Agent、开源、论文与产业消息。' : '国内外 AI、科技产业、量化与市场的新消息。'}</p>
+    <p class='edition-date' data-radar-date={issue.date}>最近整理 <time datetime={issue.date}>{issue.date}</time><span>北京时间 · 按发布或事件日期排列</span></p>
+  </header>
+  <RadarNav active={archive ? '/radar/archive' : channel ? `/radar/${channel}` : '/radar'} />
+  <div class='news-tools'>
+    <label class='search-label' for='news-search'>搜索本期动态</label>
+    <input type='search' id='news-search' placeholder='搜索公司、模型或关键词' autocomplete='off' />
+    <div class='topic-filters' role='group' aria-label='按主题筛选'>
+      <button type='button' data-news-category='' aria-pressed='true'>全部</button>
+      {categories.map(category => <button type='button' data-news-category={category} aria-pressed='false'>{category}</button>)}
+    </div>
+    <p class='filter-status' aria-live='polite' data-news-status>{recent.length} 条近一周动态{undated.length ? ` · ${undated.length} 条未标发布日期` : ''}{older.length ? ` · ${older.length} 条较早资料收在页末` : ''}</p>
+  </div>
+  <div class='news-list'>
+    {groupByPublication(recent).map(group => <section class='news-day' data-news-group>
+      <h2><time datetime={group.date}>{group.date}</time><span data-day-count>{group.items.length} 条动态</span></h2>
+      {group.items.map(item => <RadarCard {item} date={issue.date} />)}
+    </section>)}
+    {recent.length === 0 && <p class='no-news'>本期暂未收录这一方向近一周的动态。</p>}
+    <p class='no-news' data-news-empty hidden>没有匹配的近期动态，换一个关键词或选择“全部”。</p>
+  </div>
+  {!!undated.length && <section class='undated-news news-day' data-news-group>
+    <h2>本期核对的其他更新<span>原文未注明发布日期</span></h2>
+    {undated.map(item => <RadarCard {item} date={issue.date} />)}
+  </section>}
+  {!!older.length && <details class='older-news' data-older-news>
+    <summary>更早的资料 <span>{older.length} 条 · 非本周消息</span></summary>
+    <p>保留首期收录的历史发布与背景材料，单独浏览。</p>
+    {groupByPublication(older).map(group => <section class='news-day' data-news-group><h2>{group.date}</h2>{group.items.map(item => <RadarCard {item} date={issue.date} />)}</section>)}
+  </details>}
+  <footer class='feed-footer'>
+    <a href='/radar/archive'>往期简报</a><a href='/radar/sources'>信息源目录</a><a href='/radar/rss.xml'>RSS 订阅</a><a href='/radar/method'>更新说明</a>
+  </footer>
+  <details class='coverage-note'><summary>本期收录范围</summary><p>{issue.coverage.note}</p><ul>{issue.coverage.gaps.map(gap => <li>{gap}</li>)}</ul></details>
+  {!!issue.corrections?.length && <details class='coverage-note'><summary>修订记录</summary><ul>{issue.corrections.map(c => <li>{c.date} · {c.reason}</li>)}</ul></details>}
+</div>
 <script>
-  function markFreshness() {
-    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
-    for (const element of document.querySelectorAll<HTMLElement>('[data-radar-date]')) {
-      const date = element.dataset.radarDate!
-      const age = (Date.parse(today + 'T00:00:00+08:00') - Date.parse(date + 'T00:00:00+08:00')) / 86400000
-      if (age >= 2) element.textContent = `你正在阅读 ${date} 的资料快照，距今天已 ${Math.floor(age)} 天；请先核对原文是否有后续变化。`
+  function setupNewsFeed() {
+    const root = document.querySelector<HTMLElement>('[data-news-feed]')
+    if (!root || root.dataset.ready) return
+    root.dataset.ready = 'true'
+    const search = root.querySelector<HTMLInputElement>('#news-search')!
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-news-item]')]
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-news-category]')]
+    let category = ''
+    function filter() {
+      const terms = search.value.trim().toLowerCase().split(/\s+/).filter(Boolean)
+      let recentCount = 0, olderCount = 0, undatedCount = 0
+      for (const card of cards) {
+        card.hidden = (category !== '' && card.dataset.category !== category) || !terms.every(term => card.dataset.newsSearch!.includes(term))
+        if (!card.hidden) { if (card.closest('[data-older-news]')) olderCount++; else if(card.closest('.undated-news')) undatedCount++; else recentCount++ }
+      }
+      root!.querySelectorAll<HTMLElement>('[data-news-group]').forEach(group => { const count=group.querySelectorAll('[data-news-item]:not([hidden])').length; group.hidden=count===0; const label=group.querySelector('[data-day-count]'); if(label)label.textContent=`${count} 条动态` })
+      const older=root!.querySelector<HTMLElement>('[data-older-news]');if(older)older.hidden=olderCount===0
+      root!.querySelector<HTMLElement>('[data-news-empty]')!.hidden = recentCount + undatedCount !== 0 || (!category && !terms.length)
+      root!.querySelector<HTMLElement>('[data-news-status]')!.textContent = `${recentCount} 条近一周动态${undatedCount ? ` · ${undatedCount} 条未标发布日期` : ''}${olderCount ? ` · 页末另有 ${olderCount} 条较早资料` : ''}`
+      buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.newsCategory === category)))
     }
+    search.addEventListener('input', filter)
+    buttons.forEach(button => button.addEventListener('click', () => { category = button.dataset.newsCategory!; filter() }))
+    function revealAnchor() {
+      const target = document.getElementById(decodeURIComponent(location.hash.slice(1)))
+      const older = target?.closest<HTMLDetailsElement>('[data-older-news]')
+      if (older) { older.open = true; target?.scrollIntoView({ block: 'start' }) }
+    }
+    revealAnchor(); window.addEventListener('hashchange', revealAnchor)
+    const dateLabel = root.querySelector<HTMLElement>('[data-radar-date]')!
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit' }).format(new Date())
+    if (Date.parse(today) - Date.parse(dateLabel.dataset.radarDate!) >= 2 * 86400000) dateLabel.append(' · 暂无更新期号')
   }
-  markFreshness(); document.addEventListener('astro:page-load', markFreshness)
+  setupNewsFeed(); document.addEventListener('astro:page-load', setupNewsFeed)
 </script>
 <style>
-.eyebrow,.freshness{font-size:.9rem;color:var(--muted-foreground);line-height:1.7}.issue-header h1{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:600;line-height:1.35;margin:.75rem 0}.summary{font-size:1.06rem;line-height:1.9;margin:1rem 0}.takeaways{margin:2rem 0;padding:1.25rem 1.5rem;background:var(--muted);border-radius:.6rem}.takeaways h2{font-size:1.15rem;font-weight:600}.takeaways ol{padding-left:1.4rem}.takeaways li{padding:.65rem 0;line-height:1.85}.takeaways li div{display:flex;gap:1rem;font-size:.875rem}.takeaways a,.issue-foot a{text-decoration:underline;text-underline-offset:.25rem}.coverage{margin:1rem 0 2rem;font-size:.95rem;line-height:1.8}.coverage summary{cursor:pointer;font-weight:600}.coverage p{margin:.75rem 0}.coverage ul{list-style:disc;padding-left:1.25rem}.issue-foot{padding:1rem 0 2rem;font-size:.95rem;line-height:2}
+[hidden]{display:none!important}.column-label{font-size:.875rem;color:hsl(var(--muted-foreground));margin-bottom:1rem}.feed-header h1{font-size:clamp(1.9rem,5vw,2.7rem);font-weight:650;letter-spacing:-.04em;line-height:1.2}.feed-description{margin:.9rem 0;font-size:1.05rem;line-height:1.75;color:hsl(var(--muted-foreground))}.edition-date{font-size:.875rem;line-height:1.8;color:hsl(var(--muted-foreground))}.edition-date span{margin-left:1rem}.search-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.news-tools input{border:1px solid hsl(var(--border));background:hsl(var(--card));color:inherit;border-radius:.5rem;padding:.7rem 1rem;width:100%;font-size:1rem}.topic-filters{display:flex;flex-wrap:wrap;gap:.4rem;margin:.9rem 0}.topic-filters button{cursor:pointer;font-size:.875rem;padding:.35rem .7rem;border:1px solid transparent;border-radius:.35rem;color:hsl(var(--muted-foreground))}.topic-filters button[aria-pressed=true]{color:hsl(var(--foreground));border-color:hsl(var(--border));background:hsl(var(--muted))}.topic-filters button:hover{color:hsl(var(--primary))}.filter-status{font-size:.875rem;color:hsl(var(--muted-foreground));margin:.8rem 0 1.75rem}.news-day{margin-bottom:2.25rem}.news-day h2{display:flex;gap:1rem;align-items:baseline;font-size:1rem;font-weight:650;padding-bottom:.6rem;border-bottom:2px solid hsl(var(--border));font-variant-numeric:tabular-nums}.news-day h2 span{font-size:.875rem;font-weight:400;color:hsl(var(--muted-foreground))}.older-news{border:1px solid hsl(var(--border));padding:1rem 1.25rem;border-radius:.5rem;margin-top:2rem}.older-news>summary{cursor:pointer;font-size:1rem;font-weight:600}.older-news>summary span{font-weight:400;font-size:.875rem;color:hsl(var(--muted-foreground));margin-left:.5rem}.older-news>p{margin:1rem 0;color:hsl(var(--muted-foreground));font-size:.9rem}.feed-footer{display:flex;flex-wrap:wrap;gap:1.2rem;font-size:.875rem;border-top:1px solid hsl(var(--border));padding:1.5rem 0;margin-top:2rem}.feed-footer a{text-decoration:underline;text-underline-offset:.25em}.coverage-note{font-size:.875rem;line-height:1.8;color:hsl(var(--muted-foreground));margin:.5rem 0}.coverage-note summary{cursor:pointer}.coverage-note p,.coverage-note ul{margin:.75rem 0}.coverage-note ul{padding-left:1.2rem;list-style:disc}.no-news{padding:2rem 0;color:hsl(var(--muted-foreground))}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px}@media(max-width:640px){.topic-filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:.4rem}.topic-filters button{white-space:nowrap;flex-shrink:0}}@media(max-width:520px){.edition-date span{display:block;margin-left:0}.older-news{padding:1rem}.older-news>summary span{display:block;margin:.3rem 0 0}}
 </style>

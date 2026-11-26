@@ -5,17 +5,17 @@ import ReadingFilter from '@/components/ReadingFilter.astro'
 import sources from '../../data/radar-sources.json'
 export const prerender = true
 ---
-<BaseLayout meta={{ title: '每日观察 · 信息源', description: '前沿公司、研究者、技术领导者与市场原始信息入口。' }}>
+<BaseLayout meta={{ title: '信息源 · 每日前沿', description: '前沿公司、研究者、技术领导者与市场原始信息入口。' }}>
   <main class='mx-auto max-w-4xl py-8'>
     <RadarNav active='/radar/sources' /><h1 class='text-3xl font-medium'>长期信息源与人物</h1>
-    <p class='mt-4 leading-relaxed text-muted-foreground'>公司公开材料反映其技术与商业立场。创始人的预测作为观点记录，技术效果优先找实验设置、复现、限制与反证。X 是发现线索的入口，引用时必须能核对原帖。</p>
+    <p class='mt-4 leading-relaxed text-muted-foreground'>按公司、研究团队、人物和机构查找原始动态。可搜索名称或主题，直接打开公开发布渠道。</p>
     <ReadingFilter placeholder='例如：算力、宏观、研究者、Agent、DeepSeek' />
     {sources.map(item => <article class='source-entry' data-reading-search={Object.values(item).join(' ')}>
       <p class='meta'>{item.channel === 'ai' ? 'AI 前沿' : '量化与市场'} · {item.type} · {item.publisher}</p>
-      <h2><a href={item.url}>{item.title}</a></h2><p><strong>看什么：</strong>{item.focus}</p><p><strong>怎样读：</strong>{item.readingRule}</p>
+      <h2><a href={item.url}>{item.title}</a></h2><p><strong>看什么：</strong>{item.focus}</p>
     </article>)}
   </main>
 </BaseLayout>
 <style>
-.source-entry{padding:1.3rem 0;border-top:1px solid var(--border);line-height:1.8}.source-entry[hidden]{display:none}.source-entry h2{font-size:1.2rem;font-weight:600;margin:.4rem 0}.source-entry a{text-decoration:underline;text-underline-offset:.25rem}.source-entry p{margin:.5rem 0}.meta{font-size:.875rem;color:var(--muted-foreground)}
+.source-entry{padding:1.3rem 0;border-top:1px solid hsl(var(--border));line-height:1.8}.source-entry[hidden]{display:none}.source-entry h2{font-size:1.2rem;font-weight:600;margin:.4rem 0}.source-entry a{text-decoration:underline;text-underline-offset:.25rem}.source-entry p{margin:.5rem 0}.meta{font-size:.875rem;color:hsl(var(--muted-foreground))}
 </style>

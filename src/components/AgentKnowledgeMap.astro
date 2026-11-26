@@ -1,246 +1,107 @@
 ---
-import { domains, concepts, roles, problems, lessonUrl, learningPaths } from '../lib/agent-curriculum'
+import { domains, concepts, lessonUrl } from '../lib/agent-curriculum'
+const subtopics: Record<string,string> = {F:'表示 · 概率 · 优化',B:'算法 · 网络 · 存储 · 并发',M:'结构 · 训练 · 对齐 · 推理',A:'提示 · RAG · 记忆 · 工具 · 编排',I:'训练平台 · 推理服务 · Agent 运行时',E:'测量 · 诊断 · 实验 · 数据反馈'}
 ---
-
 <section class='knowledge-explorer not-prose' aria-label='大模型知识地图' data-knowledge-map>
-  <div class='map-intro'>
-    <p class='map-eyebrow'>先定位，再沿关系深入</p>
-    <h2>一张知识树，多个观察角度</h2>
-    <p>树表示知识归属；选中一个节点，看它为什么依赖其他知识、又被用在哪里。Agent 的运行流程只是其中一个局部视图。</p>
+  <div class='map-topline'><p>选择分支，再展开概念与依赖关系。</p><label><span class='sr-only'>查概念或问题</span><input type='search' data-map-search placeholder='查概念或问题，如 KV、超时' autocomplete='off' /></label></div>
+  <div class='map-root'><strong>大模型技术体系</strong><span>六个知识分支，互相支撑</span></div>
+  <div class='domain-overview' aria-label='六个知识分支'>
+    {domains.map(domain => <button type='button' data-select-domain={domain.id} aria-pressed='false' aria-controls='knowledge-workspace'>
+      <strong>{domain.title}</strong><span>{domain.question}</span><small>{subtopics[domain.id]}</small>
+    </button>)}
   </div>
-  <div class='map-controls'>
-    <label>查概念或问题<input type='search' data-map-search placeholder='例如：超时、KV、为什么答错、事务' autocomplete='off' /></label>
-    <label>按工作方向看重心<select data-map-role>{roles.map(role => <option value={role.id}>{role.title}</option>)}</select></label>
-  </div>
-  <p class='map-role-note' data-role-note>{roles[0]?.description}</p>
-  <div class='domain-overview' aria-label='六个知识分支，选择一个展开'>
-    {domains.map(domain => <button type='button' data-select-domain={domain.id} aria-pressed='false'><strong>{domain.title}</strong><span>{domain.question}</span><small>{concepts.filter(node => node.domain === domain.id).length} 个深读节点</small></button>)}
-  </div>
-  <button type='button' class='expand-tree' data-expand-tree>展开全部分支</button>
-  <p class='map-live' data-map-status aria-live='polite'>32 个知识节点。点击标题可在下方定位栏查看依赖；“阅读全文”进入完整推导。</p>
-  <div class='map-layout'>
-    <div id='knowledge-tree' class='map-tree' aria-label='按知识归属组织的六个分支'>
-      <div class='tree-root'>大模型技术体系<span>学习与计算 · 模型与系统 · 证据与改进</span></div>
-      <div class='tree-branches'>
+  <div class='map-caption'><p>这里的分支表示知识归属，不是必须顺序完成的流程。</p><button type='button' data-expand-tree>查看全部概念</button></div>
+  <p class='map-live' data-map-status aria-live='polite'></p>
+  <div id='knowledge-workspace' class='map-workspace' hidden>
+    <div class='workspace-heading'><h2 data-workspace-title>概念与关系</h2><button type='button' data-close-workspace>收起，回到全景</button></div>
+    <div class='map-layout'>
+      <div class='map-tree' id='knowledge-concepts' aria-label='概念列表'>
         {domains.map(domain => <section class='tree-domain' data-map-domain={domain.id}>
-          <h3><span class='domain-code'>{domain.id}</span>{domain.title}</h3>
-          <p>{domain.question}</p>
+          <h3>{domain.title}</h3>
           <ul>{concepts.filter(node => node.domain === domain.id).map(node => <li data-concept-row={node.id}>
-            <button type='button' data-concept={node.id} aria-pressed='false'><span>{node.id}</span>{node.title}<small data-relation-label></small></button>
-            <a class='node-read' href={lessonUrl(node)} aria-label={`阅读全文：${node.title}`}>读</a>
+            <button type='button' data-concept={node.id} aria-pressed='false'><span>{node.title}</span><small>{node.question}</small></button>
+            <a class='node-read' href={lessonUrl(node)} aria-label={`阅读全文：${node.title}`}>阅读</a>
           </li>)}</ul>
         </section>)}
       </div>
+      <aside class='map-inspector' aria-label='选中概念与依赖关系'>
+        <p class='inspector-kicker' data-node-location>选择一个概念</p><h3 data-node-title>它是什么，又与什么有关？</h3>
+        <p class='inspector-question' data-node-question>左侧选择概念，即可查看解释和上下游关系。</p>
+        <p data-node-thesis></p>
+        <a data-node-read class='inspector-read' href='/learn/agent/guide'>先读全景导读</a>
+        <div class='relation-section'><h4>理解它，先懂什么</h4><ul data-before-list></ul></div>
+        <div class='relation-section'><h4>懂了它，可以继续理解</h4><ul data-after-list></ul></div>
+        <details class='relation-section'><summary>跨分支的应用联系</summary><ul data-related-list></ul></details>
+        <a class='back-to-concepts' href='#knowledge-concepts'>回到本分支概念列表</a>
+      </aside>
     </div>
-    <aside class='map-inspector' aria-label='选中节点的定位与关系'>
-      <p class='inspector-kicker' data-node-location>选择左侧任一节点</p>
-      <h3 data-node-title>从一个具体问题开始</h3>
-      <p class='inspector-question' data-node-question>这是什么问题？属于哪一层？解释它需要哪些前提？</p>
-      <p data-node-thesis>不必从头背完所有内容。先选中你关心的节点，再沿“前置知识”和“后续用途”补齐因果链。</p>
-      <a data-node-read class='inspector-read' href='/learn/agent/deep/task-contract'>从任务契约开始读</a>
-      <div class='inspector-legend'><span class='selected'>当前节点</span><span class='before'>理解前置</span><span class='after'>后续用途</span></div>
-      <div class='relation-section'><h4>先懂什么 · 为什么</h4><ul data-before-list></ul></div>
-      <div class='relation-section'><h4>接下来能解释什么</h4><ul data-after-list></ul></div>
-      <div class='relation-section'><h4>跨层联系 · 用在什么地方</h4><ul data-related-list></ul></div>
-      <a class='map-return' href='#knowledge-tree'>回到知识树</a><p class='map-hint'>位置可通过本页地址分享。深读页始终保留“回到图中位置”和上下游链接。</p>
-    </aside>
   </div>
-  <section class='question-routes'>
-    <h3>从问题反查知识链</h3>
-    <p>同一问题通常跨越几层。点击下面的问题，先看推理顺序，再逐个进入节点。</p>
-    <div class='problem-buttons'>{problems.map((problem, index) => <button type='button' data-problem={index}>{problem.title}</button>)}</div>
-    <div class='problem-result' data-problem-result hidden aria-live='polite'></div>
-  </section>
-  <section class='learning-paths'>
-    <h3>按理解依赖安排阅读</h3>
-    <p>这是学习路线，不是运行时序。可以跳过已经能解释、举反例并验证的节点。</p>
-    <div>{learningPaths.map(path => <details><summary>{path.title}</summary><p>{path.description}</p><ol>{path.nodes.map(id => { const node = concepts.find(item => item.id === id)!; return <li><a href={lessonUrl(node)}>{node.id} · {node.title}</a></li> })}</ol></details>)}</div>
-  </section>
-  <noscript><p>当前浏览器未启用交互。每个节点旁的“读”仍可进入完整解释，正文和下载的笔记库也包含依赖链接。</p></noscript>
+  <noscript><div class='fallback-tree'>{domains.map(domain => <details><summary>{domain.title}</summary><ul>{concepts.filter(n => n.domain === domain.id).map(n => <li><a href={lessonUrl(n)}>{n.title}</a></li>)}</ul></details>)}</div></noscript>
 </section>
-
 <script>
-  import { concepts, domains, roles, problems, conceptById, connections, lessonUrl, searchConcepts } from '../lib/agent-curriculum'
-
+  import { concepts, domains, conceptById, connections, lessonUrl, searchConcepts } from '../lib/agent-curriculum'
   function setupKnowledgeMap() {
     const root = document.querySelector<HTMLElement>('[data-knowledge-map]')
     if (!root || root.dataset.ready) return
     root.dataset.ready = 'true'
     const search = root.querySelector<HTMLInputElement>('[data-map-search]')!
-    const role = root.querySelector<HTMLSelectElement>('[data-map-role]')!
-    let selectedId = ''
+    const workspace = root.querySelector<HTMLElement>('#knowledge-workspace')!
     let focusedDomain = ''
-    const putText = (selector: string, text: string) => { const element = root.querySelector(selector); if (element) element.textContent = text }
-    const renderRelations = (selector: string, entries: { id: string; why: string }[], empty: string) => {
-      const list = root.querySelector(selector)!
-      list.replaceChildren()
-      if (!entries.length) { const li = document.createElement('li'); li.textContent = empty; list.append(li); return }
-      for (const entry of entries) {
-        const node = conceptById(entry.id)
-        if (!node) continue
-        const li = document.createElement('li')
-        const button = document.createElement('button')
-        button.type = 'button'
-        button.textContent = `${node.id} · ${node.title}`
-        button.addEventListener('click', () => selectNode(node.id, true))
-        const reason = document.createElement('p')
-        reason.textContent = entry.why
-        li.append(button, reason)
-        list.append(li)
+    const putText = (selector:string,text:string) => { const el = root.querySelector(selector); if(el) el.textContent = text }
+    function setUrl(id?:string) { const url = new URL(location.href); if(id) url.searchParams.set('node',id); else url.searchParams.delete('node'); history.replaceState(history.state,'',url) }
+    function showWorkspace(scroll:boolean) {
+      workspace.hidden = false
+      if(scroll) workspace.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'})
+    }
+    function renderRelations(selector:string,entries:{id:string;why:string}[],empty:string) {
+      const list = root!.querySelector(selector)!; list.replaceChildren()
+      if(!entries.length) { const p=document.createElement('li');p.textContent=empty;list.append(p);return }
+      for(const entry of entries) {
+        const node=conceptById(entry.id);if(!node)continue
+        const li=document.createElement('li'),button=document.createElement('button'),p=document.createElement('p')
+        button.type='button';button.textContent=node.title;button.addEventListener('click',()=>selectNode(node.id,true))
+        p.textContent=entry.why;li.append(button,p);list.append(li)
       }
     }
-    function selectNode(id: string, updateUrl: boolean) {
-      const node = conceptById(id)
-      if (!node) return
-      selectedId = id
-      focusedDomain = node.domain
-      if (updateUrl) search.value = ''
-      const domain = domains.find(item => item.id === node.domain)!
-      const { before, after, related } = connections(id)
-      putText('[data-node-location]', `大模型体系 / ${domain.title} / ${node.id}`)
-      putText('[data-node-title]', node.title)
-      putText('[data-node-question]', node.question)
-      putText('[data-node-thesis]', node.thesis)
-      const link = root!.querySelector<HTMLAnchorElement>('[data-node-read]')!
-      link.href = lessonUrl(node)
-      link.textContent = '阅读全文：推导、算例与自测'
-      renderRelations('[data-before-list]', before.map(edge => ({ id: edge.fromId, why: edge.why })), '本节从具体问题引入；需要的基础概念会在正文补齐。')
-      renderRelations('[data-after-list]', after.map(edge => ({ id: edge.to, why: edge.why })), '可沿下方跨层联系，把机制带回实际问题。')
-      renderRelations('[data-related-list]', related.map(edge => ({ id: edge.fromId === id ? edge.to : edge.fromId, why: edge.why })), '先掌握本节的机制与边界，再回到任务中验证。')
-      const previous = new Set(before.map(edge => edge.fromId))
-      const next = new Set(after.map(edge => edge.to))
-      root!.querySelectorAll<HTMLButtonElement>('[data-concept]').forEach(button => {
-        const code = button.dataset.concept!
-        button.setAttribute('aria-pressed', String(code === id))
-        button.dataset.relation = code === id ? 'selected' : previous.has(code) ? 'before' : next.has(code) ? 'after' : ''
-        const label = button.querySelector('[data-relation-label]')!
-        label.textContent = code === id ? '当前' : previous.has(code) ? '前置' : next.has(code) ? '后续' : ''
-      })
-      if (updateUrl) { const url = new URL(window.location.href); url.searchParams.set('node', id); history.replaceState(history.state, '', url) }
-      applyFilters()
-      if (updateUrl && window.innerWidth <= 800) root!.querySelector('.map-inspector')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' })
+    function selectNode(id:string,updateUrl:boolean) {
+      const node=conceptById(id);if(!node)return
+      focusedDomain=node.domain;search.value=''
+      const domain=domains.find(d=>d.id===node.domain)!
+      putText('[data-node-location]',`${domain.title} / ${node.id}`)
+      putText('[data-node-title]',node.title);putText('[data-node-question]',node.question);putText('[data-node-thesis]',node.thesis)
+      const link=root!.querySelector<HTMLAnchorElement>('[data-node-read]')!;link.href=lessonUrl(node);link.textContent='进入完整讲解'
+      const {before,after,related}=connections(id)
+      renderRelations('[data-before-list]',before.map(e=>({id:e.fromId,why:e.why})),'从本节的问题和定义开始即可。')
+      renderRelations('[data-after-list]',after.map(e=>({id:e.to,why:e.why})),'先完成本节算例和自测，再沿应用联系深入。')
+      renderRelations('[data-related-list]',related.map(e=>({id:e.fromId===id?e.to:e.fromId,why:e.why})),'本节的应用边界见正文。')
+      root!.querySelectorAll<HTMLButtonElement>('[data-concept]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.concept===id)))
+      if(updateUrl)setUrl(id)
+      applyFilter();showWorkspace(false)
+      if(updateUrl && innerWidth < 760) root!.querySelector('.map-inspector')?.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})
     }
-    function applyFilters() {
-      const matches = new Set(searchConcepts(search.value).map(node => node.id))
-      const focus = roles.find(item => item.id === role.value) ?? roles[0]!
-      root!.querySelectorAll<HTMLElement>('[data-concept-row]').forEach(row => {
-        row.hidden = !matches.has(row.dataset.conceptRow!)
-        row.dataset.focus = focus.nodes.length && !focus.nodes.includes(row.dataset.conceptRow!) ? 'secondary' : 'primary'
+    function applyFilter() {
+      const matches=new Set(searchConcepts(search.value).map(n=>n.id))
+      root!.querySelectorAll<HTMLElement>('.map-root,.domain-overview,.map-caption').forEach(el=>{el.hidden=Boolean(search.value.trim())})
+      root!.querySelectorAll<HTMLElement>('[data-concept-row]').forEach(row=>{row.hidden=!matches.has(row.dataset.conceptRow!)})
+      root!.querySelectorAll<HTMLElement>('[data-map-domain]').forEach(section=>{
+        section.hidden=(focusedDomain!=='' && section.dataset.mapDomain!==focusedDomain)||!concepts.some(n=>n.domain===section.dataset.mapDomain&&matches.has(n.id))
       })
-      root!.querySelectorAll<HTMLElement>('[data-map-domain]').forEach(section => {
-        section.hidden = (focusedDomain !== '' && section.dataset.mapDomain !== focusedDomain) || !concepts.some(node => node.domain === section.dataset.mapDomain && matches.has(node.id))
-      })
-      root!.querySelector<HTMLElement>('.tree-branches')!.dataset.focused = String(focusedDomain !== '')
-      root!.querySelectorAll<HTMLButtonElement>('[data-select-domain]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.selectDomain === focusedDomain)))
-      putText('[data-role-note]', focus.description + (focus.id === 'all' ? '' : ' 高亮为常见工作重心；其余知识仍保留，方便查前置。这不是某家公司 JD 的保证。'))
-      putText('[data-map-status]', search.value.trim() ? `匹配 ${matches.size} 个节点。${matches.size ? '点击节点查看依赖，或点“读”直接学习。' : '可尝试更短的关键词，如“超时”“KV”“概率”。'}` : `32 个知识节点。${selectedId ? `当前定位 ${selectedId}；边框标签标明前置与后续。` : '点击节点查看依赖。'}`)
+      root!.querySelectorAll<HTMLButtonElement>('[data-select-domain]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.selectDomain===focusedDomain)))
+      putText('[data-workspace-title]',search.value.trim()?'搜索结果':focusedDomain?domains.find(d=>d.id===focusedDomain)!.title:'全部概念')
+      putText('[data-map-status]',search.value.trim()?`找到 ${matches.size} 个概念${matches.size?'':'，可以试试“推理”“重试”“评测”等关键词'}。`:'')
     }
-    root.querySelectorAll<HTMLButtonElement>('[data-concept]').forEach(button => button.addEventListener('click', () => selectNode(button.dataset.concept!, true)))
-    search.addEventListener('input', () => { focusedDomain = ''; applyFilters() })
-    role.addEventListener('change', () => { focusedDomain = ''; applyFilters() })
-    root.querySelector('[data-expand-tree]')!.addEventListener('click', () => { search.value = ''; focusedDomain = ''; applyFilters() })
-    root.querySelectorAll<HTMLButtonElement>('[data-select-domain]').forEach(button => button.addEventListener('click', () => {
-      const node = concepts.find(item => item.domain === button.dataset.selectDomain)
-      if (!node) return
-      search.value = ''
-      selectNode(node.id, false)
-      const url = new URL(window.location.href); url.searchParams.set('node', node.id); history.replaceState(history.state, '', url)
-      root.querySelector('.map-layout')?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' })
+    root.querySelectorAll<HTMLButtonElement>('[data-concept]').forEach(button=>button.addEventListener('click',()=>selectNode(button.dataset.concept!,true)))
+    root.querySelectorAll<HTMLButtonElement>('[data-select-domain]').forEach(button=>button.addEventListener('click',()=>{
+      const node=concepts.find(n=>n.domain===button.dataset.selectDomain)!;selectNode(node.id,false);setUrl(node.id);showWorkspace(true)
     }))
-    root.querySelectorAll<HTMLButtonElement>('[data-problem]').forEach(button => button.addEventListener('click', () => {
-      const problem = problems[Number(button.dataset.problem)]
-      if (!problem) return
-      const box = root.querySelector<HTMLElement>('[data-problem-result]')!
-      box.hidden = false
-      box.replaceChildren()
-      const title = document.createElement('h4'); title.textContent = problem.title
-      const explanation = document.createElement('p'); explanation.textContent = problem.explanation
-      const sequence = document.createElement('ol')
-      for (const id of problem.nodes) {
-        const node = conceptById(id)!
-        const li = document.createElement('li')
-        const link = document.createElement('a'); link.href = lessonUrl(node); link.textContent = `${node.id} · ${node.title}`
-        const question = document.createElement('span'); question.textContent = node.question
-        li.append(link, question); sequence.append(li)
-      }
-      box.append(title, explanation, sequence)
-      search.value = ''; selectNode(problem.nodes[0]!, true)
-    }))
-    const queryId = new URL(window.location.href).searchParams.get('node')
-    selectNode(queryId && conceptById(queryId) ? queryId : 'A1', false)
+    search.addEventListener('input',()=>{focusedDomain='';applyFilter();showWorkspace(false)})
+    root.querySelector('[data-expand-tree]')!.addEventListener('click',()=>{search.value='';focusedDomain='';applyFilter();showWorkspace(true)})
+    root.querySelector('[data-close-workspace]')!.addEventListener('click',()=>{workspace.hidden=true;focusedDomain='';search.value='';setUrl();applyFilter();root.scrollIntoView({block:'start'})})
+    const queryId=new URL(location.href).searchParams.get('node')
+    if(queryId&&conceptById(queryId)){selectNode(queryId,false);showWorkspace(false)}
   }
-  setupKnowledgeMap()
-  document.addEventListener('astro:page-load', setupKnowledgeMap)
+  setupKnowledgeMap();document.addEventListener('astro:page-load',setupKnowledgeMap)
 </script>
-
 <style is:global>
-  .knowledge-explorer { --map-blue:#216ab4; --map-green:#18725c; --map-orange:#a95c14; color:inherit; font-size:1rem; line-height:1.7; }
-  .knowledge-explorer [hidden] { display:none !important; }
-  .knowledge-explorer h2 { font-size:clamp(1.6rem,3vw,2rem); font-weight:650; letter-spacing:-.025em; margin:.35rem 0 .6rem; }
-  .knowledge-explorer h3 { font-size:1.1rem; font-weight:650; margin:0 0 .5rem; }
-  .knowledge-explorer h4 { font-size:1rem; font-weight:650; margin:0 0 .5rem; }
-  .map-eyebrow,.inspector-kicker { font-size:.875rem; color:var(--map-blue); font-weight:600; }
-  .map-intro>p:last-child { max-width:70ch; opacity:.85; }
-  .map-controls { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:1rem; margin:1.5rem 0 .6rem; }
-  .map-controls label { display:flex; flex-direction:column; gap:.4rem; font-size:.875rem; font-weight:600; }
-  .map-controls input,.map-controls select { width:100%; border:1px solid color-mix(in srgb,currentColor 25%,transparent); border-radius:.5rem; padding:.7rem .8rem; background:transparent; color:inherit; font-size:1rem; font-weight:400; }
-  .map-controls select { appearance:auto; }
-  .map-role-note,.map-live { font-size:.875rem; margin:.4rem 0; opacity:.8; }
-  .domain-overview { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.65rem; margin:1.3rem 0 .6rem; }
-  .domain-overview button { cursor:pointer; text-align:left; border:1px solid color-mix(in srgb,currentColor 22%,transparent); border-radius:.5rem; padding:.85rem; }
-  .domain-overview button[aria-pressed=true] { border-color:var(--map-blue); background:color-mix(in srgb,var(--map-blue) 8%,transparent); }
-  .domain-overview strong,.domain-overview span,.domain-overview small { display:block; }.domain-overview strong { font-size:1rem; }.domain-overview span { font-size:.875rem; margin:.3rem 0; }.domain-overview small { font-size:.8rem; opacity:.7; }
-  .expand-tree { text-decoration:underline; text-underline-offset:.2em; font-size:.875rem; margin:.5rem 0; cursor:pointer; }
-  .map-layout { scroll-margin-top:5rem; }.tree-branches[data-focused=true] { grid-template-columns:1fr; }
-  .map-layout { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(270px,1fr); gap:1.5rem; align-items:start; margin-top:1.5rem; }
-  .tree-root { text-align:center; font-weight:650; border:1px solid color-mix(in srgb,currentColor 25%,transparent); border-top:3px solid var(--map-blue); padding:.9rem; border-radius:.6rem; margin-bottom:1.5rem; position:relative; }
-  .tree-root:after { content:''; position:absolute; height:1.5rem; width:1px; background:color-mix(in srgb,currentColor 30%,transparent); bottom:-1.5rem; left:50%; }
-  .tree-root span { display:block; font-size:.875rem; font-weight:400; opacity:.75; }
-  .tree-branches { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; border-top:1px solid color-mix(in srgb,currentColor 20%,transparent); padding-top:1rem; }
-  .tree-domain { min-width:0; border:1px solid color-mix(in srgb,currentColor 16%,transparent); border-radius:.65rem; padding:.85rem .6rem .6rem; }
-  .tree-domain h3 { padding:0 .3rem; font-size:1rem; }
-  .domain-code { display:inline-block; color:var(--map-blue); margin-right:.5rem; font-size:.875rem; }
-  .tree-domain>p { margin:0 .3rem .65rem; font-size:.875rem; opacity:.75; }
-  .tree-domain ul { list-style:none; margin:0; padding:0; }
-  .tree-domain li { display:flex; align-items:center; gap:.15rem; margin:.18rem 0; border-radius:.35rem; }
-  .tree-domain li[data-focus=secondary] { opacity:.65; }
-  .tree-domain button { flex:1; text-align:left; min-width:0; line-height:1.6; padding:.45rem .3rem; border:1px solid transparent; border-radius:.35rem; font-size:.9rem; cursor:pointer; background:transparent; }
-  .tree-domain button>span { font-size:.8rem; opacity:.65; margin-right:.4rem; }
-  .tree-domain small { display:inline-block; font-size:.75rem; margin-left:.35rem; font-weight:650; }
-  .tree-domain button:hover,.tree-domain button:focus-visible { background:color-mix(in srgb,currentColor 6%,transparent); }
-  .tree-domain button[data-relation=selected] { border-color:var(--map-blue); background:color-mix(in srgb,var(--map-blue) 12%,transparent); }
-  .tree-domain button[data-relation=before] { border-color:var(--map-orange); border-style:dashed; }
-  .tree-domain button[data-relation=after] { border-color:var(--map-green); border-style:dashed; }
-  .node-read { font-size:.875rem; text-decoration:underline; text-underline-offset:.2em; padding:.35rem; }
-  .map-inspector { position:sticky; top:5rem; max-height:calc(100vh - 6rem); overflow:auto; border:1px solid color-mix(in srgb,currentColor 20%,transparent); border-top:3px solid var(--map-blue); border-radius:.7rem; padding:1.1rem; }
-  .map-inspector h3 { font-size:1.35rem; }
-  .inspector-question { font-weight:600; margin:.75rem 0; }
-  .inspector-read { display:block; margin:1rem 0; padding:.7rem; border:1px solid var(--map-blue); border-radius:.4rem; color:var(--map-blue); font-weight:600; text-align:center; text-decoration:none; }
-  .inspector-legend { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; font-size:.75rem; }
-  .inspector-legend span { padding:.15rem .4rem; border-radius:.2rem; border:1px solid; }
-  .inspector-legend .selected { color:var(--map-blue); }.inspector-legend .before { color:var(--map-orange); border-style:dashed; }.inspector-legend .after { color:var(--map-green); border-style:dashed; }
-  .relation-section { border-top:1px solid color-mix(in srgb,currentColor 14%,transparent); padding-top:.85rem; margin-top:.85rem; }
-  .relation-section ul { list-style:none; padding:0; margin:0; }
-  .relation-section li { margin:.75rem 0; font-size:.875rem; }
-  .relation-section button { text-align:left; text-decoration:underline; text-underline-offset:.2em; font-weight:600; cursor:pointer; }
-  .relation-section p { margin:.3rem 0; opacity:.8; }
-  .map-return { display:block; margin-top:1rem; text-decoration:underline; font-size:.875rem; }
-  .map-inspector { scroll-margin-top:5rem; }
-  .map-hint { font-size:.8rem; opacity:.7; margin-top:1rem; }
-  .question-routes,.learning-paths { margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid color-mix(in srgb,currentColor 20%,transparent); }
-  .problem-buttons { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; margin:1rem 0; }
-  .problem-buttons button { text-align:left; cursor:pointer; border:1px solid color-mix(in srgb,currentColor 20%,transparent); border-radius:.4rem; padding:.75rem; font-size:.95rem; }
-  .problem-buttons button:hover { border-color:var(--map-blue); }
-  .problem-result { padding:1rem; border-left:3px solid var(--map-blue); background:color-mix(in srgb,var(--map-blue) 5%,transparent); }
-  .problem-result ol,.learning-paths ol { padding-left:1.5rem; list-style:decimal; }
-  .problem-result li { margin:.6rem 0; }.problem-result li span { display:block; font-size:.875rem; opacity:.8; }
-  .problem-result a,.learning-paths a { text-decoration:underline; text-underline-offset:.2em; }
-  .learning-paths>div { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
-  .learning-paths details { padding:.8rem 1rem; border:1px solid color-mix(in srgb,currentColor 18%,transparent); border-radius:.4rem; }
-  .learning-paths summary { cursor:pointer; font-weight:600; }.learning-paths details p { margin:.75rem 0; }
-  .knowledge-explorer button:focus-visible,.knowledge-explorer a:focus-visible { outline:2px solid var(--map-blue); outline-offset:2px; }
-  .dark .knowledge-explorer { --map-blue:#7eb8f0; --map-green:#7bd5b8; --map-orange:#e6ae6e; }
-  @media(max-width:800px) { .map-layout { grid-template-columns:1fr; }.map-inspector { position:static; max-height:none; }.map-controls { grid-template-columns:1fr; }.tree-branches { gap:.65rem; } }
-  @media(max-width:650px) { .domain-overview { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-  @media(max-width:440px) { .tree-branches,.problem-buttons,.learning-paths>div { grid-template-columns:1fr; }.tree-domain button { font-size:1rem; } }
+.knowledge-explorer{line-height:1.7;font-size:1rem}.knowledge-explorer [hidden]{display:none!important}.map-topline{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:1.25rem 0}.map-topline p{font-size:.9rem;color:hsl(var(--muted-foreground))}.map-topline label{min-width:17rem}.map-topline input{background:hsl(var(--card));color:inherit;border:1px solid hsl(var(--border));padding:.6rem .85rem;border-radius:.45rem;width:100%;font-size:1rem}.map-root{position:relative;width:fit-content;text-align:center;padding:.6rem 2rem;margin:1.75rem auto 2rem;border:1px solid hsl(var(--border));border-radius:.5rem;background:hsl(var(--muted))}.map-root strong{font-size:1.15rem;font-weight:650}.map-root span{display:block;font-size:.875rem;color:hsl(var(--muted-foreground))}.map-root:after{content:'';position:absolute;height:2rem;width:1px;left:50%;top:100%;background:hsl(var(--border))}.domain-overview{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;padding:1rem 0 0;border-top:1px solid hsl(var(--border))}.domain-overview button{position:relative;text-align:left;padding:1.1rem;border:1px solid hsl(var(--border));border-radius:.5rem;cursor:pointer;background:hsl(var(--card))}.domain-overview button:hover,.domain-overview button[aria-pressed=true]{border-color:hsl(var(--primary));background:hsl(var(--primary)/.06)}.domain-overview strong,.domain-overview span,.domain-overview small{display:block}.domain-overview strong{font-size:1.05rem;font-weight:650}.domain-overview span{font-size:.9rem;margin:.5rem 0 .7rem;color:hsl(var(--muted-foreground))}.domain-overview small{font-size:.875rem;color:hsl(var(--primary))}.map-caption{display:flex;justify-content:space-between;gap:1rem;margin:1rem 0;font-size:.875rem;color:hsl(var(--muted-foreground))}.map-caption button{text-decoration:underline;text-underline-offset:.2em;white-space:nowrap;cursor:pointer;color:hsl(var(--primary))}.map-live{font-size:.9rem;margin:.7rem 0;color:hsl(var(--primary))}.map-workspace{scroll-margin-top:5rem;border-top:1px solid hsl(var(--border));margin-top:2rem;padding-top:1.25rem}.workspace-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}.workspace-heading h2{font-size:1.3rem;font-weight:650}.workspace-heading button{font-size:.875rem;text-decoration:underline;cursor:pointer}.map-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:2rem;align-items:start}.tree-domain{margin-bottom:1.5rem}.tree-domain h3{font-weight:600;font-size:.875rem;color:hsl(var(--muted-foreground));margin-bottom:.6rem}.tree-domain ul{list-style:none;margin:0;padding:0}.tree-domain li{display:flex;align-items:center;gap:.4rem;border-bottom:1px solid hsl(var(--border));padding:.3rem 0}.tree-domain button{flex:1;min-width:0;text-align:left;padding:.6rem;border-radius:.4rem;cursor:pointer;border:1px solid transparent}.tree-domain button span{font-size:1rem;font-weight:550}.tree-domain button small{display:block;font-size:.875rem;color:hsl(var(--muted-foreground));margin-top:.3rem}.tree-domain button[aria-pressed=true]{background:hsl(var(--primary)/.08);border-color:hsl(var(--primary))}.node-read{font-size:.875rem;padding:.5rem;text-decoration:underline;text-underline-offset:.2em;color:hsl(var(--primary))}.back-to-concepts{display:block;text-decoration:underline;text-underline-offset:.2em;font-size:.875rem;margin-top:1rem}#knowledge-concepts{scroll-margin-top:5rem}.map-inspector{background:hsl(var(--muted)/.65);border:1px solid hsl(var(--border));border-radius:.6rem;padding:1.4rem;position:sticky;top:5rem;scroll-margin-top:5rem}.inspector-kicker{font-size:.875rem;color:hsl(var(--muted-foreground))}.map-inspector h3{font-size:1.4rem;font-weight:650;margin:.5rem 0}.inspector-question{font-size:1rem;font-weight:600;margin:.8rem 0}.map-inspector [data-node-thesis]{font-size:1rem;color:hsl(var(--muted-foreground))}.inspector-read{display:block;background:hsl(var(--foreground));color:hsl(var(--background));padding:.65rem 1rem;border-radius:.4rem;text-align:center;font-weight:600;margin:1.2rem 0}.inspector-read:hover{color:hsl(var(--background));opacity:.85}.relation-section{border-top:1px solid hsl(var(--border));padding-top:1rem;margin-top:1rem}.relation-section h4,.relation-section summary{font-size:.95rem;font-weight:600}.relation-section summary{cursor:pointer}.relation-section ul{list-style:none;padding:0;margin:0}.relation-section li{margin:.7rem 0;font-size:.9rem}.relation-section button{text-align:left;text-decoration:underline;text-underline-offset:.2em;cursor:pointer;color:hsl(var(--primary));font-size:1rem}.relation-section p{color:hsl(var(--muted-foreground));margin-top:.3rem}.knowledge-explorer button:focus-visible,.knowledge-explorer a:focus-visible,.knowledge-explorer input:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px}.fallback-tree details{padding:.75rem;border-bottom:1px solid hsl(var(--border))}.fallback-tree a{text-decoration:underline}@media(max-width:760px){.map-layout{grid-template-columns:1fr;gap:1rem}.map-inspector{position:static}.domain-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.map-topline{display:block}.map-topline label{display:block;margin-top:.75rem}.domain-overview button{padding:.85rem}.map-caption{align-items:start}.map-root{margin-top:1.3rem}}@media(max-width:380px){.domain-overview{grid-template-columns:1fr}.map-caption{display:block}.map-caption button{margin-top:.6rem}}
 </style>
