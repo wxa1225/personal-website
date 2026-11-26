@@ -80,7 +80,10 @@ const agentHandbook = defineCollection({
     description: z.string(),
     order: z.number(),
     updatedDate: z.coerce.date(),
-    prerequisites: z.array(z.string()).default([])
+    prerequisites: z.array(z.string()).default([]),
+    kind: z.enum(['overview', 'chapter', 'lesson']).default('chapter'),
+    conceptId: z.string().optional(),
+    parent: z.string().optional()
   })
 })
 

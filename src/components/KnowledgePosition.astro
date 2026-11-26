@@ -1,0 +1,36 @@
+---
+import { type Concept, conceptById, domains, connections, lessonUrl, mapUrl } from '../lib/agent-curriculum'
+interface Props { concept: Concept }
+const { concept } = Astro.props
+const domain = domains.find(item => item.id === concept.domain)!
+const { before, after, related } = connections(concept.id)
+const firstByDomain = Object.fromEntries(domains.map(domain => [domain.id, domain.id === concept.domain ? concept.id : ({ F: 'F1', B: 'B2', M: 'M2', A: 'A1', I: 'I1', E: 'E1' } as Record<string, string>)[domain.id]!]))
+---
+<section class='knowledge-position not-prose' aria-label='本节在知识体系中的位置'>
+  <nav aria-label='知识分支定位' class='domain-strip'>
+    {domains.map(item => <a href={mapUrl(firstByDomain[item.id]!)} aria-current={item.id === concept.domain ? 'location' : undefined}>{item.title}</a>)}
+  </nav>
+  <p class='position-address'>当前位置：{domain.title} / <strong>{concept.id} · {concept.title}</strong> <a href={mapUrl(concept.id)}>回到图中位置</a></p>
+  <p class='position-question'>{concept.question}</p>
+  <p>{concept.thesis}</p>
+  <details>
+    <summary>理解本节需要什么，又能用来解释什么？</summary>
+    <div class='position-relations'>
+      <div><h2>先懂这些</h2>{before.length ? <ul>{before.map(edge => { const node = conceptById(edge.fromId)!; return <li><a href={lessonUrl(node)}>{node.id} · {node.title}</a><p>{edge.why}</p></li> })}</ul> : <p>本节从具体问题开始，所需概念会在正文引入。</p>}</div>
+      <div><h2>继续追问</h2><ul>{after.map(edge => { const node = conceptById(edge.to)!; return <li><a href={lessonUrl(node)}>{node.id} · {node.title}</a><p>{edge.why}</p></li> })}{related.map(edge => { const node = conceptById(edge.fromId === concept.id ? edge.to : edge.fromId)!; return <li><a href={lessonUrl(node)}>{node.id} · {node.title}</a><p>{edge.why}</p></li> })}</ul></div>
+    </div>
+  </details>
+</section>
+<style>
+  .knowledge-position { margin:1.5rem 0 2rem; padding:1.1rem; border:1px solid color-mix(in srgb,currentColor 20%,transparent); border-radius:.65rem; line-height:1.75; font-size:.95rem; }
+  .domain-strip { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+  .domain-strip a { border:1px solid color-mix(in srgb,currentColor 20%,transparent); border-radius:.3rem; padding:.2rem .5rem; font-size:.8rem; text-decoration:none; }
+  .domain-strip a[aria-current] { font-weight:650; border-color:currentColor; background:color-mix(in srgb,currentColor 8%,transparent); }
+  .position-address { font-size:.875rem; }.position-address>a { display:inline-block; margin-left:.5rem; }
+  .position-question { font-weight:650; margin:.75rem 0 .35rem; }
+  .knowledge-position a { text-decoration:underline; text-underline-offset:.2em; }
+  details { margin-top:1rem; }summary { cursor:pointer; font-weight:600; }
+  .position-relations { display:grid; grid-template-columns:1fr 1fr; gap:1.3rem; margin-top:1rem; }
+  .position-relations h2 { font-size:1rem; font-weight:600; }.position-relations ul { list-style:none; padding:0; }.position-relations li { margin:.8rem 0; }.position-relations li p { font-size:.875rem; opacity:.8; }
+  @media(max-width:600px) { .position-relations { grid-template-columns:1fr; } }
+</style>

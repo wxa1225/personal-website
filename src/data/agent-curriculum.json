@@ -1,0 +1,1273 @@
+{
+  "version": 2,
+  "domains": [
+    {
+      "id": "F",
+      "title": "数学与学习原理",
+      "question": "怎样表示、学习与判断不确定性？",
+      "role": "向量与导数解释计算，概率和优化解释学习。"
+    },
+    {
+      "id": "B",
+      "title": "计算机与软件基础",
+      "question": "程序、数据与网络实际怎样工作？",
+      "role": "算法、操作系统、网络、存储和并发是上层系统的约束。"
+    },
+    {
+      "id": "M",
+      "title": "大模型本体",
+      "question": "模型怎样形成能力，又怎样生成输出？",
+      "role": "表示、结构、预训练、后训练和推理是不同阶段。"
+    },
+    {
+      "id": "A",
+      "title": "应用与 Agent",
+      "question": "怎样把模型能力变成可完成的任务？",
+      "role": "从需求与提示到信息组织、工具行动和动态编排。"
+    },
+    {
+      "id": "I",
+      "title": "基础设施与平台",
+      "question": "怎样高效、可靠地运行和交付？",
+      "role": "区分模型训练/推理基础设施与 Agent 执行基础设施。"
+    },
+    {
+      "id": "E",
+      "title": "评测与持续改进",
+      "question": "怎样证明有效，并知道下一步改哪里？",
+      "role": "任务契约、评审校准、因果实验和数据反馈贯穿各层。"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "F1",
+      "domain": "F",
+      "title": "向量、矩阵与导数",
+      "slug": "math-representations",
+      "chapter": "10-foundations",
+      "question": "公式里的矩阵和梯度究竟在表示什么？",
+      "thesis": "先追踪形状和变化率，再把线性变换与链式法则连到神经网络。",
+      "tags": [
+        "线性代数",
+        "微积分",
+        "向量",
+        "矩阵",
+        "导数",
+        "Jacobian",
+        "链式法则"
+      ],
+      "order": 1
+    },
+    {
+      "id": "M1",
+      "domain": "F",
+      "title": "概率、损失与梯度",
+      "slug": "probability-learning",
+      "chapter": "01-model-foundations",
+      "question": "语言模型到底在学什么，为什么会流畅地答错？",
+      "thesis": "从条件概率与交叉熵理解训练信号，再区分似然和任务正确性。",
+      "tags": [
+        "softmax",
+        "交叉熵",
+        "梯度",
+        "反向传播",
+        "损失",
+        "概率",
+        "幻觉",
+        "cross",
+        "entropy",
+        "为什么答错",
+        "答错"
+      ],
+      "order": 2
+    },
+    {
+      "id": "B1",
+      "domain": "B",
+      "title": "数据结构与算法选择",
+      "slug": "algorithms-structures",
+      "chapter": "10-foundations",
+      "question": "字典、堆、图和搜索怎样决定一个系统的行为？",
+      "thesis": "从操作、规模和复杂度选择表示，数据结构会限制可用算法。",
+      "tags": [
+        "算法",
+        "数据结构",
+        "哈希",
+        "heap",
+        "图",
+        "DAG",
+        "BFS",
+        "DFS",
+        "复杂度",
+        "topk"
+      ],
+      "order": 3
+    },
+    {
+      "id": "B2",
+      "domain": "B",
+      "title": "操作系统与网络通信",
+      "slug": "os-network-foundations",
+      "chapter": "10-foundations",
+      "question": "一个请求从 Python 到远端进程，中间经历了什么？",
+      "thesis": "区分进程资源、调度、传输和应用语义，才能定位阻塞与未知结果。",
+      "tags": [
+        "操作系统",
+        "进程",
+        "线程",
+        "协程",
+        "TCP",
+        "HTTP",
+        "DNS",
+        "socket",
+        "Linux",
+        "内存"
+      ],
+      "order": 4
+    },
+    {
+      "id": "B3",
+      "domain": "B",
+      "title": "存储、索引与数据一致性",
+      "slug": "storage-indexes",
+      "chapter": "10-foundations",
+      "question": "任务状态、原始文件和向量为什么不能都当成同一种数据？",
+      "thesis": "按访问方式与一致性需求选择存储，索引用空间换查询效率。",
+      "tags": [
+        "数据库",
+        "SQL",
+        "Btree",
+        "索引",
+        "隔离",
+        "MVCC",
+        "对象存储",
+        "Redis",
+        "PostgreSQL"
+      ],
+      "order": 5
+    },
+    {
+      "id": "R1",
+      "domain": "B",
+      "title": "并发、队列与背压",
+      "slug": "concurrency-queues",
+      "chapter": "05-reliable-execution",
+      "question": "用了 async，为什么任务依然排队甚至拖垮服务？",
+      "thesis": "并发重叠等待，并行增加执行资源；容量、到达率和背压约束整体吞吐。",
+      "tags": [
+        "Python",
+        "asyncio",
+        "GIL",
+        "async",
+        "并行",
+        "队列",
+        "背压",
+        "Little",
+        "吞吐"
+      ],
+      "order": 6
+    },
+    {
+      "id": "R2",
+      "domain": "B",
+      "title": "幂等与事务边界",
+      "slug": "idempotency-transactions",
+      "chapter": "05-reliable-execution",
+      "question": "超时之后重试，为什么可能创建两个远端任务？",
+      "thesis": "超时只说明结果未知，幂等需要稳定身份和服务端去重语义。",
+      "tags": [
+        "幂等",
+        "idempotency",
+        "transaction",
+        "outbox",
+        "重试",
+        "超时",
+        "timeout",
+        "数据库",
+        "事务"
+      ],
+      "order": 7
+    },
+    {
+      "id": "B4",
+      "domain": "B",
+      "title": "测试与交付链路",
+      "slug": "testing-delivery",
+      "chapter": "08-engineering-delivery",
+      "question": "测试通过了，为什么上线后还会失败？",
+      "thesis": "不同测试覆盖不同边界，部署必须连接版本、依赖、迁移与回滚。",
+      "tags": [
+        "测试",
+        "test",
+        "CI",
+        "CD",
+        "Git",
+        "Docker",
+        "集成",
+        "契约",
+        "回归",
+        "发布"
+      ],
+      "order": 8
+    },
+    {
+      "id": "M4",
+      "domain": "M",
+      "title": "Token 与向量表示",
+      "slug": "tokenization-representation",
+      "chapter": "02-transformer-inference",
+      "question": "字符串怎样变成模型可以计算的表示？",
+      "thesis": "分词决定离散序列，embedding 建立向量入口，hidden state 随上下文变化。",
+      "tags": [
+        "tokenizer",
+        "BPE",
+        "embedding",
+        "token",
+        "词表",
+        "分词",
+        "表示",
+        "hidden",
+        "state"
+      ],
+      "order": 9
+    },
+    {
+      "id": "M2",
+      "domain": "M",
+      "title": "注意力与表示",
+      "slug": "attention-representation",
+      "chapter": "02-transformer-inference",
+      "question": "Q、K、V 为什么能把其他 token 的信息带进来？",
+      "thesis": "把注意力看成受掩码约束的信息加权聚合，逐一检查矩阵形状。",
+      "tags": [
+        "Transformer",
+        "attention",
+        "QKV",
+        "矩阵",
+        "位置编码",
+        "causal",
+        "mask"
+      ],
+      "order": 10
+    },
+    {
+      "id": "M5",
+      "domain": "M",
+      "title": "预训练与规模规律",
+      "slug": "pretraining-scaling",
+      "chapter": "11-model-platforms",
+      "question": "预训练为什么能产生多种能力，扩大规模又受什么限制？",
+      "thesis": "在数据、模型容量和计算预算之间建立经验假设，再用验证分布检验。",
+      "tags": [
+        "pretrain",
+        "scaling",
+        "law",
+        "数据清洗",
+        "预训练",
+        "Chinchilla",
+        "compute"
+      ],
+      "order": 11
+    },
+    {
+      "id": "L2",
+      "domain": "M",
+      "title": "后训练目标与算法",
+      "slug": "post-training",
+      "chapter": "07-data-posttraining",
+      "question": "SFT、DPO 和 GRPO 各自究竟改变了什么？",
+      "thesis": "按监督信号和优化目标理解算法，并把参数效率与训练目标分开。",
+      "tags": [
+        "SFT",
+        "LoRA",
+        "DPO",
+        "PPO",
+        "GRPO",
+        "RL",
+        "KL",
+        "奖励",
+        "策略梯度",
+        "训练"
+      ],
+      "order": 12
+    },
+    {
+      "id": "M3",
+      "domain": "M",
+      "title": "生成过程与 KV Cache",
+      "slug": "inference-budget",
+      "chapter": "02-transformer-inference",
+      "question": "为什么长输入、长输出和并发会分别拖慢推理？",
+      "thesis": "prefill 建立历史表示，decode 逐步读取缓存；时间和显存来自不同部分。",
+      "tags": [
+        "KV",
+        "cache",
+        "GQA",
+        "prefill",
+        "decode",
+        "TTFT",
+        "FlashAttention",
+        "PagedAttention",
+        "显存",
+        "吞吐"
+      ],
+      "order": 13
+    },
+    {
+      "id": "G1",
+      "domain": "A",
+      "title": "任务契约与成功标准",
+      "slug": "task-contract",
+      "chapter": "06-evaluation-experiments",
+      "question": "为什么“报告写完了”不代表任务完成？",
+      "thesis": "先把意图变成可观察的验收条件，才能设计行动与评测。",
+      "tags": [
+        "目标",
+        "需求",
+        "验收",
+        "业务",
+        "指标",
+        "约束",
+        "specification"
+      ],
+      "order": 14
+    },
+    {
+      "id": "A4",
+      "domain": "A",
+      "title": "应用架构与技术选型",
+      "slug": "application-architecture",
+      "chapter": "12-application-design",
+      "question": "一个需求应该用普通程序、RAG、工作流还是 Agent？",
+      "thesis": "先判断不确定性和动作需求，再用最小完整链路验证架构。",
+      "tags": [
+        "系统设计",
+        "架构",
+        "应用开发",
+        "workflow",
+        "工作流",
+        "agent",
+        "FDE",
+        "后端",
+        "前端"
+      ],
+      "order": 15
+    },
+    {
+      "id": "A0",
+      "domain": "A",
+      "title": "提示与结构化输出",
+      "slug": "prompting-structured-output",
+      "chapter": "12-application-design",
+      "question": "提示词改变了什么，格式合法为什么仍可能答错？",
+      "thesis": "提示改变条件输入，约束解码约束形式，业务正确性仍需验证。",
+      "tags": [
+        "prompt",
+        "提示词",
+        "few",
+        "shot",
+        "structured",
+        "output",
+        "JSON",
+        "schema",
+        "约束解码"
+      ],
+      "order": 16
+    },
+    {
+      "id": "C1",
+      "domain": "A",
+      "title": "上下文选择与压缩",
+      "slug": "context-selection",
+      "chapter": "04-context-retrieval-memory",
+      "question": "窗口放得下，为什么还会漏掉关键条件？",
+      "thesis": "上下文是决策输入的有损表示，需要按任务保留证据、约束与未解决问题。",
+      "tags": [
+        "上下文",
+        "context",
+        "压缩",
+        "摘要",
+        "token",
+        "window",
+        "长文本"
+      ],
+      "order": 17
+    },
+    {
+      "id": "C2",
+      "domain": "A",
+      "title": "检索与 RAG 链路",
+      "slug": "retrieval-pipeline",
+      "chapter": "04-context-retrieval-memory",
+      "question": "检索出了相关文本，为什么最终答案仍然错误？",
+      "thesis": "把召回、排序、证据选择与生成分开检查，才能找到信息在哪一步丢失。",
+      "tags": [
+        "RAG",
+        "embedding",
+        "BM25",
+        "rerank",
+        "向量",
+        "召回",
+        "cosine",
+        "Recall",
+        "MRR"
+      ],
+      "order": 18
+    },
+    {
+      "id": "C3",
+      "domain": "A",
+      "title": "记忆与权威状态",
+      "slug": "memory-state",
+      "chapter": "04-context-retrieval-memory",
+      "question": "记忆说任务完成，但数据库说还在跑，应该信谁？",
+      "thesis": "记忆帮助决策，权威状态约束事实；写入、冲突与过期必须有来源。",
+      "tags": [
+        "长期记忆",
+        "memory",
+        "state",
+        "遗忘",
+        "冲突",
+        "写入",
+        "过期",
+        "数据库"
+      ],
+      "order": 19
+    },
+    {
+      "id": "A1",
+      "domain": "A",
+      "title": "观察—决策—反馈",
+      "slug": "agent-state-loop",
+      "chapter": "03-agent-loop",
+      "question": "Agent 与一段连续生成的文字到底差在哪里？",
+      "thesis": "动作改变环境或获得观察，下一步必须依据新证据更新判断。",
+      "tags": [
+        "Agent",
+        "loop",
+        "ReAct",
+        "POMDP",
+        "policy",
+        "观察",
+        "状态",
+        "策略",
+        "反馈"
+      ],
+      "order": 20
+    },
+    {
+      "id": "A2",
+      "domain": "A",
+      "title": "工具契约与 MCP",
+      "slug": "tool-contracts",
+      "chapter": "03-agent-loop",
+      "question": "模型生成正确 JSON 后，为什么仍然不能直接执行？",
+      "thesis": "结构正确只是入口，业务语义、授权与重复调用规则决定动作是否可执行。",
+      "tags": [
+        "MCP",
+        "function",
+        "calling",
+        "JSON",
+        "schema",
+        "tool",
+        "use",
+        "工具调用",
+        "参数",
+        "授权"
+      ],
+      "order": 21
+    },
+    {
+      "id": "A3",
+      "domain": "A",
+      "title": "规划、反思与协作",
+      "slug": "planning-coordination",
+      "chapter": "03-agent-loop",
+      "question": "什么时候需要规划和多 Agent，什么时候只会增加混乱？",
+      "thesis": "按任务依赖和新信息需求选择编排形式，用相同预算比较收益。",
+      "tags": [
+        "multi",
+        "agent",
+        "多智能体",
+        "workflow",
+        "planner",
+        "reflection",
+        "反思",
+        "协作"
+      ],
+      "order": 22
+    },
+    {
+      "id": "G2",
+      "domain": "A",
+      "title": "预算与决策取舍",
+      "slug": "budget-decisions",
+      "chapter": "03-agent-loop",
+      "question": "时间与钱有限，应该多检索、换模型还是多试一次？",
+      "thesis": "比较下一步带来的预期收益，并为验收、回收和失败保留预算。",
+      "tags": [
+        "预算",
+        "成本",
+        "时延",
+        "p95",
+        "timeout",
+        "停止",
+        "ROI"
+      ],
+      "order": 23
+    },
+    {
+      "id": "I2",
+      "domain": "I",
+      "title": "训练基础设施与并行",
+      "slug": "training-infrastructure",
+      "chapter": "11-model-platforms",
+      "question": "模型和优化器放不进一张卡，训练怎样继续？",
+      "thesis": "把数据、计算、参数和通信拆开考虑，并行会转移瓶颈而非消灭成本。",
+      "tags": [
+        "训练infra",
+        "GPU",
+        "显存",
+        "DDP",
+        "FSDP",
+        "ZeRO",
+        "NCCL",
+        "数据并行",
+        "tensor",
+        "pipeline",
+        "checkpoint"
+      ],
+      "order": 24
+    },
+    {
+      "id": "I1",
+      "domain": "I",
+      "title": "模型推理服务",
+      "slug": "inference-serving",
+      "chapter": "11-model-platforms",
+      "question": "单次生成很快，为什么同时服务很多用户会很慢？",
+      "thesis": "推理服务调度 token、计算与KV资源，吞吐优化必须同时观察请求时延。",
+      "tags": [
+        "vLLM",
+        "serving",
+        "continuous",
+        "batching",
+        "量化",
+        "tensor",
+        "parallel",
+        "推理infra",
+        "TPOT"
+      ],
+      "order": 25
+    },
+    {
+      "id": "R3",
+      "domain": "I",
+      "title": "租约、所有权与恢复",
+      "slug": "leases-recovery",
+      "chapter": "05-reliable-execution",
+      "question": "Worker 重启以后，怎样接着原来的任务做？",
+      "thesis": "恢复必须找回执行身份并排除旧写入者，心跳和锁各自只解决部分问题。",
+      "tags": [
+        "lease",
+        "heartbeat",
+        "fencing",
+        "checkpoint",
+        "租约",
+        "心跳",
+        "恢复",
+        "锁",
+        "崩溃"
+      ],
+      "order": 26
+    },
+    {
+      "id": "P1",
+      "domain": "I",
+      "title": "服务、可观测性与交付",
+      "slug": "service-observability",
+      "chapter": "08-engineering-delivery",
+      "question": "本地能跑的 Agent，怎样变成别人放心用的服务？",
+      "thesis": "围绕任务生命周期设计接口和证据，让使用者、运维与研发看到同一事实。",
+      "tags": [
+        "API",
+        "SSE",
+        "Docker",
+        "Linux",
+        "服务",
+        "trace",
+        "span",
+        "日志",
+        "metrics",
+        "部署",
+        "FDE"
+      ],
+      "order": 27
+    },
+    {
+      "id": "P2",
+      "domain": "I",
+      "title": "信任边界与安全",
+      "slug": "trust-boundaries",
+      "chapter": "08-engineering-delivery",
+      "question": "读到网页里的指令，为什么不能当作用户授权？",
+      "thesis": "将数据来源、决策输出与执行权限分开，安全边界落在可强制执行的宿主层。",
+      "tags": [
+        "安全",
+        "prompt",
+        "injection",
+        "沙箱",
+        "sandbox",
+        "权限",
+        "secret",
+        "SSRF",
+        "注入"
+      ],
+      "order": 28
+    },
+    {
+      "id": "E1",
+      "domain": "E",
+      "title": "评测契约与统计口径",
+      "slug": "evaluation-contracts",
+      "chapter": "06-evaluation-experiments",
+      "question": "分数下降，到底是能力退化还是评分环境坏了？",
+      "thesis": "先确定被估计的量、版本和失败口径，再把分数用于决策。",
+      "tags": [
+        "评测",
+        "benchmark",
+        "harness",
+        "grader",
+        "分母",
+        "覆盖率",
+        "评分",
+        "零分"
+      ],
+      "order": 29
+    },
+    {
+      "id": "E2",
+      "domain": "E",
+      "title": "模型评审与校准",
+      "slug": "judge-calibration",
+      "chapter": "06-evaluation-experiments",
+      "question": "两个评审模型都同意，就说明答案正确吗？",
+      "thesis": "一致性、正确性和覆盖率是不同的量，评审器本身也需要被测量。",
+      "tags": [
+        "LLM",
+        "judge",
+        "人工标注",
+        "偏差",
+        "校准",
+        "一致性",
+        "precision",
+        "recall",
+        "拒判"
+      ],
+      "order": 30
+    },
+    {
+      "id": "E3",
+      "domain": "E",
+      "title": "对照实验与不确定性",
+      "slug": "causal-experiments",
+      "chapter": "06-evaluation-experiments",
+      "question": "成功率涨了几个点，怎样判断是改动带来的？",
+      "thesis": "固定比较对象与预算，用配对结果和不确定性区分收益、噪声与混杂。",
+      "tags": [
+        "bootstrap",
+        "置信区间",
+        "消融",
+        "ablation",
+        "A/B",
+        "统计",
+        "配对",
+        "泄漏"
+      ],
+      "order": 31
+    },
+    {
+      "id": "L1",
+      "domain": "E",
+      "title": "数据反馈与分布",
+      "slug": "data-feedback",
+      "chapter": "07-data-posttraining",
+      "question": "收集成功轨迹，为什么不一定让下一版更强？",
+      "thesis": "先按失败机制决定干预点，再控制数据选择、标签和分布偏差。",
+      "tags": [
+        "数据飞轮",
+        "flywheel",
+        "数据集",
+        "合成数据",
+        "选择偏差",
+        "分布",
+        "数据质量"
+      ],
+      "order": 32
+    }
+  ],
+  "relations": [
+    {
+      "fromId": "G1",
+      "to": "A1",
+      "type": "prerequisite",
+      "why": "先知道验收目标，才能判断动作是否使任务向前推进。"
+    },
+    {
+      "fromId": "G1",
+      "to": "G2",
+      "type": "prerequisite",
+      "why": "没有成功标准，就无法定义多花一次调用的收益。"
+    },
+    {
+      "fromId": "M1",
+      "to": "M2",
+      "type": "prerequisite",
+      "why": "先理解概率输出和可训练参数，再看 Transformer 怎样计算这些输出。"
+    },
+    {
+      "fromId": "M2",
+      "to": "M3",
+      "type": "prerequisite",
+      "why": "缓存的是各层注意力的 K/V，先看懂张量才能推算显存和计算。"
+    },
+    {
+      "fromId": "A1",
+      "to": "A2",
+      "type": "application",
+      "why": "先区分模型建议与外部动作，再设计二者之间的校验接口。"
+    },
+    {
+      "fromId": "A1",
+      "to": "A3",
+      "type": "prerequisite",
+      "why": "先掌握单个反馈闭环，再讨论如何拆分、调度与合并多个闭环。"
+    },
+    {
+      "fromId": "A1",
+      "to": "C1",
+      "type": "application",
+      "why": "上下文的价值取决于它是否足够支持下一步决策。"
+    },
+    {
+      "fromId": "C1",
+      "to": "C2",
+      "type": "prerequisite",
+      "why": "检索负责补充缺失信息，召回数量必须服从上下文和证据预算。"
+    },
+    {
+      "fromId": "C1",
+      "to": "C3",
+      "type": "prerequisite",
+      "why": "先理解本轮输入的有限性，再讨论跨轮、跨任务的信息保存。"
+    },
+    {
+      "fromId": "A2",
+      "to": "R2",
+      "type": "application",
+      "why": "幂等键和重复请求语义必须先成为工具契约的一部分。"
+    },
+    {
+      "fromId": "R1",
+      "to": "R2",
+      "type": "application",
+      "why": "异步等待和网络失败会产生未知结果，多请求并发会放大重复副作用。"
+    },
+    {
+      "fromId": "R2",
+      "to": "R3",
+      "type": "prerequisite",
+      "why": "恢复必须先明确一个逻辑操作的身份及可重复执行范围。"
+    },
+    {
+      "fromId": "G1",
+      "to": "E1",
+      "type": "prerequisite",
+      "why": "评分逻辑需要落实已定义的成功标准，不能反过来用容易测的量替代目标。"
+    },
+    {
+      "fromId": "E1",
+      "to": "E2",
+      "type": "prerequisite",
+      "why": "先固定评分对象和证据，再讨论模型评审的偏差与可靠性。"
+    },
+    {
+      "fromId": "E1",
+      "to": "E3",
+      "type": "prerequisite",
+      "why": "比较需要相同的任务、版本和统计口径，否则差值没有共同含义。"
+    },
+    {
+      "fromId": "E3",
+      "to": "L1",
+      "type": "prerequisite",
+      "why": "先识别真实失败与改进，才能避免把测量噪声采入训练数据。"
+    },
+    {
+      "fromId": "M1",
+      "to": "L2",
+      "type": "prerequisite",
+      "why": "SFT、偏好和强化学习目标最终都要通过梯度改变参数。"
+    },
+    {
+      "fromId": "L1",
+      "to": "L2",
+      "type": "application",
+      "why": "训练目标无法弥补数据来源、标签和分布设计中的根本错误。"
+    },
+    {
+      "fromId": "R1",
+      "to": "P1",
+      "type": "prerequisite",
+      "why": "服务要在有限资源下接收任务，队列、背压与超时决定可交付性。"
+    },
+    {
+      "fromId": "A2",
+      "to": "P2",
+      "type": "prerequisite",
+      "why": "必须先知道工具能做什么，再限制谁能对哪些资源执行它。"
+    },
+    {
+      "fromId": "M3",
+      "to": "G2",
+      "type": "application",
+      "why": "输入长度、输出长度和并发共同决定时间与显存预算。"
+    },
+    {
+      "fromId": "C2",
+      "to": "E1",
+      "type": "application",
+      "why": "端到端失败需要分解到召回、排序和生成，才能定位责任。"
+    },
+    {
+      "fromId": "C3",
+      "to": "R3",
+      "type": "application",
+      "why": "恢复所依据的执行身份和任务快照必须来自权威记录，不能只靠模型摘要。"
+    },
+    {
+      "fromId": "R3",
+      "to": "E1",
+      "type": "application",
+      "why": "区分执行失败、未观测与作答错误，才能给评测结果正确归因。"
+    },
+    {
+      "fromId": "E2",
+      "to": "L1",
+      "type": "application",
+      "why": "错误评审会变成错误训练标签，形成越训练越偏的反馈。"
+    },
+    {
+      "fromId": "L2",
+      "to": "E3",
+      "type": "application",
+      "why": "训练效果必须回到冻结评测和预算一致的对照中验证。"
+    },
+    {
+      "fromId": "P1",
+      "to": "E3",
+      "type": "application",
+      "why": "日志、指标和轨迹为对照实验提供可追溯的测量证据。"
+    },
+    {
+      "fromId": "P2",
+      "to": "C2",
+      "type": "application",
+      "why": "检索结果是外部数据；相关性高不等于有权控制系统行为。"
+    },
+    {
+      "fromId": "P2",
+      "to": "R3",
+      "type": "application",
+      "why": "故障恢复不得继承超过原任务范围的权限。"
+    },
+    {
+      "fromId": "A3",
+      "to": "G2",
+      "type": "application",
+      "why": "多 Agent 的协调和重复上下文也消耗预算，不能只看单个子任务耗时。"
+    },
+    {
+      "fromId": "F1",
+      "to": "M1",
+      "type": "prerequisite",
+      "why": "导数和链式法则解释损失怎样改变模型参数。"
+    },
+    {
+      "fromId": "F1",
+      "to": "M2",
+      "type": "prerequisite",
+      "why": "矩阵乘法和向量内积解释注意力的形状与相似度。"
+    },
+    {
+      "fromId": "M4",
+      "to": "M2",
+      "type": "prerequisite",
+      "why": "注意力接收的是 token 表示序列，需要先理解输入怎样形成。"
+    },
+    {
+      "fromId": "M1",
+      "to": "M5",
+      "type": "prerequisite",
+      "why": "预训练首先是一个学习目标和数据分布上的优化问题。"
+    },
+    {
+      "fromId": "M3",
+      "to": "I1",
+      "type": "prerequisite",
+      "why": "先理解单请求的生成与缓存，再讨论多请求的调度和共享资源。"
+    },
+    {
+      "fromId": "M1",
+      "to": "I2",
+      "type": "prerequisite",
+      "why": "训练并行必须保持梯度、参数更新与优化目标之间的语义。"
+    },
+    {
+      "fromId": "B2",
+      "to": "R1",
+      "type": "prerequisite",
+      "why": "协程、线程和网络等待的区别决定 async 能够重叠哪段时间。"
+    },
+    {
+      "fromId": "B3",
+      "to": "R2",
+      "type": "prerequisite",
+      "why": "唯一约束、事务与持久化为去重和状态提交提供具体机制。"
+    },
+    {
+      "fromId": "G1",
+      "to": "A4",
+      "type": "prerequisite",
+      "why": "架构选择服务于真实的交付目标，而不是预先选定某个框架。"
+    },
+    {
+      "fromId": "M1",
+      "to": "A0",
+      "type": "prerequisite",
+      "why": "提示是条件输入，结构约束不能把概率自动变成正确性。"
+    },
+    {
+      "fromId": "B4",
+      "to": "P1",
+      "type": "prerequisite",
+      "why": "服务发布需要可重建版本、验证边界和恢复路径。"
+    },
+    {
+      "fromId": "B1",
+      "to": "A3",
+      "type": "application",
+      "why": "任务依赖可以表示成图，调度和并行收益受图结构约束。"
+    },
+    {
+      "fromId": "B1",
+      "to": "C2",
+      "type": "application",
+      "why": "哈希、倒排和近邻索引决定检索候选生成的复杂度与召回边界。"
+    },
+    {
+      "fromId": "B3",
+      "to": "C3",
+      "type": "application",
+      "why": "记忆更新需要有版本、有来源的存储，避免覆盖掉权威事实。"
+    },
+    {
+      "fromId": "M5",
+      "to": "L1",
+      "type": "application",
+      "why": "数据分布问题同时存在于预训练和应用反馈数据。"
+    },
+    {
+      "fromId": "I1",
+      "to": "G2",
+      "type": "application",
+      "why": "服务侧排队和批处理会改变应用感知的总时延。"
+    },
+    {
+      "fromId": "I2",
+      "to": "B3",
+      "type": "application",
+      "why": "训练 checkpoint 必须持久化并关联数据位置与优化器状态。"
+    },
+    {
+      "fromId": "A4",
+      "to": "P1",
+      "type": "application",
+      "why": "架构中的每个组件要成为可观测、可运维的交付对象。"
+    },
+    {
+      "fromId": "A0",
+      "to": "E3",
+      "type": "application",
+      "why": "提示改动同样需要固定评测和对照，不能靠挑选例子。"
+    },
+    {
+      "fromId": "B4",
+      "to": "E1",
+      "type": "application",
+      "why": "软件测试和模型评测互补：前者约束程序，后者测量分布上的行为。"
+    },
+    {
+      "fromId": "M4",
+      "to": "C1",
+      "type": "prerequisite",
+      "why": "先区分 token 序列、模型表示与文本，才能讨论上下文长度和内容选择。"
+    },
+    {
+      "fromId": "M1",
+      "to": "C1",
+      "type": "prerequisite",
+      "why": "上下文改变条件输入而不是直接改权重，需要区分生成条件与训练目标。"
+    },
+    {
+      "fromId": "B2",
+      "to": "R2",
+      "type": "prerequisite",
+      "why": "先理解请求与响应可能分别失败，才知道超时为何不能证明副作用未发生。"
+    }
+  ],
+  "paths": [
+    {
+      "id": "foundations",
+      "title": "从零补齐底层",
+      "description": "先理解计算、学习和程序执行的基本对象，再进入模型与应用。",
+      "nodes": [
+        "F1",
+        "M1",
+        "M4",
+        "M2",
+        "B1",
+        "B2",
+        "B3",
+        "R1"
+      ]
+    },
+    {
+      "id": "first",
+      "title": "第一次建立系统观",
+      "description": "先走通一个任务，再下潜模型与系统原理。",
+      "nodes": [
+        "G1",
+        "A1",
+        "C1",
+        "A2",
+        "R2",
+        "E1"
+      ]
+    },
+    {
+      "id": "model",
+      "title": "补模型与算法基础",
+      "description": "从数学和表示走到结构、预训练、后训练与推理；基础设施再从 I1/I2 分叉。",
+      "nodes": [
+        "F1",
+        "M1",
+        "M4",
+        "M2",
+        "M5",
+        "L2",
+        "M3"
+      ]
+    },
+    {
+      "id": "infra",
+      "title": "理解 Agent Infra",
+      "description": "从工具契约走到并发、所有权、恢复与观测。",
+      "nodes": [
+        "A2",
+        "R1",
+        "R2",
+        "R3",
+        "P1",
+        "P2"
+      ]
+    },
+    {
+      "id": "quality",
+      "title": "改善效果与评测",
+      "description": "从信息不足、判分偏差到实验和数据反馈。",
+      "nodes": [
+        "C1",
+        "C2",
+        "C3",
+        "E1",
+        "E2",
+        "E3",
+        "L1"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "id": "all",
+      "title": "全局知识图",
+      "description": "按知识归属浏览；岗位只改变阅读重心，不改变原理。",
+      "nodes": []
+    },
+    {
+      "id": "agent",
+      "title": "Agent 研发",
+      "description": "侧重任务、信息、行动和效果，同时依赖模型与软件基础。",
+      "nodes": [
+        "G1",
+        "A4",
+        "M1",
+        "M2",
+        "M3",
+        "A0",
+        "C1",
+        "C2",
+        "C3",
+        "A1",
+        "A2",
+        "A3",
+        "R2",
+        "R3",
+        "E1",
+        "E3"
+      ]
+    },
+    {
+      "id": "agent-infra",
+      "title": "Agent Infra",
+      "description": "侧重运行状态、工具、并发、隔离、恢复与观测，不等同于 GPU 推理引擎。",
+      "nodes": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "R1",
+        "R2",
+        "R3",
+        "A2",
+        "P1",
+        "P2",
+        "E1",
+        "M3"
+      ]
+    },
+    {
+      "id": "eval",
+      "title": "评测与数据",
+      "description": "侧重测量有效性、评审可靠性、实验设计和数据反馈。",
+      "nodes": [
+        "G1",
+        "M1",
+        "A1",
+        "E1",
+        "E2",
+        "E3",
+        "L1",
+        "L2",
+        "C2",
+        "B3",
+        "P1"
+      ]
+    },
+    {
+      "id": "application",
+      "title": "AI 应用 / FDE",
+      "description": "侧重需求、系统选型、数据与工具集成，以及可验收的交付。",
+      "nodes": [
+        "G1",
+        "G2",
+        "A4",
+        "A0",
+        "C1",
+        "C2",
+        "A1",
+        "A2",
+        "B3",
+        "B4",
+        "P1",
+        "P2",
+        "E1"
+      ]
+    },
+    {
+      "id": "model",
+      "title": "模型算法 / 推理",
+      "description": "补模型训练与推理原理；岗位深度还需对应实验与工程证据。",
+      "nodes": [
+        "F1",
+        "M1",
+        "M4",
+        "M2",
+        "M5",
+        "L2",
+        "M3",
+        "I1",
+        "I2",
+        "L1",
+        "E3"
+      ]
+    }
+  ],
+  "problems": [
+    {
+      "title": "超时以后重试，为什么出现重复任务？",
+      "nodes": [
+        "B2",
+        "R2",
+        "R3",
+        "E1"
+      ],
+      "explanation": "先解释通信为什么会丢失观察，再区分操作身份与重复副作用，最后讨论恢复和评测归因。"
+    },
+    {
+      "title": "RAG 找到了文档，为什么仍然答错？",
+      "nodes": [
+        "C2",
+        "C1",
+        "M1",
+        "E1"
+      ],
+      "explanation": "逐步检查召回、证据进入上下文、模型利用证据与验收口径，不能直接归因于模型小。"
+    },
+    {
+      "title": "上下文一变长，为什么显存和时延都变了？",
+      "nodes": [
+        "M4",
+        "M2",
+        "M3",
+        "I1",
+        "G2"
+      ],
+      "explanation": "从 token 数走到注意力和缓存，再到多请求调度；最后回到应用的质量与预算。"
+    },
+    {
+      "title": "训练 loss 降了，业务效果为什么没提高？",
+      "nodes": [
+        "M1",
+        "L1",
+        "L2",
+        "E3"
+      ],
+      "explanation": "先区分优化目标与业务目标，再检查数据分布、训练信号与对照实验。"
+    },
+    {
+      "title": "加了多 Agent，为什么更贵也更慢？",
+      "nodes": [
+        "A3",
+        "B1",
+        "R1",
+        "M3",
+        "G2"
+      ],
+      "explanation": "把任务依赖画成图，区分可并行部分、协调开销、模型调用和等待时间。"
+    },
+    {
+      "title": "从零设计一个可交付的 Agent 服务",
+      "nodes": [
+        "G1",
+        "A4",
+        "A1",
+        "A2",
+        "R3",
+        "P1",
+        "E1"
+      ],
+      "explanation": "从验收目标出发，确定哪些步骤需要模型，再安排执行状态、接口与证据。"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+---
+import { concepts, domains, lessonUrl, mapUrl } from '../lib/agent-curriculum'
+interface Props { currentId: string; conceptId?: string }
+const { currentId, conceptId } = Astro.props
+const current = concepts.find(node => node.id === conceptId)
+---
+<nav class='knowledge-sidebar' aria-label='知识树导航'>
+  <a class='back-map' href={conceptId ? mapUrl(conceptId) : '/learn/agent'}>知识总图与问题定位</a>
+  {current && <p class='current-position'>本节 · {current.id}<br /><strong>{current.title}</strong></p>}
+  {domains.map(domain => <details open={current?.domain === domain.id}>
+    <summary>{domain.title}</summary>
+    <ul>{concepts.filter(node => node.domain === domain.id).map(node => <li><a href={lessonUrl(node)} aria-current={currentId === `deep/${node.slug}` ? 'page' : undefined}><span>{node.id}</span>{node.title}</a></li>)}</ul>
+  </details>)}
+</nav>
+<style>
+  .knowledge-sidebar { font-size:.875rem; margin-bottom:2rem; line-height:1.6; }
+  .back-map { display:block; padding:.65rem .5rem; font-weight:600; text-decoration:underline; }
+  .current-position { padding:.7rem .6rem; margin:.7rem 0; border-left:2px solid currentColor; }
+  details { margin:.5rem 0; }summary { cursor:pointer; font-weight:600; padding:.4rem .3rem; }
+  ul { list-style:none; padding:0; margin:.3rem 0 .5rem .5rem; border-left:1px solid color-mix(in srgb,currentColor 20%,transparent); }
+  a { text-decoration:none; }li a { display:block; padding:.4rem .65rem; border-radius:.3rem; }li a>span { opacity:.6; font-size:.75rem; margin-right:.4rem; }
+  li a:hover,li a[aria-current] { background:color-mix(in srgb,currentColor 8%,transparent); }li a[aria-current] { font-weight:600; }
+</style>

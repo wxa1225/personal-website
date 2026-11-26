@@ -3,54 +3,68 @@ import { type CollectionEntry, getCollection, render } from 'astro:content'
 import { TOC } from 'astro-pure/components/pages'
 import 'katex/dist/katex.min.css'
 import PageLayout from '@/layouts/ContentLayout.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
 import AgentDiagrams from '@/components/AgentDiagrams.astro'
+import AgentKnowledgeMap from '@/components/AgentKnowledgeMap.astro'
+import KnowledgePosition from '@/components/KnowledgePosition.astro'
+import KnowledgeSidebar from '@/components/KnowledgeSidebar.astro'
+import { concepts, conceptById, lessonUrl } from '../../../lib/agent-curriculum'
+import { integ } from '@/site-config'
 
 export const prerender = true
-
 export async function getStaticPaths() {
   const chapters = (await getCollection('agentHandbook')).sort((a, b) => a.data.order - b.data.order)
-  return chapters.map(chapter => ({
-    params: { slug: chapter.data.order === 0 ? undefined : chapter.id },
-    props: { chapter, chapters }
-  }))
+  return chapters.map(chapter => ({ params: { slug: chapter.data.order === 0 ? undefined : chapter.id }, props: { chapter, chapters } }))
 }
-
 type Props = { chapter: CollectionEntry<'agentHandbook'>; chapters: CollectionEntry<'agentHandbook'>[] }
 const { chapter, chapters } = Astro.props
 const { Content, headings } = await render(chapter)
-const position = chapters.findIndex(item => item.id === chapter.id)
-const previous = chapters[position - 1]
-const next = chapters[position + 1]
-const pathFor = (entry: CollectionEntry<'agentHandbook'>) => entry.data.order === 0 ? '/learn/agent' : `/learn/agent/${entry.id}`
+const overview = chapter.data.order === 0
+const concept = chapter.data.conceptId ? conceptById(chapter.data.conceptId) : undefined
+const lessons = concepts.filter(node => node.chapter === chapter.id)
+const parent = chapter.data.parent ? chapters.find(entry => entry.id === chapter.data.parent) : undefined
+const chapterUrl = (id: string) => id === '00-overview' ? '/learn/agent' : `/learn/agent/${id}`
+const meta = { title: chapter.data.title, description: chapter.data.description }
 ---
 
-<PageLayout meta={{ title: chapter.data.title, description: chapter.data.description }} back='/learn/agent'>
+{overview ? <BaseLayout {meta}>
+  <main class='knowledge-home py-8'>
+    <p class='text-sm text-muted-foreground'>Sia's Space · 大模型技术学习专栏</p>
+    <h1 class='mt-3 text-3xl font-medium sm:text-4xl'>从知识总图，走到可以讲通的原理</h1>
+    <p class='mt-4 max-w-3xl leading-relaxed text-muted-foreground'>数学与软件基础支撑模型，模型构成应用与 Agent，基础设施让它们可运行，评测让改进有依据。先找到位置，再沿依赖追问。</p>
+    <p class='mt-4 text-sm'><a class='underline underline-offset-4' href='/agent-handbook/agent-handbook-markdown.zip' download>下载完整 Markdown 笔记库</a><span class='mx-3'>·</span><a class='underline underline-offset-4' href='#how-to-learn'>怎样使用这张图</a></p>
+    <div class='mt-9'><AgentKnowledgeMap /></div>
+    <article id='how-to-learn' class={`mt-12 max-w-none ${integ.typography.class}`}><Content /></article>
+  </main>
+</BaseLayout> : <PageLayout {meta} back='/learn/agent'>
   <Fragment slot='sidebar'>
-    <nav class='handbook-nav' aria-label='学习手册章节'>
-      <h2>知识总图与章节</h2>
-      {chapters.map(item => <a href={pathFor(item)} aria-current={item.id === chapter.id ? 'page' : undefined}>{item.data.title}</a>)}
-    </nav>
+    <KnowledgeSidebar currentId={chapter.id} conceptId={chapter.data.conceptId} />
     {!!headings.length && <TOC {headings} />}
   </Fragment>
   <Fragment slot='header'>
-    <p class='mb-3 text-sm text-muted-foreground'>Agent 研发原理与实践 · 持续更新的学习专栏</p>
+    <p class='mb-3 text-sm text-muted-foreground'>大模型技术体系 · {concept ? '原理深读' : '主干导读'}</p>
     <h1 class='text-2xl font-medium sm:text-3xl'>{chapter.data.title}</h1>
     <p class='mt-3 leading-relaxed text-muted-foreground'>{chapter.data.description}</p>
-    <p class='mt-4 text-sm'><a href='/agent-handbook/agent-handbook-markdown.zip' download>下载 Markdown 笔记库</a><span class='mx-3 text-muted-foreground'>·</span><span class='text-muted-foreground'>更新于 {chapter.data.updatedDate.toISOString().slice(0, 10)}</span></p>
+    <p class='mt-4 text-sm'><a href='/agent-handbook/agent-handbook-markdown.zip' download>下载完整笔记库</a><span class='mx-3 text-muted-foreground'>·</span><span class='text-muted-foreground'>更新于 {chapter.data.updatedDate.toISOString().slice(0, 10)}</span></p>
   </Fragment>
+  {concept && <KnowledgePosition {concept} />}
+  {!concept && lessons.length > 0 && <section class='chapter-lessons not-prose' aria-label='本章可深入的专题'>
+    <h2>本章是导读，完整推导在这些节点</h2>
+    <p>先知道这些问题怎样相连，再选一个进入算例、反例与自测。每篇深读页都能回到总图。</p>
+    <ul>{lessons.map(node => <li><a href={lessonUrl(node)}>{node.id} · {node.title}</a><p>{node.question}</p></li>)}</ul>
+  </section>}
   <Content />
-  <nav slot='bottom' class='handbook-pager' aria-label='相邻章节'>
-    {previous && <a href={pathFor(previous)}>上一章 · {previous.data.title}</a>}
-    {next && <a href={pathFor(next)}>下一章 · {next.data.title}</a>}
+  <nav slot='bottom' class='handbook-pager' aria-label='返回知识结构'>
+    <a href={concept ? `/learn/agent?node=${concept.id}` : '/learn/agent'}>回到知识总图与依赖关系</a>
+    {parent && <a href={chapterUrl(parent.id)}>本组导读 · {parent.data.title}</a>}
   </nav>
-</PageLayout>
+</PageLayout>}
 <AgentDiagrams />
-
 <style>
-  .handbook-nav { margin-bottom: 2rem; font-size: .9rem; }
-  .handbook-nav h2 { font-size: 1rem; font-weight: 600; margin-bottom: .8rem; }
-  .handbook-nav a { display: block; padding: .6rem .75rem; border-radius: .45rem; margin: .2rem 0; line-height: 1.6; text-decoration: none; }
-  .handbook-nav a:hover, .handbook-nav a[aria-current=page] { background: color-mix(in srgb, currentColor 9%, transparent); }
-  .handbook-pager { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-  .handbook-pager a { border: 1px solid; border-color: color-mix(in srgb, currentColor 20%, transparent); border-radius: .5rem; padding: .75rem 1rem; font-size: .9rem; }
+  .knowledge-home { scroll-margin-top:5rem; }
+  .chapter-lessons { padding:1rem 1.1rem; border:1px solid color-mix(in srgb,currentColor 20%,transparent); border-radius:.6rem; margin-bottom:2rem; line-height:1.7; }
+  .chapter-lessons h2 { font-size:1.1rem; font-weight:600; margin:0 0 .5rem; }
+  .chapter-lessons ul { margin:1rem 0 0; padding:0; list-style:none; }.chapter-lessons li { margin:.8rem 0; }.chapter-lessons li a { font-weight:600; text-decoration:underline; }.chapter-lessons li p { font-size:.9rem; opacity:.8; margin:.25rem 0; }
+  .handbook-pager { display:flex; flex-wrap:wrap; gap:1rem; }
+  .handbook-pager a { border:1px solid color-mix(in srgb,currentColor 20%,transparent); border-radius:.5rem; padding:.75rem 1rem; font-size:.9rem; }
 </style>
