@@ -1,0 +1,17 @@
+---
+import { knowledgeLink } from '../lib/radar'
+import { readingKind, type ReadingResource } from '../lib/learning-reading'
+interface Props { item: ReadingResource; showNodes?: boolean }
+const { item, showNodes = false } = Astro.props
+---
+<div class='reading-card'>
+  <p class='meta'><span class='date'>{item.publishedAt || '原文未注明日期'}</span><span>{readingKind[item.kind] || item.kind} · {item.level}</span></p>
+  <h3><a href={item.url} rel='noopener noreferrer'>{item.title}</a></h3>
+  <p class='publisher'>{item.publisher}</p>
+  <p class='idea'>{item.why}</p>
+  <details><summary>阅读重点</summary><p>{item.readFocus}</p><p class='meta'>原文核验：{item.checkedAt}</p></details>
+  {showNodes && <div class='nodes' aria-label='相关知识节点'>{item.conceptIds.map(id => { const node = knowledgeLink(id); return node && <a href={node.url}>{node.title}</a> })}</div>}
+</div>
+<style>
+.reading-card{line-height:1.85}.meta{display:flex;gap:.6rem 1rem;flex-wrap:wrap;font-size:.875rem;color:hsl(var(--muted-foreground))}.date{font-variant-numeric:tabular-nums}.reading-card h3{font-size:1.15rem;font-weight:600;line-height:1.5;margin:.5rem 0;overflow-wrap:anywhere}.reading-card h3 a:hover{text-decoration:underline;text-underline-offset:.2rem}.publisher{font-size:.875rem;color:hsl(var(--muted-foreground));margin:.3rem 0}.idea{margin:.7rem 0}.reading-card details{font-size:.95rem;margin-top:.6rem}.reading-card summary{cursor:pointer;width:fit-content;color:hsl(var(--muted-foreground))}.reading-card details p{margin:.5rem 0}.nodes{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.9rem;font-size:.875rem}.nodes a{color:hsl(var(--muted-foreground));text-decoration:underline;text-underline-offset:.2rem}.nodes a:hover{color:hsl(var(--foreground))}
+</style>

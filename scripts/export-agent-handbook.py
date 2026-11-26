@@ -1,6 +1,7 @@
 """Export the public curriculum as a portable Markdown/Obsidian vault."""
 from pathlib import Path
 import json, os, re, zipfile
+from datetime import date
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'src/content/agent-handbook'
@@ -8,6 +9,14 @@ QUANT_SOURCE = ROOT / 'src/content/quant-handbook'
 DEST = ROOT / 'public/agent-handbook/agent-handbook-markdown.zip'
 CATALOG = json.loads((ROOT/'src/data/agent-curriculum.json').read_text())
 RESOURCES = json.loads((ROOT/'src/data/learning-resources.json').read_text())
+AS_OF = max(item['checkedAt'] for item in RESOURCES)
+def reading_group(item):
+    if item['kind'] in ('docs', 'course'):
+        return '文档与课程'
+    if item['publishedAt'] and 0 <= (date.fromisoformat(AS_OF) - date.fromisoformat(item['publishedAt'])).days <= 90:
+        return '近期研究与思考'
+    return '基础与经典'
+RESOURCES.sort(key=lambda item: item['publishedAt'] or '', reverse=True)
 quant_files = sorted(QUANT_SOURCE.glob('*.md'), key=lambda path: int(re.search(r'^order:\s*(\d+)', path.read_text(), re.M).group(1)))
 files = sorted(SOURCE.rglob('*.md')) + quant_files
 titles = {}
@@ -31,7 +40,7 @@ for path in files:
         body += '\n\n## 拓展：原始资料阅读卡\n\n'
         for item in selected:
             body += '### [' + item['title'] + '](' + item['url'] + ')\n\n'
-            body += item['level'] + ' · ' + item['publisher'] + ' · 原文 ' + (item['publishedAt'] or '日期未注明') + ' · 核验 ' + item['checkedAt'] + '\n\n'
+            body += reading_group(item) + ' · ' + item['level'] + ' · ' + item['publisher'] + ' · 原文 ' + (item['publishedAt'] or '日期未注明') + ' · 核验 ' + item['checkedAt'] + '\n\n'
             body += '**为什么读：**' + item['why'] + '\n\n**重点位置与问题：**' + item['readFocus'] + '\n\n'
     body += '\n\n[每日前沿与量化观察](https://siaspace.vercel.app/radar) · [完整资料目录](https://siaspace.vercel.app/learn/resources)\n'
     def local_link(match):
@@ -54,6 +63,12 @@ for path in files:
 
 contents['quant/index.md'] = '# 量化研究学习地图\n\n先从数据可知时间开始，走到信号检验、组合风险、回测执行、AI研究平台与宏观证据。\n\n' + '\n'.join('- [' + titles[path] + '](' + path.name + ')' for path in quant_files) + '\n\n[大模型知识总图](../00-overview.md)\n'
 contents['原始资料阅读库.json'] = json.dumps(RESOURCES, ensure_ascii=False, indent=2)
+contents['原始资料阅读库.md'] = '# 原始资料阅读库\n\n核验至 ' + AS_OF + '。近期按原文日期计算，未注明日期的资料不冒充最新内容。\n'
+for group in ('近期研究与思考', '基础与经典', '文档与课程'):
+    contents['原始资料阅读库.md'] += '\n## ' + group + '\n\n'
+    for item in RESOURCES:
+        if reading_group(item) == group:
+            contents['原始资料阅读库.md'] += '### [' + item['title'] + '](' + item['url'] + ')\n\n' + item['publisher'] + ' · ' + (item['publishedAt'] or '日期未注明') + '\n\n' + item['why'] + '\n\n**阅读重点：**' + item['readFocus'] + '\n\n'
 
 canvas_nodes=[]
 canvas_edges=[]

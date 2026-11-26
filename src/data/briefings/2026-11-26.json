@@ -8,7 +8,7 @@
     "end": "2026-11-26",
     "note": "本期核对11月25—26日的新消息，并补入近一周遗漏；原文未注明日期的更新单列。首期已有的历史资料保留在折叠区，不作为本周动态。国内外来源均有收录。",
     "gaps": [
-      "X 原帖仍有访问缺口，本期主要采用官网、论文和项目发布页。",
+      "本期已通过浏览器核对 Karpathy 公开 X 原帖；完整回复列表需登录，其他账号不声称全量覆盖。普通抓取的403不等于浏览器不可读。",
       "部分官方文档没有明确发布日期，单独列出；滚动统计页可能在后续更新。",
       "字节 Seed 博客正文、腾讯近期新发布和部分交易所公告未取得足够可读内容，未据转述补写细节。"
     ]
@@ -474,12 +474,49 @@
       "publishedAt": "2026-11-20",
       "checkedAt": "2026-11-26",
       "facts": "央行公布 10 月金融市场运行情况，银行间债券回购日均成交 7.4 万亿元，同比增长 2.0%，月末债券市场托管余额为 212.8 万亿元。报告还披露当月人民币衍生品、国债期货、票据、黄金、外汇和股票市场的交易及价格统计，并列出银行间债券市场持有人结构。"
+    },
+    {
+      "id": "karpathy-usaciv-20261126",
+      "channel": "ai",
+      "category": "公司与人物",
+      "title": "Karpathy 展示由 Agent 整合公共数据生成的美国地图项目",
+      "url": "https://x.com/karpathy/status/2125779541952246039",
+      "publisher": "Andrej Karpathy / X",
+      "publishedAt": "2026-11-26",
+      "checkedAt": "2026-11-26",
+      "facts": "Karpathy 发布 Civilization 风格地图演示，称使用 Claude Code 和 Opus 5.5 整合 31 个公共数据来源，将地形、经济、就业等数据映射到统一网格。原帖展示城市视图与多种数据图层，并说明部分地区尚未覆盖。",
+      "conceptIds": [
+        "A1",
+        "A4",
+        "G1",
+        "E1"
+      ]
+    },
+    {
+      "id": "simon-inflection-points-20261124",
+      "channel": "ai",
+      "category": "公司与人物",
+      "title": "Simon Willison 回顾过去一年编码 Agent 的三次能力转折",
+      "url": "https://simonwillison.net/2026/Nov/24/llm-inflection-points/",
+      "publisher": "Simon Willison",
+      "publishedAt": "2026-11-24",
+      "checkedAt": "2026-11-26",
+      "facts": "Simon Willison 根据 AI Engineer Code Summit 演讲发表长文，以自己的编码、工具求解及游戏制作经历讨论模型能力变化。文章将近期开发方式的改变作为个人观察，也保留了对最新模型是否构成另一次能力转折的疑问。",
+      "conceptIds": [
+        "A1",
+        "A2",
+        "G1"
+      ]
     }
   ],
   "corrections": [
     {
       "date": "2026-11-26",
       "reason": "按新的阅读要求改为事实简报，补充国内动态；近期发布、明确事件日期和日期未注明的资料分别展示。"
+    },
+    {
+      "date": "2026-11-26",
+      "reason": "通过浏览器补读 Karpathy 原帖，修正此前仅按网页抓取失败记录的 X 访问缺口；补入本人项目动态与 Simon Willison 最新观点文章。"
     }
   ]
 }

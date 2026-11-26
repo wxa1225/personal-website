@@ -926,5 +926,372 @@
     "level": "入门",
     "readFocus": "从现金流折现的基本式开始，区分股权与企业估值的现金流口径、折现率及相互匹配关系。",
     "why": "把公司新闻和产业判断还原为现金流、增长、折现率与风险假设。"
+  },
+  {
+    "id": "karpathy-usaciv-agent-2026",
+    "title": "Karpathy：用真实美国数据生成 Civilization 风格地图",
+    "url": "https://x.com/karpathy/status/2125779541952246039",
+    "publisher": "Andrej Karpathy / X",
+    "kind": "post",
+    "publishedAt": "2026-11-26",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A1",
+      "A4",
+      "G1",
+      "E1",
+      "B4"
+    ],
+    "level": "拓展",
+    "track": "frontier",
+    "why": "作者展示把多种公共数据统一到六边形地图、再转成游戏规则的 Agent 项目，并承认遗漏了部分地区。它提示我们把验收拆成数据覆盖、口径对齐和交互效果；这是个人项目报告，不能仅凭运行时长或代码量推断普遍可靠性。",
+    "readFocus": "先读数据来源、网格转换和遗漏地区的说明，再打开演示。试着列出数据完整性与规则正确性两套验收项，区分作者报告的完成情况与自己实际验证的结果。"
+  },
+  {
+    "id": "simon-llm-inflection-points-2026",
+    "title": "Three LLM inflection points in twelve months",
+    "url": "https://simonwillison.net/2026/Nov/24/llm-inflection-points/",
+    "publisher": "Simon Willison",
+    "kind": "essay",
+    "publishedAt": "2026-11-24",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A1",
+      "A2",
+      "G1",
+      "G2",
+      "E1"
+    ],
+    "level": "拓展",
+    "track": "frontier",
+    "why": "作者用一年中的编码、工具求解和游戏制作经历讨论能力拐点，把关注点从生成代码移向明确目标、提供工具与反复验收。他也保留对最新一次跃迁的疑问；适合比较专家的工作方式变化，不应把个人体验当成跨任务基准结论。",
+    "readFocus": "顺着三个拐点阅读，分别记下目标、可用工具、反馈信号及作者判断成功的方式；再读结尾尚未下结论的一节，区分已观察现象和对能力趋势的推测。"
+  },
+  {
+    "id": "graham-ai-lifestyle-choice-2026",
+    "title": "AI as a lifestyle choice",
+    "url": "https://grahamdumpleton.me/posts/2026/11/ai-as-a-lifestyle-choice/",
+    "publisher": "Graham Dumpleton / mod_wsgi 作者",
+    "kind": "essay",
+    "publishedAt": "2026-11-11",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "B4",
+      "A4",
+      "G1",
+      "L1"
+    ],
+    "level": "拓展",
+    "track": "frontier",
+    "why": "资深维护者解释 AI 编码如何改变自己愿意承担的项目，同时把设计判断、反复打磨和长期维护责任留给人。写清楚文档、让用户完成工作坊也是检验设计的方法；作者的个人经历不能替代团队效率或质量的对照实验。",
+    "readFocus": "重点读 Everything starts out as mud 和 Polishing in public：生成初稿后，谁判断还不够好、怎样收集反馈、谁承担维护；对照自己项目的验收流程。"
+  },
+  {
+    "id": "anthropic-api-rust-verification-2026",
+    "title": "Migrating our Messages API to Rust",
+    "url": "https://www.anthropic.com/research/migrating-api-to-rust",
+    "publisher": "Anthropic Engineering",
+    "kind": "blog",
+    "publishedAt": "2026-11-25",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "B4",
+      "E1",
+      "E3",
+      "P1",
+      "A1"
+    ],
+    "level": "深入",
+    "why": "线上迁移中，生成代码可能比证明行为等价更容易。文章用生产影子流量、同一模型输出回放和分阶段差异定位构造验证器，并揭示代理同时修改代码与测试时，断言被削弱为何会制造虚假的通过信号。",
+    "readFocus": "读第二区的生产一致性验证与第三区的验证循环：随机模型输出怎样隔离，影子请求怎样避免重复副作用，快速反馈为何仍需人工审查架构。",
+    "track": "frontier"
+  },
+  {
+    "id": "hf-maintain-agentic-evaluation-2026",
+    "title": "How to build and maintain an agentic evaluation",
+    "url": "https://huggingface.co/blog/agentic-evals",
+    "publisher": "Avijit Ghosh、Ben Burtenshaw、Irene Solaiman / Hugging Face",
+    "kind": "blog",
+    "publishedAt": "2026-11-23",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "E1",
+      "E2",
+      "E3",
+      "B4",
+      "L1"
+    ],
+    "level": "深入",
+    "why": "把评测当作也会出错的软件系统：任务、环境、代理运行框架与验证器共同决定分数。通过参考解、空操作及故意走捷径的答案检查评分漏洞，再区分公开基础设施与保留测试项，避免把可复现和防污染误当成二选一。",
+    "readFocus": "先读附录甲的第三至五步，看光谱任务如何发现捷径答案也能过关；再读第三区和第四区，核对修订责任、版本可比性与开源内容的边界。",
+    "track": "frontier"
+  },
+  {
+    "id": "langchain-tool-gateway-governance-2026",
+    "title": "LangSmith Tool Gateway: Secure, governed tool use for agents",
+    "url": "https://www.langchain.com/blog/langsmith-tool-gateway",
+    "publisher": "Karthic Subramanian / LangChain",
+    "kind": "blog",
+    "publishedAt": "2026-11-19",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A2",
+      "P2",
+      "P1",
+      "C1"
+    ],
+    "level": "深入",
+    "why": "工具接通之后，还要解决每次调用代表谁、允许做什么以及怎样追查。文章以用户身份和服务身份区分凭证，结合工具子集、按需搜索、逐次策略检查与审批，说明工具发现、身份认证和行为授权是不同层的职责。",
+    "readFocus": "对照门店助手与凌晨库存任务两个例子，读访问、控制、可见性三节；追踪一次调用的身份解析、凭证附加、拒绝或审批，以及审计记录。",
+    "track": "frontier"
+  },
+  {
+    "id": "temporal-security-compounds-2026",
+    "title": "Security that compounds",
+    "url": "https://temporal.io/blog/security-that-compounds",
+    "publisher": "Kent Gruber / Temporal",
+    "kind": "blog",
+    "publishedAt": "2026-11-18",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "C3",
+      "P2",
+      "R3",
+      "P1",
+      "B4"
+    ],
+    "level": "深入",
+    "why": "安全知识库以源码引用、正反测试和版本审查维持可信度，执行权限交给模型外的确定性规则。跨仓修复已由持久工作流承接，调查流程迁移则仍是计划；案例同时展示可积累记忆与可恢复执行各自负责什么。",
+    "readFocus": "读知识库、确定性规则与文末调查迁移三节，追踪主张如何被测试支持、审批绑定什么对象，并区分已上线的跨仓修复与尚未实现的调查恢复。",
+    "track": "frontier"
+  },
+  {
+    "id": "langchain-proactive-agents-lessons-2026",
+    "title": "What We’ve Learned Building Proactive Agents",
+    "url": "https://www.langchain.com/blog/what-weve-learned-building-proactive-agents",
+    "publisher": "Sydney Runkle / LangChain",
+    "kind": "blog",
+    "publishedAt": "2026-11-17",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A1",
+      "C3",
+      "G2",
+      "L1",
+      "P1"
+    ],
+    "level": "拓展",
+    "why": "主动代理的难点包含何时启动、何时保持沉默及何时请求人介入。作者把记忆来源拆成既有材料、当前反馈和后续结果，并讨论重要性、过期和去重；以审阅耗时与实际被采用的提醒衡量收益，而非只数执行次数。",
+    "readFocus": "读记忆来源、维护难题和主动交互设计三节；沿事件触发到人审反馈的链路，判断哪些信息应过期，以及怎样检验更多自主执行是否真的节省注意力。",
+    "track": "frontier"
+  },
+  {
+    "id": "anthropic-strong-safety-evaluations-2026",
+    "title": "Building strong safety evaluations",
+    "url": "https://www.anthropic.com/research/building-strong-safety-evaluations",
+    "publisher": "Anthropic Engineering",
+    "kind": "blog",
+    "publishedAt": "2026-11-13",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "E1",
+      "E2",
+      "E3",
+      "P2"
+    ],
+    "level": "深入",
+    "why": "安全分数首先是测量设计问题：拒答率并不等于安全性，评分一致也不保证测到了目标行为。文章把构念定义、因果设计、评分器校准和预注册连起来，要求同时考虑有害服从与过度拒绝，并报告评分失败和不确定性。",
+    "readFocus": "读设计中的问题匹配与测量目标，再读运行中的评分器校准和报告部分；检查评分器看到哪些信息、无效判分怎样处理、比较差异能支持多强的结论。",
+    "track": "frontier"
+  },
+  {
+    "id": "nvidia-agent-substrate-kubernetes-2026",
+    "title": "Agent Substrate: Advancing Kubernetes for Agents at Scale",
+    "url": "https://developer.nvidia.com/blog/agent-substrate-advancing-kubernetes-for-agents-at-scale/",
+    "publisher": "Ekin Karabulut、Omer Yahud / NVIDIA",
+    "kind": "blog",
+    "publishedAt": "2026-11-10",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "R1",
+      "R3",
+      "I1",
+      "P1",
+      "B2"
+    ],
+    "level": "深入",
+    "why": "代理会频繁等待，但文件与进程状态需要跨步骤延续。文章以温热工作池承载大量代理，把闲置沙箱快照后恢复到空闲工作节点，并用有界等待吸收突发请求，具体解释了代理生命周期管理与集群调度为何分层。",
+    "readFocus": "读工作负载形态、工作原理与上游进展三节，画出等待、快照、恢复和排队的过程；另看文末成熟度说明，分清已有机制与实验中的推理联动。",
+    "track": "frontier"
+  },
+  {
+    "id": "anthropic-components-agent-memory-2026",
+    "title": "The components of agent memory",
+    "url": "https://www.anthropic.com/research/components-of-agent-memory",
+    "publisher": "Anthropic Engineering",
+    "kind": "blog",
+    "publishedAt": "2026-11-06",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "C1",
+      "C3",
+      "L1",
+      "E3"
+    ],
+    "level": "深入",
+    "why": "将记忆拆成原始轨迹、笔记、知识表示与注入上下文，再通过离线整理纠错和重组。关键困难是在未来问题尚未知时判断哪些经验值得留下，并区分临时状态、未经验证的猜测和可复用规则，而非简单增加存储容量。",
+    "readFocus": "先看记忆层级图与笔记定义，再读预测未来需要的记忆和重要性判断两节；比较整理前后留下什么，并核对实验能否证明经验跨任务复用。",
+    "track": "frontier"
+  },
+  {
+    "id": "arc-adaptive-rollout-control-2026",
+    "title": "ARC: Adaptive Rollout Control for Efficient Synchronous LLM Reinforcement Learning",
+    "url": "https://arxiv.org/abs/2611.29156",
+    "publisher": "Yihui Zhang 等 / 北京航空航天大学、利兹大学",
+    "kind": "preprint",
+    "publishedAt": "2026-11-22",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "L2",
+      "I2",
+      "R1",
+      "G2"
+    ],
+    "level": "深入",
+    "why": "同步强化学习的瓶颈不只是生成速度，还在于长短悬殊的轨迹必须凑成可用于更新的样本组。论文把提前停止、暂存恢复和自适应准入结合起来，连接组相对优化与队列背压，要求同时核对资源利用和训练样本选择是否改变。",
+    "readFocus": "先读第三节的继续概率、暂存与有界恢复，再对照第四节组件消融及下游准确率；重点问停止哪些组、补入哪些组，以及调度收益是否牺牲训练质量。",
+    "track": "frontier"
+  },
+  {
+    "id": "calibrated-decision-rewards-2026",
+    "title": "Calibrated Decision Rewards: Training Language Models with a Judge That Knows How Sure It Is",
+    "url": "https://arxiv.org/abs/2611.25135",
+    "publisher": "Rudransh Agnihotri、Manasvi Kapoor / FuturixAI Research",
+    "kind": "preprint",
+    "publishedAt": "2026-11-18",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "E2",
+      "L2",
+      "E3"
+    ],
+    "level": "深入",
+    "why": "把模型评审当作奖励时，输出一个分数并不等于知道自己何时会错。论文将判断拆为带概率的决策、去除选项位置偏差，再用少量标签校准；值得追问的是策略改变后校准能否保持，以及组内排序是否足以支持有效学习。",
+    "readFocus": "读第三节的决策概率与校准，再看第五节策略分布变化、困难题过度自信和随机奖励对照；区分奖励更准、排序更好与最终策略更强三种证据。",
+    "track": "frontier"
+  },
+  {
+    "id": "control-map-test-time-updates-2026",
+    "title": "Beyond Update Counts: A Control Map for Evaluating Test-Time Model Updates",
+    "url": "https://arxiv.org/abs/2610.36109",
+    "publisher": "Zehao Zhao、Shangjian Yin 等",
+    "kind": "preprint",
+    "publishedAt": "2026-10-26",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "E1",
+      "E3",
+      "C3",
+      "L2"
+    ],
+    "level": "深入",
+    "why": "同样更新十次，写入位置、发生时机和先后顺序不同，每次回答面对的模型也不同。论文把评测单位推进到回答之前实际提交的更新历史，并分别检查知识获得、保留、局部影响和泛化，连接在线学习与有状态系统的可追溯评测。",
+    "readFocus": "读第二节的回答前历史定义，再看第三至五节如何把更新送达与行为变化分开；关注附录中何种假设下更新次数才足够，以及记住新知识是否损伤旧能力。",
+    "track": "frontier"
+  },
+  {
+    "id": "select-ttt-query-conditioned-writes-2026",
+    "title": "Select-TTT: Query-Conditioned Selective Fast Weight Updates for In-Place Test-Time Training",
+    "url": "https://arxiv.org/abs/2610.36794",
+    "publisher": "Yue Wu、Yang Zhang 等",
+    "kind": "preprint",
+    "publishedAt": "2026-10-27",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "C1",
+      "C3",
+      "M2",
+      "L2"
+    ],
+    "level": "深入",
+    "why": "长文档的每个片段都以相同强度写入快速权重，相关信息可能被无关内容稀释。论文用冻结输出头估计片段与问题的相关程度，再调节更新步长；它把上下文选择推进到写入选择，也提示参数记忆需要明确容量和任务边界。",
+    "readFocus": "先读第二节原位更新目标，再推第四节相关性分数如何变成学习率倍率；结合第五节温度、聚合方式及开销消融，判断收益来自选择规则还是更多计算。",
+    "track": "frontier"
+  },
+  {
+    "id": "self-generated-feedback-ttt-instability-2026",
+    "title": "Self-Generated Feedback Destabilizes Test-Time Training: A Causal Decomposition of Long-Horizon Adaptation",
+    "url": "https://arxiv.org/abs/2610.05076",
+    "publisher": "Cheng Luo、Bing Li、Bernard Ghanem",
+    "kind": "preprint",
+    "publishedAt": "2026-10-04",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "L1",
+      "L2",
+      "E3",
+      "C3"
+    ],
+    "level": "深入",
+    "why": "模型用自己的输出更新自己，会同时改变训练内容和下一轮内容的生产者。论文通过冻结生成器、记录回放及单步配对实验拆开反馈与写入损伤，并测试提交前外部验证；这是理解数据飞轮为何可能变成偏差循环的具体反例。",
+    "readFocus": "重点读第五节三组因果对照和第六节提交前验证：分别保持什么不变，如何检测独立文本上的退化；不要把特定长期自更新实验外推成所有合成数据都有害。",
+    "track": "frontier"
+  },
+  {
+    "id": "thinking-machines-end-to-end-4bit-training-2026",
+    "title": "End-to-End 4-Bit Training",
+    "url": "https://thinkingmachines.ai/blog/end-to-end-4-bit-training/",
+    "publisher": "Jack Cook / Thinking Machines Lab",
+    "kind": "blog",
+    "publishedAt": "2026-11-13",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "I2",
+      "M1",
+      "L2"
+    ],
+    "level": "深入",
+    "why": "低精度训练不能只看数据类型：矩阵转置会改变分块缩放的分组，使前后向误差不再匹配。文章用随机舍入的重新量化处理偏差，并追踪计算加速后的通信瓶颈；同时明确反向及部分层仍使用更高精度，避免误读标题。",
+    "readFocus": "读分块缩放反向传播、随机舍入重新量化及通信量化三部分，画出转置前后的缩放组；核对哪些运算仍用较高精度，以及硬件条件对结论的限制。",
+    "track": "frontier"
+  },
+  {
+    "id": "weight-space-programming-sparks-2026",
+    "title": "Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights",
+    "url": "https://rikiyat.github.io/blog/weight-space-programming/",
+    "publisher": "Rikiya Takehi、Jayden Teoh、Alex Zhang、Omar Khattab / MIT CSAIL",
+    "kind": "blog",
+    "publishedAt": "2026-11-02",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M2",
+      "L2",
+      "A1",
+      "E3"
+    ],
+    "level": "拓展",
+    "why": "作者探索把神经网络权重作为模型可读写的对象，但真正有价值的问题是反馈预算和能力来源。部分收益来自消除推理循环，缺少此类故障的对照未得到同样改善；适合练习区分有趣现象、有效修复与可推广训练方法。",
+    "readFocus": "读实验七、八及无循环故障的补充对照，逐项核对允许的前向调用与观测反馈；再看问答中的方法边界，特别留意仅凭权重无法完成的迎合行为实验。",
+    "track": "frontier"
+  },
+  {
+    "id": "sandman-agentic-rl-sandbox-2026",
+    "title": "Sandman: A Sandbox Service for Production Agentic Reinforcement Learning",
+    "url": "https://arxiv.org/abs/2610.39711",
+    "publisher": "Yiming Yan 等 / Amazon",
+    "kind": "preprint",
+    "publishedAt": "2026-10-29",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "I2",
+      "R1",
+      "R3",
+      "P1",
+      "E1"
+    ],
+    "level": "深入",
+    "why": "真实工具环境使强化学习从生成请求变成有状态执行系统：创建洪峰、调用方取消和评分环境漂移都会污染效率或结果。论文把沙箱创建节流、跨调用状态与清理责任具体化，连接队列背压、资源所有权及评测条件一致性。",
+    "readFocus": "读第四节创建调度、预热复用、调用方放弃后的清理与评分条件，再看故障附录；追踪超时后谁仍负责回收资源，并区分训练吞吐与单次创建延迟。",
+    "track": "frontier"
   }
 ]

@@ -1,23 +1,25 @@
 ---
 import resources from '../data/learning-resources.json'
 import { allItems } from '../lib/radar'
+import LearningResourceCard from './LearningResourceCard.astro'
+import { newestReadings, readingGroup } from '../lib/learning-reading'
 interface Props { conceptIds: string[] }
 const { conceptIds } = Astro.props
-const reading = resources.filter(item => item.conceptIds?.some(id => conceptIds.includes(id)))
+const checkedAt = resources.reduce((latest, item) => item.checkedAt > latest ? item.checkedAt : latest, '')
+const reading = newestReadings(resources.filter(item => item.conceptIds?.some(id => conceptIds.includes(id))))
+const newReading = reading.filter(item => readingGroup(item, checkedAt) === 'recent')
+const foundations = reading.filter(item => readingGroup(item, checkedAt) !== 'recent')
 const recent = allItems.filter(item => item.conceptIds?.some(id => conceptIds.includes(id))).slice(0, 4)
 ---
 <section class='reading-expansion not-prose' aria-label='原始资料与拓展阅读'>
   <h2>拓展：从解释走到原始资料</h2>
   <p>先用本页的算例理解问题，再到原文核对假设与边界。资料发布日期与本次核验日期分开记录。</p>
-  <div class='reading-list'>{reading.map(item => <article>
-    <p class='meta'>{item.level} · {item.kind} · {item.publisher}</p>
-    <h3><a href={item.url} rel='noopener noreferrer'>{item.title}</a></h3>
-    <p><strong>为什么读：</strong>{item.why}</p><p><strong>重点位置与问题：</strong>{item.readFocus}</p>
-    <p class='meta'>原文 {item.publishedAt || '未注明日期'} · 核验 {item.checkedAt}</p>
-  </article>)}</div>
+  {newReading.length > 0 && <><h3 class='group-heading'>近期研究与思考</h3><div class='reading-list'>{newReading.map(item => <article><LearningResourceCard item={item} /></article>)}</div></>}
+  {foundations.length > 0 && <details class='foundation-reading' open={newReading.length === 0}><summary>基础论文与参考文档 · {foundations.length} 份</summary><div class='reading-list'>{foundations.map(item => <article><LearningResourceCard item={item} /></article>)}</div></details>}
   {recent.length > 0 && <div class='recent-reading'><h3>这块知识最近怎样被用到</h3><ul>{recent.map(item => <li><a href={`/radar/${item.issueDate}#${item.id}`}>{item.title}</a><span> · {item.publishedAt || '原文日期未明'}</span></li>)}</ul></div>}
   <p class='reading-footer'><a href='/learn/resources'>浏览全部阅读卡</a> · <a href='/radar/sources'>长期信息源与人物</a> · <a href='/radar'>每日前沿</a></p>
 </section>
 <style>
 .reading-expansion{border-top:2px solid hsl(var(--border));margin-top:3rem;padding-top:1.5rem;line-height:1.8}.reading-expansion h2{font-size:1.3rem;font-weight:600;margin-bottom:.6rem}.reading-expansion>p{color:hsl(var(--muted-foreground))}.reading-list{display:grid;gap:1rem;margin-top:1rem}.reading-list article{padding:1rem 1.1rem;border:1px solid hsl(var(--border));border-radius:.5rem}.reading-expansion h3{font-size:1.05rem;font-weight:600}.reading-list article p{margin:.4rem 0}.reading-expansion a{text-decoration:underline;text-underline-offset:.25rem}.meta,.recent-reading span{font-size:.875rem;color:hsl(var(--muted-foreground))}.recent-reading{margin-top:1.5rem}.recent-reading li{margin:.75rem 0}.reading-footer{margin-top:1.5rem;font-size:.95rem}
+.group-heading,.foundation-reading{margin-top:1.5rem}.foundation-reading>summary{cursor:pointer;font-weight:600}
 </style>

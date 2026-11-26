@@ -5,6 +5,7 @@ import { parse as parseYaml } from 'yaml'
 import katex from 'katex'
 import { freshness } from '../src/lib/radar-dates.ts'
 import { recentPublication, groupByPublication } from '../src/lib/radar-feed.ts'
+import { readingGroup, newestReadings } from '../src/lib/learning-reading.ts'
 
 const root = new URL('../', import.meta.url)
 const read = file => fs.readFileSync(new URL(file, root), 'utf8')
@@ -76,6 +77,21 @@ test('historical papers cannot be mislabeled as recent just because they were ch
   assert.equal(freshness('2026-11-24', '2026-11-26'), '近一周发布')
   assert.equal(freshness('2025-05-21', '2026-11-26'), '背景与补读')
   assert.equal(freshness(null, '2026-11-26'), '原文日期未明确')
+})
+
+test('reading library separates recent thinking from timeless references using publication dates', () => {
+  const asOf = '2026-11-26'
+  assert.equal(readingGroup({kind:'paper', publishedAt:'2026-11-22'}, asOf), 'recent')
+  assert.equal(readingGroup({kind:'paper', publishedAt:'2017-06-12'}, asOf), 'foundations')
+  assert.equal(readingGroup({kind:'blog', publishedAt:null}, asOf), 'foundations')
+  assert.equal(readingGroup({kind:'docs', publishedAt:null}, asOf), 'living')
+  assert.equal(readingGroup({kind:'docs', publishedAt:'2026-11-25'}, asOf), 'living')
+  assert.equal(readingGroup({kind:'blog', publishedAt:'2026-11-27'}, asOf), 'foundations')
+  assert.equal(readingGroup({kind:'blog', publishedAt:'2026-08-28'}, asOf), 'recent')
+  assert.equal(readingGroup({kind:'blog', publishedAt:'2026-08-27'}, asOf), 'foundations')
+  const input = [{id:'undated',publishedAt:null},{id:'old',publishedAt:'2025-01-01'},{id:'new',publishedAt:'2026-11-26'}]
+  assert.deepEqual(newestReadings(input).map(x => x.id), ['new','old','undated'])
+  assert.equal(input[0].id, 'undated')
 })
 
 test('quant lessons have worked explanations, diagrams, answered self-checks and valid formulas', () => {
