@@ -51,6 +51,7 @@ export const theme: ThemeUserConfig = {
       { title: 'Blog', link: '/blog' },
       { title: 'Notes', link: '/notes' },
       { title: '大模型学习', link: '/learn/agent' },
+      { title: '每日观察', link: '/radar' },
       { title: 'Projects', link: '/projects' },
       { title: 'Links', link: '/links' },
       { title: 'About', link: '/about' },

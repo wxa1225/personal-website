@@ -4,25 +4,45 @@ import json, os, re, zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'src/content/agent-handbook'
+QUANT_SOURCE = ROOT / 'src/content/quant-handbook'
 DEST = ROOT / 'public/agent-handbook/agent-handbook-markdown.zip'
 CATALOG = json.loads((ROOT/'src/data/agent-curriculum.json').read_text())
-files = sorted(SOURCE.rglob('*.md'))
-routes = {'/learn/agent' if path.stem == '00-overview' else '/learn/agent/' + path.relative_to(SOURCE).with_suffix('').as_posix(): path for path in files}
+RESOURCES = json.loads((ROOT/'src/data/learning-resources.json').read_text())
+quant_files = sorted(QUANT_SOURCE.glob('*.md'), key=lambda path: int(re.search(r'^order:\s*(\d+)', path.read_text(), re.M).group(1)))
+files = sorted(SOURCE.rglob('*.md')) + quant_files
+titles = {}
+def archive_name(path):
+    return 'quant/' + path.name if path.parent == QUANT_SOURCE else path.relative_to(SOURCE).as_posix()
+routes = {}
+for path in files:
+    route = '/learn/quant/' + path.stem if path.parent == QUANT_SOURCE else ('/learn/agent' if path.stem == '00-overview' else '/learn/agent/' + path.relative_to(SOURCE).with_suffix('').as_posix())
+    routes[route] = archive_name(path)
+routes['/learn/quant'] = 'quant/index.md'
 DEST.parent.mkdir(parents=True, exist_ok=True)
 contents = {}
 for path in files:
     source = path.read_text()
     front, body = source.split('---', 2)[1:]
     title = json.loads(next(line[7:] for line in front.splitlines() if line.startswith('title: ')))
+    titles[path] = title
+    node_id = re.search(r'^conceptId:\s*"?([^"\n]+)"?$', front, re.M)
+    selected = [item for item in RESOURCES if node_id and node_id.group(1) in item['conceptIds']]
+    if selected:
+        body += '\n\n## 拓展：原始资料阅读卡\n\n'
+        for item in selected:
+            body += '### [' + item['title'] + '](' + item['url'] + ')\n\n'
+            body += item['level'] + ' · ' + item['publisher'] + ' · 原文 ' + (item['publishedAt'] or '日期未注明') + ' · 核验 ' + item['checkedAt'] + '\n\n'
+            body += '**为什么读：**' + item['why'] + '\n\n**重点位置与问题：**' + item['readFocus'] + '\n\n'
+    body += '\n\n[每日前沿与量化观察](https://siaspace.vercel.app/radar) · [完整资料目录](https://siaspace.vercel.app/learn/resources)\n'
     def local_link(match):
         raw = match.group(1)
         route, _, fragment = raw.partition('#')
         route = route.split('?')[0].rstrip('/')
         if route not in routes:
             raise ValueError(f'Broken route in {path.name}: {raw}')
-        target = os.path.relpath(routes[route], path.parent).replace(os.sep, '/')
+        target = os.path.relpath(routes[route], Path(archive_name(path)).parent).replace(os.sep, '/')
         return '](' + target + ('#' + fragment if fragment else '') + ')'
-    body = re.sub(r'\]\((/learn/agent[^)]*)\)', local_link, body)
+    body = re.sub(r'\]\((/learn/(?:agent|quant)[^)]*)\)', local_link, body)
     if path.stem == '00-overview':
         body += '\n\n## 深读节点索引\n\n'
         for domain in CATALOG['domains']:
@@ -30,7 +50,10 @@ for path in files:
             for node in CATALOG['concepts']:
                 if node['domain'] == domain['id']:
                     body += '- [' + node['id'] + ' · ' + node['title'] + '](deep/' + node['slug'] + '.md)：' + node['question'] + '\n'
-    contents[path.relative_to(SOURCE).as_posix()] = '# ' + title + '\n\n' + body.strip() + '\n'
+    contents[archive_name(path)] = '# ' + title + '\n\n' + body.strip() + '\n'
+
+contents['quant/index.md'] = '# 量化研究学习地图\n\n先从数据可知时间开始，走到信号检验、组合风险、回测执行、AI研究平台与宏观证据。\n\n' + '\n'.join('- [' + titles[path] + '](' + path.name + ')' for path in quant_files) + '\n\n[大模型知识总图](../00-overview.md)\n'
+contents['原始资料阅读库.json'] = json.dumps(RESOURCES, ensure_ascii=False, indent=2)
 
 canvas_nodes=[]
 canvas_edges=[]
@@ -46,6 +69,8 @@ contents['知识图谱.json']=json.dumps(CATALOG,ensure_ascii=False,indent=2)
 contents['开始阅读.md']='''# 大模型技术体系学习笔记
 
 从 [知识总图](00-overview.md) 开始。目录分为数学与学习原理、计算机与软件基础、大模型本体、应用与 Agent、基础设施、评测与改进。
+
+新增 [量化研究学习地图](quant/index.md)，连接市场数据、统计检验、组合风险、回测执行、AI研究平台和宏观证据。每篇深读末尾都有原始资料阅读卡；完整结构化目录保存在“原始资料阅读库.json”。[每日观察](https://siaspace.vercel.app/radar) 保留在网站，离线笔记不冒充实时资讯。
 
 深读页位于 deep/，每篇都有前置依赖、推导、算例或时序、自测答案及后续联系。原有章节与三个扩展导读用于连接主干。
 

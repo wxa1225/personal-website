@@ -1,0 +1,23 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content'
+import { TOC } from 'astro-pure/components/pages'
+import 'katex/dist/katex.min.css'
+import ContentLayout from '@/layouts/ContentLayout.astro'
+import AgentDiagrams from '@/components/AgentDiagrams.astro'
+import LearningResources from '@/components/LearningResources.astro'
+import { quantNodes } from '../../../lib/radar'
+export const prerender = true
+export async function getStaticPaths() {
+  return (await getCollection('quantHandbook')).map(chapter => ({ params: { slug: chapter.id }, props: { chapter } }))
+}
+interface Props { chapter: CollectionEntry<'quantHandbook'> }
+const { chapter } = Astro.props
+const { Content, headings } = await render(chapter)
+---
+<ContentLayout meta={{ title: chapter.data.title, description: chapter.data.description }} back='/learn/quant'>
+  <Fragment slot='header'><p class='text-sm text-muted-foreground'>量化研究学习地图 · {chapter.data.conceptId}</p><h1 class='mt-3 text-3xl font-medium'>{chapter.data.title}</h1><p class='mt-4 leading-loose'>{chapter.data.description}</p></Fragment>
+  <Fragment slot='sidebar'><nav aria-label='量化研究链路' class='mb-8'><a class='font-medium' href='/learn/quant'>回到量化学习地图</a><ul class='mt-3 space-y-3 text-sm'>{quantNodes.map(node => <li><a aria-current={node.id === chapter.data.conceptId ? 'page' : undefined} class={node.id === chapter.data.conceptId ? 'font-bold underline' : ''} href={`/learn/quant/${node.slug}`}>{node.id} · {node.title}</a></li>)}</ul></nav><TOC {headings} /></Fragment>
+  <Content /><LearningResources conceptIds={[chapter.data.conceptId]} />
+  <Fragment slot='bottom'><a href='/learn/quant'>回到研究链路</a> · <a href='/radar/quant'>量化与市场每日观察</a></Fragment>
+</ContentLayout>
+<AgentDiagrams />

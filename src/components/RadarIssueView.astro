@@ -1,0 +1,41 @@
+---
+import { channels, type RadarIssue, type RadarChannel } from '../lib/radar'
+import RadarCard from './RadarCard.astro'
+interface Props { issue: RadarIssue; channel?: RadarChannel }
+const { issue, channel } = Astro.props
+const entries = issue.items.filter(item => !channel || item.channel === channel)
+const takeaways = issue.takeaways.filter(item => !channel || item.itemIds.some(id => entries.some(entry => entry.id === id)))
+---
+<header class='issue-header'>
+  <p class='eyebrow'><time datetime={issue.date}>{issue.date}</time> · 北京时间 · {channel ? channels[channel] : 'AI × 量化与市场'}</p>
+  <h1>{channel ? `${channels[channel]} · ${issue.title}` : issue.title}</h1>
+  <p class='summary'>{issue.summary}</p>
+  <p class='freshness' data-radar-date={issue.date}>最近一期：{issue.date}。文中每条资料保留自己的发布日期。</p>
+</header>
+<section class='takeaways' aria-label='优先关注'>
+  <h2>先记住这些变化</h2>
+  <ol>{takeaways.map(item => <li><p>{item.text}</p><div>{item.itemIds.map(id => { const source = issue.items.find(entry => entry.id === id); return source && <a href={source.url}>{source.publisher}原文</a> })}</div></li>)}</ol>
+</section>
+<details class='coverage'><summary>本期检索范围与缺口</summary>
+  <p>检索窗口：{issue.coverage.start} 至 {issue.coverage.end}；实际核验：{issue.checkedAt}。</p>
+  <p>{issue.coverage.note}</p><ul>{issue.coverage.gaps.map(gap => <li>{gap}</li>)}</ul>
+</details>
+{!!issue.corrections?.length && <section class='coverage' aria-label='修订记录'><h2>修订记录</h2><ul>{issue.corrections.map(correction => <li>{correction.date} · {correction.reason}</li>)}</ul></section>}
+{entries.length > 0 && <details class='coverage'><summary>本期条目目录</summary><nav aria-label='本期条目'><ul>{entries.map(item => <li><a href={`#${item.id}`}>{item.title}</a></li>)}</ul></nav></details>}
+<div>{entries.map(item => <RadarCard {item} date={issue.date} />)}</div>
+{entries.length === 0 && <p>本期此方向没有足够证据支持的新增条目。可先阅读知识树与往期，不以旧闻填充“今日新闻”。</p>}
+<p class='issue-foot'>想继续学：<a href='/learn/agent'>大模型知识树</a> · <a href='/learn/quant'>量化学习地图</a> · <a href='/radar/archive'>全部往期</a> · <a href='/radar/rss.xml'>RSS 订阅</a></p>
+<script>
+  function markFreshness() {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+    for (const element of document.querySelectorAll<HTMLElement>('[data-radar-date]')) {
+      const date = element.dataset.radarDate!
+      const age = (Date.parse(today + 'T00:00:00+08:00') - Date.parse(date + 'T00:00:00+08:00')) / 86400000
+      if (age >= 2) element.textContent = `你正在阅读 ${date} 的资料快照，距今天已 ${Math.floor(age)} 天；请先核对原文是否有后续变化。`
+    }
+  }
+  markFreshness(); document.addEventListener('astro:page-load', markFreshness)
+</script>
+<style>
+.eyebrow,.freshness{font-size:.9rem;color:var(--muted-foreground);line-height:1.7}.issue-header h1{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:600;line-height:1.35;margin:.75rem 0}.summary{font-size:1.06rem;line-height:1.9;margin:1rem 0}.takeaways{margin:2rem 0;padding:1.25rem 1.5rem;background:var(--muted);border-radius:.6rem}.takeaways h2{font-size:1.15rem;font-weight:600}.takeaways ol{padding-left:1.4rem}.takeaways li{padding:.65rem 0;line-height:1.85}.takeaways li div{display:flex;gap:1rem;font-size:.875rem}.takeaways a,.issue-foot a{text-decoration:underline;text-underline-offset:.25rem}.coverage{margin:1rem 0 2rem;font-size:.95rem;line-height:1.8}.coverage summary{cursor:pointer;font-weight:600}.coverage p{margin:.75rem 0}.coverage ul{list-style:disc;padding-left:1.25rem}.issue-foot{padding:1rem 0 2rem;font-size:.95rem;line-height:2}
+</style>

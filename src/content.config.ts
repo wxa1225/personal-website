@@ -87,4 +87,9 @@ const agentHandbook = defineCollection({
   })
 })
 
-export const collections = { blog, notes, docs, agentHandbook }
+const quantHandbook = defineCollection({
+  loader: glob({ base: './src/content/quant-handbook', pattern: '*.md' }),
+  schema: z.object({ title: z.string(), description: z.string(), conceptId: z.string(), order: z.number(), updatedDate: z.coerce.date() })
+})
+
+export const collections = { blog, notes, docs, agentHandbook, quantHandbook }

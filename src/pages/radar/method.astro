@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import RadarNav from '@/components/RadarNav.astro'
+export const prerender = true
+const lenses = [
+  ['能力边界', '哪些任务从不能做变成可稳定完成？有没有独立测试、失败样本和预算匹配的对照？'],
+  ['工程与成本', '模型能力能否在延迟、吞吐、可靠性、安全和费用约束下交付？单位有效任务成本怎样变化？'],
+  ['产品与客户', '谁在真实使用，替代了什么工作，谁为结果付费？试用、使用量和可持续收入分别是什么？'],
+  ['算力与资本', '训练和推理的投入、供给、利用率、电力、资本承诺与现金回收是否匹配？'],
+  ['人才与组织', '哪些工作被自动化，验证和协作成本是否上升？组织该建设什么可复用能力？'],
+  ['风险与制度', '安全、数据、竞争、监管与共同失效会怎样改变技术路线和市场假设？']
+]
+---
+<BaseLayout meta={{ title: '每日观察 · 编辑方法', description: '怎样将每日信息变成可追溯判断，并放回长期知识结构。' }}>
+  <main class='mx-auto max-w-4xl py-8 method'>
+    <RadarNav active='/radar/method' /><h1>每天的信息，怎样进入长期知识</h1>
+    <p>目标是形成研究者与技术经营者都能使用的观察习惯：发现变化，解释机制，核对证据，判断下一步应该学习、验证还是继续等待。重要性按潜在影响、证据质量、变化程度与个人学习关联综合判断，不按转发量排序。</p>
+    <h2>从六个角度看同一条信息</h2>
+    <dl>{lenses.map(([title, detail]) => <div><dt>{title}</dt><dd>{detail}</dd></div>)}</dl>
+    <h2>每天怎样读</h2>
+    <ol><li><strong>先读摘要：</strong>了解本期最值得注意的三四个变化及其原始依据。</li><li><strong>再选专题：</strong>每条区分原文事实、分析、证据边界，展开后有具体阅读问题和下一步验证。</li><li><strong>回到知识树：</strong>遇到不懂的术语，从条目下方进入原理、算例与反例，沿前置依赖补基础。</li><li><strong>沉淀理解：</strong>能跨多期成立的机制进入长期笔记；未证实的新说法保留在当期观察中。</li></ol>
+    <h2>时间和来源怎样处理</h2>
+    <p>优先检索上次成功整理之后的变化，通常覆盖最近24小时；必要时回看7天避免漏报。背景论文可以补充，但会明确标注“背景与补读”。每条记录原文发布日期和核验日期，行情、统计还要说明观测时间；日期不明就保留未知。</p>
+    <p>优先使用论文、模型卡、公司工程博客、原作者实验、正式披露和官方数据。论文预印本不等于同行评审，厂商性能不等于独立复现，负责人预测不等于事实。X 原帖只有在可读取并能核对作者、时间、上下文时才引用；访问失败会记录缺口。</p>
+    <p>正文链接指向具体材料。转载与媒体可以帮助发现线索，但涉及技术结论和关键数字时尽量追到第一手来源。摘要使用改写，不搬运整篇文章、图表或付费内容。</p>
+    <h2>量化与市场的特殊要求</h2>
+    <p>保持“数据可得时点—统计检验—组合约束—交易执行—真实反馈”的完整链条。股票池、数据修订、试验次数、换手、滑点、费用和市场制度都会影响结果；纸面收益和观点叙事不能代替可交易性与风险分析。</p>
+    <p>宏观事件按事实、传导机制、尚未验证的假设分开写。休市时可以更新研究与制度信息，不制造行情变化。这里提供学习与公开信息分析，不构成个性化投资建议。</p>
+    <h2>更新与修订</h2>
+    <p>每日整理计划在北京时间09:00开始。页面显示最近实际生成的期号和核验日期，而不是用当前日期包装旧内容；没有足够可靠的信息时，允许明确说明“无新增可信条目”。往期保留，实质修订需注明原因和日期。</p>
+    <p>当前整理流程由本地 Codex 定时任务执行，需电脑与应用保持运行，并且能访问来源、推送 GitHub。定时任务保存成功与网站更新成功是两个状态；推送或部署失败时保留上一期可读内容，不显示虚假的更新成功。需要长期无人值守时，应在验证云端写入与部署权限后迁移任务。</p>
+    <p><a href='/radar/sources'>查看信息源目录</a> · <a href='/learn/resources'>查看具体阅读卡</a> · <a href='/radar/archive'>回看往期</a></p>
+  </main>
+</BaseLayout>
+<style>
+.method{line-height:1.9}.method h1{font-size:2rem;font-weight:600;line-height:1.4}.method h2{font-size:1.3rem;font-weight:600;margin:2rem 0 .7rem}.method p{margin:1rem 0}.method dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.method dl div{border:1px solid var(--border);padding:1rem;border-radius:.5rem}.method dt{font-weight:600}.method dd{margin-top:.4rem}.method ol{list-style:decimal;padding-left:1.5rem}.method li{margin:.75rem 0}.method a{text-decoration:underline;text-underline-offset:.25rem}@media(max-width:640px){.method dl{grid-template-columns:1fr}}
+</style>

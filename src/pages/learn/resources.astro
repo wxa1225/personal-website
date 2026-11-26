@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import ReadingFilter from '@/components/ReadingFilter.astro'
+import resources from '../../data/learning-resources.json'
+import { knowledgeLink } from '../../lib/radar'
+export const prerender = true
+---
+<BaseLayout meta={{ title: '原始资料阅读库', description: '经典论文、权威文档与作者博客，附具体阅读位置与知识树关联。' }}>
+  <main class='mx-auto max-w-4xl py-8'>
+    <p class='text-sm'><a href='/learn/agent'>大模型知识树</a> · <a href='/learn/quant'>量化学习地图</a> · <a href='/radar'>每日观察</a></p>
+    <h1 class='mt-6 text-3xl font-medium'>原始资料阅读库</h1>
+    <p class='mt-4 leading-relaxed text-muted-foreground'>每份资料回答一个具体问题。先沿知识树定位，再带着阅读提示看原文。原文日期未知的条目不会被标成最新资料。</p>
+    <ReadingFilter />
+    <div>{resources.map(item => <article class='resource' data-reading-search={[item.title,item.publisher,item.why,item.readFocus,...item.conceptIds].join(' ')}>
+      <p class='meta'>{item.level} · {item.kind} · {item.publisher}</p>
+      <h2><a href={item.url}>{item.title}</a></h2>
+      <p><strong>为什么读：</strong>{item.why}</p><p><strong>重点位置与问题：</strong>{item.readFocus}</p>
+      <p class='meta'>原文 {item.publishedAt || '未注明日期'} · 核验 {item.checkedAt}</p>
+      <p class='nodes'>{item.conceptIds.map(id => { const node = knowledgeLink(id); return node && <a href={node.url}>{id} · {node.title}</a> })}</p>
+    </article>)}</div>
+  </main>
+</BaseLayout>
+<style>
+.resource{padding:1.3rem 0;border-top:1px solid var(--border);line-height:1.8}.resource[hidden]{display:none}.resource h2{font-size:1.2rem;font-weight:600;margin:.4rem 0}.resource a{text-decoration:underline;text-underline-offset:.25rem}.resource p{margin:.5rem 0}.meta{font-size:.875rem;color:var(--muted-foreground)}.nodes{display:flex;gap:.5rem 1rem;flex-wrap:wrap;font-size:.9rem}
+</style>

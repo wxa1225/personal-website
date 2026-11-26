@@ -1,0 +1,23 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import RadarNav from '@/components/RadarNav.astro'
+import RadarIssueView from '@/components/RadarIssueView.astro'
+import { issues, channels, type RadarIssue, type RadarChannel } from '../../lib/radar'
+export const prerender = true
+export function getStaticPaths() {
+  return [
+    ...issues.map(issue => ({ params: { slug: issue.date }, props: { issue } })),
+    ...(['ai','quant'] as const).map(channel => ({ params: { slug: channel }, props: { issue: issues[0], channel } }))
+  ]
+}
+interface Props { issue: RadarIssue; channel?: RadarChannel }
+const { issue, channel } = Astro.props
+---
+<BaseLayout meta={{ title: `${channel ? channels[channel] : issue.date} · 每日观察`, description: issue.summary }}>
+  <main class='mx-auto max-w-4xl py-8'>
+    <p class='text-sm text-muted-foreground'>Sia's Space · 每日观察</p>
+    <RadarNav active={channel ? `/radar/${channel}` : '/radar/archive'} />
+    {channel === 'quant' && <p class='mb-6 rounded border p-4 leading-relaxed'>先建立研究链路：<a class='underline underline-offset-4' href='/learn/quant'>市场与数据、信号、组合、回测执行、AI 研究与宏观证据</a>。本栏分析公开信息与方法，不把论文回测或公司表述写成可兑现的投资收益。</p>}
+    <RadarIssueView {issue} {channel} />
+  </main>
+</BaseLayout>

@@ -1,0 +1,15 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import RadarNav from '@/components/RadarNav.astro'
+import RadarIssueView from '@/components/RadarIssueView.astro'
+import { issues } from '../../lib/radar'
+export const prerender = true
+const latest = issues[0]
+---
+<BaseLayout meta={{ title: '每日观察 · AI 与量化', description: '追踪模型、Agent、算力、研究与资本变化，从原始信息回到知识树。' }}>
+  <main class='mx-auto max-w-4xl py-8'>
+    <p class='text-sm text-muted-foreground'>Sia's Space · 每日观察</p>
+    <RadarNav active='/radar' />
+    {latest ? <RadarIssueView issue={latest} /> : <p>首期整理中。</p>}
+  </main>
+</BaseLayout>

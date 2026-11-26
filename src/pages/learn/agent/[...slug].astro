@@ -8,6 +8,7 @@ import AgentDiagrams from '@/components/AgentDiagrams.astro'
 import AgentKnowledgeMap from '@/components/AgentKnowledgeMap.astro'
 import KnowledgePosition from '@/components/KnowledgePosition.astro'
 import KnowledgeSidebar from '@/components/KnowledgeSidebar.astro'
+import LearningResources from '@/components/LearningResources.astro'
 import { concepts, conceptById, lessonUrl } from '../../../lib/agent-curriculum'
 import { integ } from '@/site-config'
 
@@ -32,7 +33,7 @@ const meta = { title: chapter.data.title, description: chapter.data.description 
     <p class='text-sm text-muted-foreground'>Sia's Space · 大模型技术学习专栏</p>
     <h1 class='mt-3 text-3xl font-medium sm:text-4xl'>从知识总图，走到可以讲通的原理</h1>
     <p class='mt-4 max-w-3xl leading-relaxed text-muted-foreground'>数学与软件基础支撑模型，模型构成应用与 Agent，基础设施让它们可运行，评测让改进有依据。先找到位置，再沿依赖追问。</p>
-    <p class='mt-4 text-sm'><a class='underline underline-offset-4' href='/agent-handbook/agent-handbook-markdown.zip' download>下载完整 Markdown 笔记库</a><span class='mx-3'>·</span><a class='underline underline-offset-4' href='#how-to-learn'>怎样使用这张图</a></p>
+    <p class='mt-4 text-sm leading-loose'><a class='underline underline-offset-4' href='/agent-handbook/agent-handbook-markdown.zip' download>下载完整 Markdown 笔记库</a><span class='mx-3'>·</span><a class='underline underline-offset-4' href='#how-to-learn'>怎样使用这张图</a><span class='mx-3'>·</span><a class='underline underline-offset-4' href='/learn/resources'>原始资料阅读库</a><span class='mx-3'>·</span><a class='underline underline-offset-4' href='/radar'>每日前沿观察</a></p>
     <div class='mt-9'><AgentKnowledgeMap /></div>
     <article id='how-to-learn' class={`mt-12 max-w-none ${integ.typography.class}`}><Content /></article>
   </main>
@@ -54,6 +55,7 @@ const meta = { title: chapter.data.title, description: chapter.data.description 
     <ul>{lessons.map(node => <li><a href={lessonUrl(node)}>{node.id} · {node.title}</a><p>{node.question}</p></li>)}</ul>
   </section>}
   <Content />
+  <LearningResources conceptIds={concept ? [concept.id] : lessons.map(node => node.id)} />
   <nav slot='bottom' class='handbook-pager' aria-label='返回知识结构'>
     <a href={concept ? `/learn/agent?node=${concept.id}` : '/learn/agent'}>回到知识总图与依赖关系</a>
     {parent && <a href={chapterUrl(parent.id)}>本组导读 · {parent.data.title}</a>}

@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import RadarNav from '@/components/RadarNav.astro'
+import { issues } from '../../lib/radar'
+export const prerender = true
+---
+<BaseLayout meta={{ title: '每日观察 · 往期', description: '可追溯的每日 AI 与量化市场观察，保留当时证据与判断。' }}>
+  <main class='mx-auto max-w-4xl py-8'>
+    <RadarNav active='/radar/archive' />
+    <h1 class='text-3xl font-medium'>每日观察 · 往期</h1>
+    <p class='my-4 leading-relaxed text-muted-foreground'>观点保留在产生它的时间点。发生修正时，在原期注明原因与修订时间，便于回看当时知道什么。</p>
+    <ul class='mt-8'>{issues.map(issue => <li class='border-t py-6'><time class='text-sm text-muted-foreground'>{issue.date}</time><h2 class='my-2 text-xl font-medium'><a href={`/radar/${issue.date}`}>{issue.title}</a></h2><p class='leading-relaxed'>{issue.summary}</p></li>)}</ul>
+  </main>
+</BaseLayout>

@@ -1,0 +1,372 @@
+[
+  {
+    "id": "ai-source-1",
+    "title": "Anthropic Engineering",
+    "url": "https://www.anthropic.com/engineering",
+    "publisher": "Anthropic Engineering",
+    "channel": "ai",
+    "type": "公司工程博客",
+    "focus": "Agent、上下文、系统复盘、评测",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-2",
+    "title": "Anthropic Research",
+    "url": "https://www.anthropic.com/research",
+    "publisher": "Anthropic Research",
+    "channel": "ai",
+    "type": "公司研究",
+    "focus": "机制研究、安全、经济影响、科学应用",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-3",
+    "title": "Google DeepMind",
+    "url": "https://deepmind.google/blog/",
+    "publisher": "Google DeepMind",
+    "channel": "ai",
+    "type": "公司研究博客",
+    "focus": "模型、世界模型、科学AI",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-4",
+    "title": "Google DeepMind Model Cards",
+    "url": "https://deepmind.google/models/model-cards/",
+    "publisher": "Google DeepMind Model Cards",
+    "channel": "ai",
+    "type": "模型卡",
+    "focus": "评测口径、能力边界、安全披露",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-5",
+    "title": "NVIDIA Technical Blog",
+    "url": "https://developer.nvidia.com/blog/",
+    "publisher": "NVIDIA Technical Blog",
+    "channel": "ai",
+    "type": "公司技术文章",
+    "focus": "内核、推理、训练、集群与硬件条件",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-6",
+    "title": "Hugging Face Blog",
+    "url": "https://huggingface.co/blog",
+    "publisher": "Hugging Face Blog",
+    "channel": "ai",
+    "type": "公司及社区技术文章",
+    "focus": "开源模型、数据、训练与部署；区分官方和社区署名",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-7",
+    "title": "vLLM Blog",
+    "url": "https://vllm.ai/blog",
+    "publisher": "vLLM Blog",
+    "channel": "ai",
+    "type": "项目维护者博客",
+    "focus": "推理调度、KV、并行、模型支持与性能",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-8",
+    "title": "DeepSeek 官方 GitHub",
+    "url": "https://github.com/deepseek-ai",
+    "publisher": "DeepSeek 官方 GitHub",
+    "channel": "ai",
+    "type": "公司开源发布",
+    "focus": "模型报告、推理栈、内核、通信；以具体release或commit为证据",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-9",
+    "title": "Qwen Research",
+    "url": "https://qwen.ai/research",
+    "publisher": "Qwen Research",
+    "channel": "ai",
+    "type": "公司研究发布",
+    "focus": "中文模型、多模态、后训练；旧博客指向的新入口",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。入口已由旧官方博客确认；本轮页面正文抓取为空，需浏览器或具体文章核验"
+  },
+  {
+    "id": "ai-source-10",
+    "title": "Moonshot AI 官方 GitHub",
+    "url": "https://github.com/MoonshotAI",
+    "publisher": "Moonshot AI 官方 GitHub",
+    "channel": "ai",
+    "type": "公司开源发布",
+    "focus": "长上下文、注意力、模型报告与代码",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-11",
+    "title": "Thinking Machines Lab / John Schulman、Horace He 等署名文章",
+    "url": "https://thinkingmachines.ai/blog/",
+    "publisher": "Thinking Machines Lab / John Schulman、Horace He 等署名文章",
+    "channel": "ai",
+    "type": "公司作者原文",
+    "focus": "后训练、LoRA、蒸馏、推理确定性与训练精度",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。X 链接由官网确认；本轮读取403，不作为已读动态"
+  },
+  {
+    "id": "ai-social-11",
+    "title": "Thinking Machines Lab / John Schulman、Horace He 等署名文章 · 官方链接的 X 账号",
+    "url": "https://x.com/thinkymachines",
+    "publisher": "Thinking Machines Lab / John Schulman、Horace He 等署名文章",
+    "channel": "ai",
+    "type": "X 线索入口",
+    "focus": "后训练、LoRA、蒸馏、推理确定性与训练精度",
+    "readingRule": "X 链接由官网确认；本轮读取403，不作为已读动态仅可核对原帖时引用；不能把账号入口当作本轮已经读取了全部动态。"
+  },
+  {
+    "id": "ai-source-12",
+    "title": "Simon Willison",
+    "url": "https://simonwillison.net/",
+    "publisher": "Simon Willison",
+    "channel": "ai",
+    "type": "技术作者原始实验与评论",
+    "focus": "工具使用、提示注入、模型行为、可复现小实验",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-13",
+    "title": "Andrej Karpathy",
+    "url": "https://karpathy.ai/",
+    "publisher": "Andrej Karpathy",
+    "channel": "ai",
+    "type": "作者主页与课程",
+    "focus": "模型直觉、训练实现、Agent趋势；从主页进入本人账号",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。主页明确链接本人账号；本轮读取403，不声称监控了全部X内容"
+  },
+  {
+    "id": "ai-social-13",
+    "title": "Andrej Karpathy · 官方链接的 X 账号",
+    "url": "https://twitter.com/karpathy",
+    "publisher": "Andrej Karpathy",
+    "channel": "ai",
+    "type": "X 线索入口",
+    "focus": "模型直觉、训练实现、Agent趋势；从主页进入本人账号",
+    "readingRule": "主页明确链接本人账号；本轮读取403，不声称监控了全部X内容仅可核对原帖时引用；不能把账号入口当作本轮已经读取了全部动态。"
+  },
+  {
+    "id": "ai-source-14",
+    "title": "Lilian Weng / Lil’Log",
+    "url": "https://lilianweng.github.io/",
+    "publisher": "Lilian Weng / Lil’Log",
+    "channel": "ai",
+    "type": "研究者技术综述",
+    "focus": "机制、强化学习、缩放、Agent与失败模式",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-15",
+    "title": "Dario Amodei",
+    "url": "https://darioamodei.com/",
+    "publisher": "Dario Amodei",
+    "channel": "ai",
+    "type": "负责人署名文章",
+    "focus": "技术路线、风险、治理与产业判断；观点单列",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-16",
+    "title": "Google Research",
+    "url": "https://research.google/blog/",
+    "publisher": "Google Research",
+    "channel": "ai",
+    "type": "公司研究博客",
+    "focus": "检索、算法、系统、科学与应用方法",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-17",
+    "title": "Berkeley AI Research",
+    "url": "https://bair.berkeley.edu/blog/",
+    "publisher": "Berkeley AI Research",
+    "channel": "ai",
+    "type": "研究团队作者解读",
+    "focus": "论文方法、Agent、系统与机器人",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-18",
+    "title": "Stanford HAI AI Index",
+    "url": "https://hai.stanford.edu/ai-index",
+    "publisher": "Stanford HAI AI Index",
+    "channel": "ai",
+    "type": "年度报告与数据",
+    "focus": "投资、技术进展、采用、就业和治理；不是逐日新闻",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-19",
+    "title": "Epoch AI",
+    "url": "https://epoch.ai/",
+    "publisher": "Epoch AI",
+    "channel": "ai",
+    "type": "独立研究与数据",
+    "focus": "算力、模型规模、成本与能力趋势",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "ai-source-20",
+    "title": "METR",
+    "url": "https://metr.org/blog/",
+    "publisher": "METR",
+    "channel": "ai",
+    "type": "独立评估机构原始研究",
+    "focus": "长任务能力、时间跨度、监控与评估方法",
+    "readingRule": "优先打开具体原文，核对日期、实验设置、限制与后续修订。"
+  },
+  {
+    "id": "quant-source-1",
+    "title": "arXiv q-fin",
+    "url": "https://arxiv.org/list/q-fin/recent",
+    "publisher": "arXiv q-fin",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "量化金融新论文；区分预印本与评审结果。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-2",
+    "title": "Microsoft Qlib",
+    "url": "https://github.com/microsoft/qlib",
+    "publisher": "Microsoft Qlib",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "研究平台、数据层、回测和执行框架的代码变化。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-3",
+    "title": "Microsoft RD-Agent",
+    "url": "https://github.com/microsoft/RD-Agent",
+    "publisher": "Microsoft RD-Agent",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "Agent 自动研究的实现、版本和可复现实验。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-4",
+    "title": "幻方技术博客",
+    "url": "https://www.high-flyer.cn/blog/",
+    "publisher": "幻方技术博客",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "训练基础设施与工程方法；本次首页最新文章为2023年，不标为今日新闻。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-5",
+    "title": "Jane Street Tech Talks",
+    "url": "https://www.janestreet.com/tech-talks/",
+    "publisher": "Jane Street Tech Talks",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "系统、语言、性能与工程可靠性的原始技术演讲。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-6",
+    "title": "Two Sigma Insights",
+    "url": "https://www.twosigma.com/insights/",
+    "publisher": "Two Sigma Insights",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "量化研究、数据科学和公司技术文章；注意公司立场。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-7",
+    "title": "BIS Research",
+    "url": "https://www.bis.org/publ/index.htm",
+    "publisher": "BIS Research",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "金融稳定、市场微观结构和央行研究。",
+    "readingRule": "核对原文、数据时间和适用口径。从官方工作论文页可达，需更新时重查"
+  },
+  {
+    "id": "quant-source-8",
+    "title": "Federal Reserve News & Events",
+    "url": "https://www.federalreserve.gov/newsevents.htm",
+    "publisher": "Federal Reserve News & Events",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "政策声明、讲话、统计与研究公告。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-9",
+    "title": "ECB News & Publications",
+    "url": "https://www.ecb.europa.eu/press/pubbydate/html/index.en.html",
+    "publisher": "ECB News & Publications",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "金融稳定报告、政策及专题研究。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-10",
+    "title": "上海证券交易所规则",
+    "url": "https://www.sse.com.cn/lawandrules/",
+    "publisher": "上海证券交易所规则",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "程序化交易与市场规则；以具体规则正文核实日期和效力。",
+    "readingRule": "核对原文、数据时间和适用口径。目录403，具体规则页可读"
+  },
+  {
+    "id": "quant-source-11",
+    "title": "中国人民银行",
+    "url": "https://www.pbc.gov.cn/",
+    "publisher": "中国人民银行",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "公开市场操作、货币政策与官方统计。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "quant-source-12",
+    "title": "ALFRED",
+    "url": "https://alfred.stlouisfed.org/",
+    "publisher": "ALFRED",
+    "channel": "quant",
+    "type": "公开研究与数据入口",
+    "focus": "经济数据的历史版本，建立可知时间和修订意识。",
+    "readingRule": "核对原文、数据时间和适用口径。已打开"
+  },
+  {
+    "id": "openai-news",
+    "title": "OpenAI 研究与工程发布",
+    "url": "https://openai.com/news/",
+    "publisher": "OpenAI",
+    "channel": "ai",
+    "type": "公司原始发布",
+    "focus": "模型、研究报告、工程、科学与产业采用。",
+    "readingRule": "公司公布的成功率要核对样本、任务、人类参与和对照组。"
+  },
+  {
+    "id": "nvidia-investor",
+    "title": "NVIDIA 财报与投资者披露",
+    "url": "https://investor.nvidia.com/",
+    "publisher": "NVIDIA",
+    "channel": "quant",
+    "type": "公司披露",
+    "focus": "算力收入、利润率、资本承诺与客户需求。",
+    "readingRule": "分清已实现结果与管理层展望，先读财季口径和财务报表，再读讲话。"
+  },
+  {
+    "id": "anthropic-news",
+    "title": "Anthropic 公司公告",
+    "url": "https://www.anthropic.com/news",
+    "publisher": "Anthropic",
+    "channel": "ai",
+    "type": "公司原始发布",
+    "focus": "模型发布、战略、经济研究、负责人公开表述。",
+    "readingRule": "技术效果回到研究报告，融资和经营状态回到正式披露；管理层立场不等于独立结论。"
+  }
+]

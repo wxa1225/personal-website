@@ -1,0 +1,23 @@
+---
+const { label = '搜索资料、作者或问题', placeholder = '例如：KV、回测、Anthropic、M2' } = Astro.props
+---
+<div class='reading-filter'><label for='reading-search'>{label}</label><input id='reading-search' type='search' {placeholder} autocomplete='off' /><p id='reading-count' role='status' aria-live='polite'></p></div>
+<script>
+  function setupReadingFilter() {
+    const input = document.querySelector<HTMLInputElement>('#reading-search')
+    if (!input || input.dataset.ready) return
+    input.dataset.ready = 'true'
+    const cards = [...document.querySelectorAll<HTMLElement>('[data-reading-search]')]
+    const count = document.getElementById('reading-count')
+    input.addEventListener('input', () => {
+      const terms = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean)
+      let visible = 0
+      for (const card of cards) { card.hidden = !terms.every(term => card.dataset.readingSearch!.toLowerCase().includes(term)); if (!card.hidden) visible++ }
+      if (count) count.textContent = visible ? `找到 ${visible} 条资料` : '没有匹配资料。试试更宽的关键词或概念编号。'
+    })
+  }
+  setupReadingFilter(); document.addEventListener('astro:page-load', setupReadingFilter)
+</script>
+<style>
+.reading-filter{margin:1.5rem 0}.reading-filter label{display:block;font-size:.95rem;margin-bottom:.5rem}.reading-filter input{width:100%;padding:.8rem 1rem;border:1px solid var(--border);border-radius:.4rem;background:var(--background);font-size:1rem}.reading-filter p{font-size:.875rem;margin-top:.5rem;color:var(--muted-foreground)}
+</style>

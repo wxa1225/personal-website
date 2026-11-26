@@ -1,0 +1,930 @@
+[
+  {
+    "id": "pytorch-autograd",
+    "title": "Automatic Differentiation with torch.autograd",
+    "url": "https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html",
+    "publisher": "PyTorch",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "F1",
+      "M1"
+    ],
+    "level": "入门",
+    "readFocus": "运行计算图与 backward 示例；逐项核对输入、权重、损失的形状，解释为何梯度积累后要清零。",
+    "why": "把链式法则落到可运行的张量计算，连接数学符号与模型训练。"
+  },
+  {
+    "id": "cross-entropy",
+    "title": "CrossEntropyLoss",
+    "url": "https://docs.pytorch.org/docs/2.15/generated/torch.nn.CrossEntropyLoss.html",
+    "publisher": "PyTorch",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M1"
+    ],
+    "level": "深入",
+    "readFocus": "先看输入 logits 与类别标签的两种定义，再手算三类别损失；检查 reduction、ignore_index 和类别权重改变了什么。",
+    "why": "同样叫交叉熵，标签形式与归一化口径仍会改变实际训练目标。"
+  },
+  {
+    "id": "heapq",
+    "title": "heapq — Heap queue algorithm",
+    "url": "https://docs.python.org/3/library/heapq.html",
+    "publisher": "Python",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "B1"
+    ],
+    "level": "入门",
+    "readFocus": "从 heap invariant 读到 Priority Queue Implementation Notes；比较维护 Top-K 与对所有元素排序的操作成本。",
+    "why": "把数据结构选型连接到优先级调度、搜索候选和有界队列。"
+  },
+  {
+    "id": "tcp",
+    "title": "RFC 9293: Transmission Control Protocol",
+    "url": "https://www.rfc-editor.org/rfc/rfc9293.html",
+    "publisher": "IETF / RFC Editor",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "B2"
+    ],
+    "level": "深入",
+    "readFocus": "读连接状态、重传和用户接口相关部分；画出发送、确认、连接中断的时序，再回答 TCP 确认是否等于业务提交。",
+    "why": "传输层保证与应用层结果分属不同边界，理解这一点才能分析超时。"
+  },
+  {
+    "id": "pg-isolation",
+    "title": "PostgreSQL: Transaction Isolation",
+    "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "publisher": "PostgreSQL",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "B3",
+      "R2",
+      "C3"
+    ],
+    "level": "深入",
+    "readFocus": "对照隔离级别表，复现两个事务交错读取和更新；重点解释 Read Committed 与 Serializable 的失败及重试条件。",
+    "why": "数据库约束帮助确定权威状态，但不会自动覆盖远端工具产生的副作用。"
+  },
+  {
+    "id": "pg-indexes",
+    "title": "PostgreSQL: Index Types",
+    "url": "https://www.postgresql.org/docs/current/indexes-types.html",
+    "publisher": "PostgreSQL",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "B3",
+      "B1"
+    ],
+    "level": "入门",
+    "readFocus": "比较 B-tree、GIN、BRIN 各自适配的谓词；为时间范围、全文词项和等值查询分别选索引并说明理由。",
+    "why": "索引的价值由查询形态决定，不能仅以存在索引判断系统是否高效。"
+  },
+  {
+    "id": "asyncio-queues",
+    "title": "asyncio Queues",
+    "url": "https://docs.python.org/3/library/asyncio-queue.html",
+    "publisher": "Python",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "R1"
+    ],
+    "level": "入门",
+    "readFocus": "看 maxsize、put、get、task_done、join；用生产者快于消费者的例子解释有界队列如何把压力传回上游。",
+    "why": "背压需要约束未完成工作量；把任务全部并发启动并不等于提高吞吐。"
+  },
+  {
+    "id": "safe-retries",
+    "title": "Making retries safe with idempotent APIs",
+    "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+    "publisher": "AWS Builders’ Library",
+    "kind": "blog",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "R2",
+      "A2"
+    ],
+    "level": "深入",
+    "readFocus": "重点读 client request identifier、late arriving requests 和 same request ID, different intent；画出成功但回执丢失的时序。",
+    "why": "幂等键代表一次业务意图，需要和参数及保留窗口一起设计。"
+  },
+  {
+    "id": "transactional-outbox",
+    "title": "Transactional outbox pattern",
+    "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html",
+    "publisher": "AWS Prescriptive Guidance",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "R2",
+      "B3"
+    ],
+    "level": "深入",
+    "readFocus": "对照数据库写入与消息发送的失败窗口；读重复消息和顺序限制，说明消费端为什么仍需去重。",
+    "why": "Outbox 解决双写一致性的一部分，不能直接推出外部操作恰好执行一次。"
+  },
+  {
+    "id": "pytest-fixtures",
+    "title": "How to use fixtures",
+    "url": "https://docs.pytest.org/en/stable/how-to/fixtures.html",
+    "publisher": "pytest",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "B4"
+    ],
+    "level": "入门",
+    "readFocus": "读 fixture 生命周期、yield 清理与 safe teardown；为一个可能启动失败的沙箱设计可重复测试。",
+    "why": "隔离环境和可靠清理决定故障测试是否可信，也决定失败是否能复现。"
+  },
+  {
+    "id": "bpe",
+    "title": "Byte-Pair Encoding tokenization",
+    "url": "https://huggingface.co/learn/llm-course/chapter6/5",
+    "publisher": "Hugging Face",
+    "kind": "course",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M4"
+    ],
+    "level": "入门",
+    "readFocus": "跟随小词表的 pair frequency、merge 和 tokenize 过程手算一轮；比较字符数、词数与 token 数。",
+    "why": "token 是模型实际处理的离散单位，决定序列长度、词表和成本估计的入口。"
+  },
+  {
+    "id": "transformer",
+    "title": "Attention Is All You Need",
+    "url": "https://arxiv.org/abs/1706.03762",
+    "publisher": "Vaswani 等",
+    "kind": "paper",
+    "publishedAt": "2017-06-12",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M2"
+    ],
+    "level": "深入",
+    "readFocus": "优先读第 3 节模型结构与缩放点积注意力；为 Q、K、V、权重矩阵标出维度，再解释掩码与多头。",
+    "why": "回到注意力的原始定义，可以把运算本身与后来的缓存、位置编码和内核优化分开。"
+  },
+  {
+    "id": "rope",
+    "title": "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+    "url": "https://arxiv.org/abs/2104.09864",
+    "publisher": "苏剑林等",
+    "kind": "paper",
+    "publishedAt": "2021-04-20",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M2",
+      "M4"
+    ],
+    "level": "拓展",
+    "readFocus": "沿旋转位置编码的推导，验证两个位置的点积如何包含相对位置；区分外推能力与任意长输入的保证。",
+    "why": "解释位置信息怎样进入匹配计算，为长上下文问题补上结构层基础。"
+  },
+  {
+    "id": "scaling-laws",
+    "title": "Scaling Laws for Neural Language Models",
+    "url": "https://arxiv.org/abs/2001.08361",
+    "publisher": "Kaplan 等",
+    "kind": "paper",
+    "publishedAt": "2020-01-23",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M5",
+      "M1"
+    ],
+    "level": "深入",
+    "readFocus": "看损失随参数量、数据量和计算量的经验曲线；列出实验范围、拟合目标与固定预算条件。",
+    "why": "规模规律是实验观察与拟合关系，不是任意模型或下游能力的无条件定律。"
+  },
+  {
+    "id": "chinchilla",
+    "title": "Training Compute-Optimal Large Language Models",
+    "url": "https://arxiv.org/abs/2203.15556",
+    "publisher": "Hoffmann 等 / DeepMind",
+    "kind": "paper",
+    "publishedAt": "2022-03-29",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M5",
+      "G2"
+    ],
+    "level": "深入",
+    "readFocus": "比较固定训练算力下参数量与 token 量的分配；对照前一篇 scaling laws，检查拟合方法和预算定义。",
+    "why": "理解模型更大与预算更优不是同一个目标，也为训练和推理成本的联合取舍留下入口。"
+  },
+  {
+    "id": "lora",
+    "title": "LoRA: Low-Rank Adaptation of Large Language Models",
+    "url": "https://arxiv.org/abs/2106.09685",
+    "publisher": "Hu 等",
+    "kind": "paper",
+    "publishedAt": "2021-06-17",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "L2",
+      "I2"
+    ],
+    "level": "深入",
+    "readFocus": "从低秩增量矩阵的参数量开始计算；区分冻结权重、可训练参数、优化器状态及推理合并条件。",
+    "why": "LoRA 改变参数更新方式；它与监督学习或偏好优化的目标选择处在不同维度。"
+  },
+  {
+    "id": "dpo",
+    "title": "Direct Preference Optimization",
+    "url": "https://arxiv.org/abs/2305.18290",
+    "publisher": "Rafailov 等",
+    "kind": "paper",
+    "publishedAt": "2023-05-29",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "L2"
+    ],
+    "level": "深入",
+    "readFocus": "沿最优策略与奖励参数化关系读到成对偏好损失；检查参考策略、偏好数据和温度参数的角色。",
+    "why": "把 DPO 从算法名称还原为假设和目标，才能解释它与显式奖励模型训练的关系。"
+  },
+  {
+    "id": "ppo",
+    "title": "Proximal Policy Optimization Algorithms",
+    "url": "https://arxiv.org/abs/1707.06347",
+    "publisher": "Schulman 等",
+    "kind": "paper",
+    "publishedAt": "2017-07-20",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "L2",
+      "G2"
+    ],
+    "level": "拓展",
+    "readFocus": "先看概率比值与 clipped surrogate objective；区分采样时旧策略、当前策略和语言模型对齐中额外的参考策略。",
+    "why": "理解限制策略更新的动机，避免把所有 KL、clip 和 reward 约束当成一件事。"
+  },
+  {
+    "id": "kv-cache",
+    "title": "How caching works",
+    "url": "https://huggingface.co/docs/transformers/main/cache_explanation",
+    "publisher": "Hugging Face Transformers",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M3"
+    ],
+    "level": "入门",
+    "readFocus": "对照 Cache class 与生成循环，逐步记录新 token、历史 K/V、attention mask 的形状。",
+    "why": "缓存复用依赖固定前缀与因果结构；张量形状能帮助定位生成循环里的真实错误。"
+  },
+  {
+    "id": "gqa",
+    "title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+    "url": "https://arxiv.org/abs/2305.13245",
+    "publisher": "Ainslie 等",
+    "kind": "paper",
+    "publishedAt": "2023-05-22",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "M3",
+      "M2"
+    ],
+    "level": "深入",
+    "readFocus": "比较 MHA、MQA、GQA 的 query heads 与 KV heads；重算一组固定层数、序列长度下的缓存容量。",
+    "why": "解释显存估算为什么应使用 KV 头数，以及共享 K/V 带来的结构与质量取舍。"
+  },
+  {
+    "id": "agent-evals",
+    "title": "Demystifying evals for AI agents",
+    "url": "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+    "publisher": "Anthropic Engineering",
+    "kind": "blog",
+    "publishedAt": "2026-01-09",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "G1",
+      "E1",
+      "L1"
+    ],
+    "level": "入门",
+    "readFocus": "读 task、trial、grader、transcript 的区分；再看参考解、正反例与非确定性评测，写出自己任务的验收契约。",
+    "why": "把业务完成标准变成可检查任务，同时保留执行失败、评分失败与能力失败的区别。"
+  },
+  {
+    "id": "effective-agents",
+    "title": "Building effective agents",
+    "url": "https://www.anthropic.com/research/building-effective-agents",
+    "publisher": "Anthropic Engineering",
+    "kind": "blog",
+    "publishedAt": "2024-12-19",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A4",
+      "A3",
+      "A1"
+    ],
+    "level": "入门",
+    "readFocus": "比较 routing、parallelization、orchestrator-workers 和 evaluator-optimizer；为同一业务指出何时固定流程足够。",
+    "why": "用任务结构解释架构选择。文章是经典设计参考，文首已提示部分工具信息随时间变化。"
+  },
+  {
+    "id": "few-shot",
+    "title": "Language Models are Few-Shot Learners",
+    "url": "https://arxiv.org/abs/2005.14165",
+    "publisher": "Brown 等",
+    "kind": "paper",
+    "publishedAt": "2020-05-28",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A0",
+      "M5"
+    ],
+    "level": "拓展",
+    "readFocus": "对照 zero-shot、one-shot、few-shot 的输入设置与评测方式，说明示例加入上下文与参数训练的区别。",
+    "why": "为提示中的任务描述和示例提供原始研究背景，也提醒读者检查数据污染与任务边界。"
+  },
+  {
+    "id": "outlines-types",
+    "title": "Outlines: Output Types",
+    "url": "https://dottxt-ai.github.io/outlines/main/features/core/output_types/",
+    "publisher": "dottxt / Outlines",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A0",
+      "A2"
+    ],
+    "level": "深入",
+    "readFocus": "比较 JSON Schema、正则与上下文无关文法的适用范围，并核对不同后端的支持矩阵。",
+    "why": "结构约束可以改善格式可靠性，业务字段是否真实、权限是否合法仍需额外验证。"
+  },
+  {
+    "id": "context-engineering",
+    "title": "Effective context engineering for AI agents",
+    "url": "https://www.anthropic.com/research/effective-context-engineering-for-ai-agents",
+    "publisher": "Anthropic Engineering",
+    "kind": "blog",
+    "publishedAt": "2025-09-29",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "C1",
+      "C3"
+    ],
+    "level": "入门",
+    "readFocus": "看 context retrieval 与长程任务中的压缩、结构化笔记；列出压缩前后哪些事实与来源必须保留。",
+    "why": "把上下文看成有限决策输入，可以解释为什么全部塞入历史并不等于保留有效信息。"
+  },
+  {
+    "id": "lost-middle",
+    "title": "Lost in the Middle: How Language Models Use Long Contexts",
+    "url": "https://arxiv.org/abs/2307.03172",
+    "publisher": "Liu 等",
+    "kind": "paper",
+    "publishedAt": "2023-07-06",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "C1",
+      "E1"
+    ],
+    "level": "深入",
+    "readFocus": "查看相关证据位置变化的对照实验与曲线；区分支持的上下文长度和有效使用证据的能力。",
+    "why": "为检索顺序和压缩策略设计可验证实验，同时注意结论对应论文测试的模型与任务。"
+  },
+  {
+    "id": "rag",
+    "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+    "url": "https://arxiv.org/abs/2005.11401",
+    "publisher": "Lewis 等",
+    "kind": "paper",
+    "publishedAt": "2020-05-22",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "C2",
+      "A4"
+    ],
+    "level": "深入",
+    "readFocus": "读检索器和生成器的组合，以及 RAG-Sequence 与 RAG-Token 的差异；画出参数知识与外部文档的边界。",
+    "why": "理解原始 RAG 概念后，再分析工程中的切分、混合召回与重排，避免把所有检索系统视为同一种结构。"
+  },
+  {
+    "id": "bm25",
+    "title": "Practical BM25 — The BM25 Algorithm and its Variables",
+    "url": "https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables",
+    "publisher": "Shane Connelly / Elastic",
+    "kind": "blog",
+    "publishedAt": "2018-04-19",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "C2",
+      "B3"
+    ],
+    "level": "入门",
+    "readFocus": "逐项看词频饱和、IDF、文档长度与 k1、b；用短文档和重复关键词的例子解释排名变化。",
+    "why": "词法召回依然有明确的适用场景，先看懂基线才能判断向量召回带来了什么。"
+  },
+  {
+    "id": "memory",
+    "title": "Memory overview",
+    "url": "https://docs.langchain.com/oss/python/concepts/memory",
+    "publisher": "LangChain",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "C3",
+      "A1"
+    ],
+    "level": "入门",
+    "readFocus": "读 thread-scoped state、checkpointer 与跨线程 store；画出会话状态、用户记忆、业务数据库各自的读写路径。",
+    "why": "框架持久化解决的是部分状态保存；业务权威性、失效和跨用户隔离仍需系统设计。"
+  },
+  {
+    "id": "react",
+    "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+    "url": "https://arxiv.org/abs/2210.03629",
+    "publisher": "Yao 等",
+    "kind": "paper",
+    "publishedAt": "2022-10-06",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A1",
+      "A3"
+    ],
+    "level": "深入",
+    "readFocus": "跟踪一条 reasoning、action、observation 交替轨迹；比较无环境反馈的推理与带观察的决策循环。",
+    "why": "解释 Agent 的闭环从哪里来，以及为什么行动失败需要进入下一轮状态更新。"
+  },
+  {
+    "id": "mcp-architecture",
+    "title": "MCP Architecture overview",
+    "url": "https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture",
+    "publisher": "Model Context Protocol",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "A2",
+      "P2"
+    ],
+    "level": "入门",
+    "readFocus": "先画 host、client、server，再读数据层、传输层与工具发现/调用示例；分别标出协议责任和应用授权责任。",
+    "why": "MCP 统一一部分连接约定；模型是否调用、调用是否有权限及副作用如何恢复仍属于宿主系统。"
+  },
+  {
+    "id": "timeouts-jitter",
+    "title": "Timeouts, retries, and backoff with jitter",
+    "url": "https://builder.aws.com/content/3EumjoZascWd1oZiEgL8ORlv3qE/timeouts-retries-and-backoff-with-jitter",
+    "publisher": "Marc Brooker / AWS",
+    "kind": "blog",
+    "publishedAt": "2019-12-05",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "G2",
+      "R1",
+      "R2"
+    ],
+    "level": "深入",
+    "readFocus": "读超时选择、指数退避与 jitter；画出多层各自重试时请求数如何放大，再设置总时间和次数预算。",
+    "why": "预算不仅是费用限制，也是控制故障放大、队列积压和尾延迟的方法。"
+  },
+  {
+    "id": "ddp",
+    "title": "Distributed Data Parallel",
+    "url": "https://docs.pytorch.org/docs/2.15/notes/ddp.html",
+    "publisher": "PyTorch",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "I2"
+    ],
+    "level": "深入",
+    "readFocus": "读 reducer、gradient buckets 与通信挂钩；画出单步前向、反向、梯度同步和 optimizer step。",
+    "why": "把分布式训练还原为计算与通信依赖，解释重叠何时有效、何时会等待最慢设备。"
+  },
+  {
+    "id": "zero",
+    "title": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+    "url": "https://arxiv.org/abs/1910.02054",
+    "publisher": "Rajbhandari 等",
+    "kind": "paper",
+    "publishedAt": "2019-10-04",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "I2"
+    ],
+    "level": "深入",
+    "readFocus": "按 optimizer states、gradients、parameters 三类状态算容量，再比较分片阶段和通信需求。",
+    "why": "训练显存不只有模型权重；分片以通信和调度复杂度换取可训练规模。"
+  },
+  {
+    "id": "orca",
+    "title": "Orca: A Distributed Serving System for Transformer-Based Generative Models",
+    "url": "https://www.usenix.org/conference/osdi22/presentation/yu",
+    "publisher": "Yu 等 / USENIX OSDI 2022",
+    "kind": "paper",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "I1",
+      "R1"
+    ],
+    "level": "深入",
+    "readFocus": "进入页面的论文与演讲，重点看 iteration-level scheduling 和 selective batching；画出长短请求交错进入批次的过程。",
+    "why": "连续批处理依赖生成任务的逐步特性，能把请求调度与模型计算连接起来。"
+  },
+  {
+    "id": "paged-attention",
+    "title": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+    "url": "https://arxiv.org/abs/2309.06180",
+    "publisher": "Kwon 等",
+    "kind": "paper",
+    "publishedAt": "2023-09-12",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "I1",
+      "M3",
+      "B2"
+    ],
+    "level": "深入",
+    "readFocus": "看逻辑 KV block 与物理 block 的映射、共享和 copy-on-write；解释内存碎片为何会限制 batch。",
+    "why": "将操作系统分页思想连接到模型服务，区分缓存存储优化和注意力数学公式。"
+  },
+  {
+    "id": "flash-attention",
+    "title": "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+    "url": "https://arxiv.org/abs/2205.14135",
+    "publisher": "Dao 等",
+    "kind": "paper",
+    "publishedAt": "2022-05-27",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "I1",
+      "M2",
+      "I2"
+    ],
+    "level": "深入",
+    "readFocus": "看 HBM/SRAM 数据搬运、分块与在线 softmax；解释不保存完整注意力矩阵如何保持精确运算。",
+    "why": "加速不总来自减少算术操作；数据移动和硬件层级也决定耗时。"
+  },
+  {
+    "id": "etcd-locks",
+    "title": "etcd API reference: concurrency",
+    "url": "https://etcd.io/docs/v3.6/dev-guide/api_concurrency_reference_v3/",
+    "publisher": "etcd",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "R3"
+    ],
+    "level": "深入",
+    "readFocus": "读 LockRequest 的 lease 与选举字段；画出租约到期、锁释放和旧持有者继续运行的时间线。",
+    "why": "协议提供的所有权生命周期不能自动阻止旧进程对外部资源继续写入。"
+  },
+  {
+    "id": "distributed-locking",
+    "title": "How to do distributed locking",
+    "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html",
+    "publisher": "Martin Kleppmann",
+    "kind": "blog",
+    "publishedAt": "2016-02-08",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "R3",
+      "R2"
+    ],
+    "level": "深入",
+    "readFocus": "重点读 Making the lock safe with fencing；用 token 33、34 的时序解释谁负责拒绝陈旧写入。",
+    "why": "把租约、进程暂停与存储校验连接起来；fencing 需要被保护资源配合，不能只在客户端自检。"
+  },
+  {
+    "id": "otel-signals",
+    "title": "OpenTelemetry: Signals",
+    "url": "https://opentelemetry.io/docs/concepts/signals/",
+    "publisher": "OpenTelemetry",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "P1",
+      "A4"
+    ],
+    "level": "入门",
+    "readFocus": "分别沿 traces、metrics、logs 页面阅读；为一次 Agent 请求设计 task、run、tool-call 的关联标识。",
+    "why": "指标帮助发现整体异常，轨迹和日志帮助定位一次执行，需要共同保留业务语义。"
+  },
+  {
+    "id": "prompt-injection",
+    "title": "LLM Prompt Injection Prevention Cheat Sheet",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+    "publisher": "OWASP",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "P2",
+      "A2"
+    ],
+    "level": "深入",
+    "readFocus": "读 indirect injection、agent-specific defenses 与 least privilege；用恶意检索文档画出内容如何影响工具调用。",
+    "why": "把内容可信度与操作授权分开，避免把提示文本或另一个守卫模型当成唯一权限边界。"
+  },
+  {
+    "id": "helm",
+    "title": "Holistic Evaluation of Language Models",
+    "url": "https://arxiv.org/abs/2211.09110",
+    "publisher": "Liang 等 / Stanford CRFM",
+    "kind": "paper",
+    "publishedAt": "2022-11-16",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "E1",
+      "G1"
+    ],
+    "level": "深入",
+    "readFocus": "看 scenarios 与 metrics 的组织方式及覆盖缺口；为自己的任务同时写出质量、效率和稳健性口径。",
+    "why": "单一分数无法覆盖系统价值，评测需要明确任务分布与多维取舍。"
+  },
+  {
+    "id": "llm-judge",
+    "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+    "url": "https://arxiv.org/abs/2306.05685",
+    "publisher": "Zheng 等",
+    "kind": "paper",
+    "publishedAt": "2023-06-09",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "E2"
+    ],
+    "level": "深入",
+    "readFocus": "看位置、冗长和自偏好偏差，以及与人类偏好的一致性实验；设计交换答案顺序的校准对照。",
+    "why": "评审模型的稳定性、与人的一致性及事实正确率是不同指标，不能互相替代。"
+  },
+  {
+    "id": "bootstrap",
+    "title": "scipy.stats.bootstrap",
+    "url": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html",
+    "publisher": "SciPy",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "E3",
+      "M1"
+    ],
+    "level": "深入",
+    "readFocus": "阅读 paired 参数和重采样步骤；对同一组任务的 A/B 差值重采样，解释独立单位为何是任务而非所有重复试验。",
+    "why": "置信区间要与数据依赖结构匹配，才能把观测提升和随机波动区分开。"
+  },
+  {
+    "id": "datasheets",
+    "title": "Datasheets for Datasets",
+    "url": "https://arxiv.org/abs/1803.09010",
+    "publisher": "Gebru 等",
+    "kind": "paper",
+    "publishedAt": "2018-03-23",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "L1",
+      "E1"
+    ],
+    "level": "入门",
+    "readFocus": "按 motivation、composition、collection、uses 和 maintenance 记录一个数据集；特别填写采样来源与不适用范围。",
+    "why": "数据反馈需要保留来源、版本和分布信息，否则更多数据也可能放大偏差。"
+  },
+  {
+    "id": "gsm1k",
+    "title": "A Careful Examination of Large Language Model Performance on Grade School Arithmetic",
+    "url": "https://arxiv.org/abs/2405.00332",
+    "publisher": "Zhang 等",
+    "kind": "paper",
+    "publishedAt": "2024-05-01",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "L1",
+      "E3",
+      "E1"
+    ],
+    "level": "拓展",
+    "readFocus": "看 GSM1k 如何匹配 GSM8k 的题型和难度，再检查性能差异的解释与限制；不要仅凭分数下降断言泄漏。",
+    "why": "为数据污染和泛化评估提供对照设计例子，说明评测集变更本身也需要证据。"
+  },
+  {
+    "id": "quant-reading-46",
+    "title": "Qlib Point-in-Time Database",
+    "url": "https://qlib.readthedocs.io/en/latest/advanced/PIT.html",
+    "publisher": "Microsoft Qlib",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q1"
+    ],
+    "level": "深入",
+    "readFocus": "date 与 period 的不同含义，以及修订链。",
+    "why": "在当时那个时刻，系统实际上能知道什么？"
+  },
+  {
+    "id": "quant-reading-47",
+    "title": "ALFRED 历史数据版本",
+    "url": "https://alfred.stlouisfed.org/",
+    "publisher": "Federal Reserve Bank of St. Louis",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q1"
+    ],
+    "level": "深入",
+    "readFocus": "按历史日期取当时已发布的数据版本。",
+    "why": "在当时那个时刻，系统实际上能知道什么？"
+  },
+  {
+    "id": "quant-reading-48",
+    "title": "Qlib 平台论文",
+    "url": "https://arxiv.org/abs/2009.11189",
+    "publisher": "Qlib 作者",
+    "kind": "paper",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q2"
+    ],
+    "level": "深入",
+    "readFocus": "数据、模型、预测到投资流程的系统分工。",
+    "why": "预测的到底是什么，为什么预期存在可持续的信息？"
+  },
+  {
+    "id": "quant-reading-49",
+    "title": "Kenneth French Data Library",
+    "url": "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html",
+    "publisher": "Kenneth R. French",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q2",
+      "Q3"
+    ],
+    "level": "深入",
+    "readFocus": "因子与投资组合构建说明，尤其原始数据口径变化。",
+    "why": "预测的到底是什么，为什么预期存在可持续的信息？"
+  },
+  {
+    "id": "quant-reading-50",
+    "title": "The Probability of Backtest Overfitting",
+    "url": "https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf",
+    "publisher": "Bailey 等作者",
+    "kind": "paper",
+    "publishedAt": "2015-02-27",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q2"
+    ],
+    "level": "深入",
+    "readFocus": "策略选择、样本外排序与 PBO 的定义。",
+    "why": "曲线变好来自可用信号，还是筛选、泄漏和运气？"
+  },
+  {
+    "id": "quant-reading-51",
+    "title": "ECB 2026-11 金融稳定报告发布",
+    "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.pr261118~83c5c60158.en.html",
+    "publisher": "European Central Bank",
+    "kind": "report",
+    "publishedAt": "2026-11-18",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q3",
+      "Q6"
+    ],
+    "level": "深入",
+    "readFocus": "债务融资、流动性与机构敞口之间的传导。",
+    "why": "即使预测正确，为什么仍可能亏损或无法持有？"
+  },
+  {
+    "id": "quant-reading-52",
+    "title": "Qlib Nested Decision Execution Framework",
+    "url": "https://qlib.readthedocs.io/en/latest/component/highfreq.html",
+    "publisher": "Microsoft Qlib",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q4"
+    ],
+    "level": "深入",
+    "readFocus": "日频组合与日内订单执行如何嵌套、共同回测。",
+    "why": "目标仓位怎样变成真实成交，并且知道发生了什么？"
+  },
+  {
+    "id": "quant-reading-53",
+    "title": "上交所程序化交易管理实施细则",
+    "url": "https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20250612_10781696.shtml",
+    "publisher": "上海证券交易所",
+    "kind": "report",
+    "publishedAt": "2025-04-03",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q4"
+    ],
+    "level": "深入",
+    "readFocus": "按适用范围读正式规则和后续修订。",
+    "why": "目标仓位怎样变成真实成交，并且知道发生了什么？"
+  },
+  {
+    "id": "quant-reading-54",
+    "title": "R&D-Agent-Quant 原论文",
+    "url": "https://arxiv.org/abs/2505.15155",
+    "publisher": "R&D-Agent-Quant 作者",
+    "kind": "paper",
+    "publishedAt": "2025-05-21",
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q5"
+    ],
+    "level": "深入",
+    "readFocus": "研究、开发和反馈循环及实验比较条件。",
+    "why": "怎样自动做研究，同时避免自动生产错误结论？"
+  },
+  {
+    "id": "quant-reading-55",
+    "title": "Microsoft RD-Agent 源码",
+    "url": "https://github.com/microsoft/RD-Agent",
+    "publisher": "Microsoft",
+    "kind": "docs",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q5"
+    ],
+    "level": "深入",
+    "readFocus": "执行、反馈与实验记录代码；固定 commit 后再复现。",
+    "why": "怎样自动做研究，同时避免自动生产错误结论？"
+  },
+  {
+    "id": "fed-data-time",
+    "title": "Federal Reserve H.15 与数据发布时间",
+    "url": "https://www.federalreserve.gov/releases/H15/",
+    "publisher": "Federal Reserve Board",
+    "kind": "report",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q1",
+      "Q6"
+    ],
+    "level": "入门",
+    "readFocus": "核对发布日、各列观测日、指标定义与脚注。思考：如果发布次日才拿到数据，能否用于观测日的收盘决策？",
+    "why": "把利率叙事落实为可追溯、可知时间明确的数据。"
+  },
+  {
+    "id": "markowitz-portfolio-selection",
+    "title": "Portfolio Selection",
+    "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.1952.tb01525.x",
+    "publisher": "Harry Markowitz / The Journal of Finance",
+    "kind": "paper",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q3"
+    ],
+    "level": "深入",
+    "readFocus": "1952年经典论文。先核对均值、方差与协方差如何进入组合选择，再手算两资产例子。出版记录可读，全文可能需机构权限。",
+    "why": "解释为什么分散化由共同风险决定，资产数量并不能替代协方差分析。"
+  },
+  {
+    "id": "damodaran-valuation",
+    "title": "Approaches to Valuation",
+    "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/lectures/approach.html",
+    "publisher": "Aswath Damodaran / NYU Stern",
+    "kind": "course",
+    "publishedAt": null,
+    "checkedAt": "2026-11-26",
+    "conceptIds": [
+      "Q6"
+    ],
+    "level": "入门",
+    "readFocus": "从现金流折现的基本式开始，区分股权与企业估值的现金流口径、折现率及相互匹配关系。",
+    "why": "把公司新闻和产业判断还原为现金流、增长、折现率与风险假设。"
+  }
+]
